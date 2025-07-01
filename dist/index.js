@@ -1,12 +1,19 @@
 #!/usr/bin/env node
 /******/ (() => { // webpackBootstrap
+/******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
-/***/ 260:
+/***/ 896:
 /***/ ((module) => {
 
-module.exports = eval("require")("./package.json");
+module.exports = require("fs");
 
+/***/ }),
+
+/***/ 928:
+/***/ ((module) => {
+
+module.exports = require("path");
 
 /***/ })
 
@@ -49,19 +56,21 @@ module.exports = eval("require")("./package.json");
 /******/ 	
 /************************************************************************/
 var __webpack_exports__ = {};
-// This entry need to be wrapped in an IIFE because it need to be in strict mode.
+// This entry need to be wrapped in an IIFE because it uses a non-standard name for the exports (exports).
 (() => {
-"use strict";
 var exports = __webpack_exports__;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.run = run;
+exports.run = void 0;
+const pt = __nccwpck_require__(928);
+const fs = __nccwpck_require__(896);
 async function run() {
-    if (process.argv.includes('--version')) {
-        console.log((__nccwpck_require__(260).version));
-        process.exit(0);
-    }
+    const packageJsonPath = __nccwpck_require__.ab + "package.json";
+    const pkg = JSON.parse(fs.readFileSync(__nccwpck_require__.ab + "package.json", 'utf-8'));
+    console.log(pkg.version);
 }
+exports.run = run;
+run();
 //# sourceMappingURL=main.js.map
 })();
 
