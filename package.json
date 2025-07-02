@@ -15,7 +15,8 @@
     "watch": "npx tsc -watch -p ./",
     "lint": "npx eslint -f checkstyle -o eslint/eslint-report.xml src/**/*.ts || echo ESLint failed, but continuing...",
     "test": "nyc mocha",
-    "package": "ncc build --license licenses.txt",
+    "copy-files": "copyfiles --flat ./src/messages/*.json ./dist/messages && copyfiles --flat ./res/*.xsl ./dist && copyfiles --up 1 ./libs/SaxonHE12-2J/**/* ./dist",
+    "package": "ncc build --license licenses.txt && npm run copy-files",
     "clean": "rimraf ./dist ./lib ./eslint ./coverage ./.nyc_output test-results.xml",
     "all": "npm run clean && npm run compile && npm run lint && npm run test && npm run package && npm run postbuild"
   },
@@ -37,8 +38,11 @@
   "homepage": "https://github.com/parasoft/parasoft-findings-bitbucket#readme",
   "devDependencies": {
     "@eslint/js": "^9.30.1",
+    "@types/minimist": "^1.2.5",
     "@types/mocha": "^10.0.6",
+    "@types/sax": "^1.2.7",
     "@types/sinon": "^17.0.3",
+    "@types/string-format": "^2.0.3",
     "@vercel/ncc": "^0.38.1",
     "eslint": "^9.30.1",
     "eslint-formatter-checkstyle": "^8.40.0",
@@ -52,5 +56,13 @@
     "ts-node": "^10.9.2",
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.35.1"
+  },
+  "dependencies": {
+    "copyfiles": "^2.4.1",
+    "glob": "^11.0.0",
+    "minimist": "^1.2.8",
+    "sax": "^1.4.1",
+    "string-format": "^2.0.0",
+    "winston": "^3.17.0"
   }
 }
