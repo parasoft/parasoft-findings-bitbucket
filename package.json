@@ -7,7 +7,7 @@
     "dist"
   ],
   "bin": {
-    "pfbit": "./dist/index.js"
+    "parasoft-findings-bitbucket": "./dist/index.js"
   },
   "scripts": {
     "postbuild": "node ./scripts/prepend.mjs",
