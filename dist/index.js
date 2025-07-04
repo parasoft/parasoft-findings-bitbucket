@@ -12,11 +12,10 @@ var __webpack_exports__ = {};
 var exports = __webpack_exports__;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.run = void 0;
+exports.run = run;
 async function run() {
     console.log('TODO: Running Parasoft Findings Bitbucket script...');
 }
-exports.run = run;
 run();
 //# sourceMappingURL=main.js.map
 })();
