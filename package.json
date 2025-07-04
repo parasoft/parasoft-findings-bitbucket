@@ -13,7 +13,7 @@
     "postbuild": "node ./scripts/prepend.mjs",
     "compile": "npx tsc -p ./",
     "watch": "npx tsc -watch -p ./",
-    "lint": "npx eslint . --ext .ts -f checkstyle -o eslint/eslint-report.xml || true",
+    "lint": "npx eslint -f checkstyle -o eslint/eslint-report.xml src/**/*.ts || echo ESLint failed, but continuing...",
     "test": "nyc mocha",
     "package": "ncc build --license licenses.txt",
     "clean": "rimraf ./dist ./lib ./eslint ./coverage ./.nyc_output test-results.xml",
@@ -36,20 +36,21 @@
   },
   "homepage": "https://github.com/parasoft/parasoft-findings-bitbucket#readme",
   "devDependencies": {
+    "@eslint/js": "^9.30.1",
     "@types/mocha": "^10.0.6",
     "@types/sinon": "^17.0.3",
-    "@typescript-eslint/eslint-plugin": "^7.2.0",
-    "@typescript-eslint/parser": "^7.2.0",
     "@vercel/ncc": "^0.38.1",
-    "eslint": "^8.57.0",
+    "eslint": "^9.30.1",
+    "eslint-formatter-checkstyle": "^8.40.0",
     "fs-extra": "^11.3.0",
-    "mocha": "^10.3.0",
+    "mocha": "^11.7.1",
     "mocha-junit-reporter": "^2.2.1",
     "mocha-multi-reporters": "^1.5.1",
-    "nyc": "^15.1.0",
+    "nyc": "^17.1.0",
     "rimraf": "^5.0.5",
-    "sinon": "^17.0.1",
+    "sinon": "^21.0.0",
     "ts-node": "^10.9.2",
-    "typescript": "~5.4.2"
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.35.1"
   }
 }
