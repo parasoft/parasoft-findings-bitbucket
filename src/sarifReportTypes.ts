@@ -54,3 +54,11 @@ export type VulnerabilityDetail = {
     summary?: string;
     details: string;
 }
+
+export type BitbucketEnv = {
+    BB_USER: string;
+    BB_APP_PASSWORD: string;
+    REPO: string;
+    COMMIT: string;
+    WORKSPACE: string;
+}

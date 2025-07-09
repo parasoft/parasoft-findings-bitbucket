@@ -25,8 +25,13 @@ class Messages implements ISerializable<Messages> {
     converted_sarif_report!: string;
     failed_parse_report!: string;
     parsed_parasoft_static_analysis_report!: string;
-    parsed_parasoft_static_analysis_report_no_duplication!: string;
     skip_static_analysis_report!: string;
+    report_contains_vulnerabilities!: string;
+    report_shows_vulnerabilities!: string;
+    missing_required_environment_variables!: string;
+    uploading_parasoft_report_results!: string;
+    uploaded_parasoft_report_results!: string;
+    failed_to_upload_parasoft_report_results!: string;
 
     deserialize(jsonPath: string) : Messages {
         const buf = fs.readFileSync(jsonPath);

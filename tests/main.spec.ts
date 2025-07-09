@@ -33,6 +33,8 @@ describe('parasoft-bitbucket/main', () => {
         const setUpFakeRunner = () => {
             fakeStaticAnalysisParserRunner = sandbox.fake.resolves({ exitCode: runnerExitCode });
             sandbox.replace(runner.StaticAnalysisParserRunner.prototype, 'run', fakeStaticAnalysisParserRunner);
+            sandbox.stub(runner.StaticAnalysisParserRunner.prototype, 'getBitbucketEnvs')
+                .returns({BB_APP_PASSWORD: "", BB_USER: "", COMMIT: "", REPO: "", WORKSPACE: ""});
         }
 
         it('Parse static analysis report with exit code 0', async () => {
