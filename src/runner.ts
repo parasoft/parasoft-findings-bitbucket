@@ -4,8 +4,9 @@ import * as fs from 'fs';
 import * as pt from 'path';
 import * as glob from 'glob';
 import * as sax from 'sax';
-import {logger} from "./logger";
-
+import * as types from './types';
+import {v4 as uuidv4} from 'uuid'
+import {logger} from './logger';
 import {messages, messagesFormatter} from './messages';
 
 export interface RunOptions {
@@ -18,7 +19,7 @@ export interface RunOptions {
 
 interface ConversionResultDetails {
     exitCode: number;
-    convertedReportPaths?: string[];
+    convertedReportPath?: string;
 }
 
 export interface Result {
@@ -40,13 +41,19 @@ export class StaticAnalysisParserRunner {
             return { exitCode: -1 }
         }
 
-        const outcome = await this.convertReportsWithJava(javaFilePath, parasoftReportPaths);
+        let convertedReportResult: ConversionResultDetails = {exitCode: 1};
+        for (const parasoftReportPath of parasoftReportPaths) {
+            convertedReportResult = await this.convertReportsWithJava(javaFilePath, parasoftReportPath);
+            if (convertedReportResult.exitCode == 0 && convertedReportResult.convertedReportPath) {
+                const convertedReportPath = convertedReportResult.convertedReportPath;
+                const convertedReportContents: types.ReportContents = await this.readConvertedReport(convertedReportPath);
+                this.parseConvertedReport(convertedReportContents);
 
-        // TODO: Implement obtaining violation results from converted sarif reports
+                // TODO: Implement uploading violation results to Bitbucket report module
+            }
+        }
 
-        // TODO: Implement uploading violation results to Bitbucket report module
-
-        return { exitCode: outcome.exitCode };
+        return { exitCode: convertedReportResult.exitCode };
     }
 
     private async findParasoftStaticAnalysisReports(reportPath: string): Promise<string[]> {
@@ -83,31 +90,27 @@ export class StaticAnalysisParserRunner {
         return staticReportPaths;
     }
 
-    private async convertReportsWithJava(javaPath: string, sourcePaths: string[]): Promise<ConversionResultDetails> {
+    private async convertReportsWithJava(javaPath: string, sourcePath: string): Promise<ConversionResultDetails> {
         const jarPath = pt.join(__dirname, "SaxonHE12-2J/saxon-he-12.2.jar");
         const xslPath = pt.join(__dirname, "sarif.xsl");
-        const sarifReports: string[] = [];
         const workspace = pt.normalize(this.WORKING_DIRECTORY).replace(/\\/g, '/');
 
-        for (const sourcePath of sourcePaths) {
-            logger.debug(messagesFormatter.format(messages.converting_static_analysis_report_to_sarif, sourcePath));
-            const outPath = sourcePath.substring(0, sourcePath.toLocaleLowerCase().lastIndexOf('.xml')) + '.sarif';
+        logger.debug(messagesFormatter.format(messages.converting_static_analysis_report_to_sarif, sourcePath));
+        const outPath = sourcePath.substring(0, sourcePath.toLocaleLowerCase().lastIndexOf('.xml')) + '.sarif';
 
-            const commandLine = `"${javaPath}" -jar "${jarPath}" -s:"${sourcePath}" -xsl:"${xslPath}" -o:"${outPath}" -versionmsg:off projectRootPaths="${workspace}"`;
-            logger.debug(commandLine);
-            const result = await new Promise<ConversionResultDetails>((resolve, reject) => {
-                const process = cp.spawn(`${commandLine}`, {shell: true, windowsHide: true });
-                this.handleProcess(process, resolve, reject);
-            });
+        const commandLine = `"${javaPath}" -jar "${jarPath}" -s:"${sourcePath}" -xsl:"${xslPath}" -o:"${outPath}" -versionmsg:off projectRootPaths="${workspace}"`;
+        logger.debug(commandLine);
+        const result = await new Promise<ConversionResultDetails>((resolve, reject) => {
+            const process = cp.spawn(`${commandLine}`, {shell: true, windowsHide: true });
+            this.handleProcess(process, resolve, reject);
+        });
 
-            if (result.exitCode != 0) {
-                return { exitCode: result.exitCode };
-            }
-            sarifReports.push(outPath);
-            logger.debug(messagesFormatter.format(messages.converted_sarif_report, outPath));
+        if (result.exitCode != 0) {
+            return { exitCode: result.exitCode };
         }
+        logger.debug(messagesFormatter.format(messages.converted_sarif_report, outPath));
 
-        return { exitCode: 0, convertedReportPaths: sarifReports };
+        return { exitCode: 0, convertedReportPath: outPath };
     }
 
     private handleProcess(process: any, resolve: any, reject: any) {
@@ -177,5 +180,71 @@ export class StaticAnalysisParserRunner {
         }
 
         return undefined;
+    }
+
+    private async readConvertedReport(reportPath: string): Promise<types.ReportContents> {
+        const reportContent = await fs.promises.readFile(reportPath, 'utf8');
+        return JSON.parse(reportContent);
+    }
+
+    private parseConvertedReport(reportContent: types.ReportContents): types.VulnerabilityDetail[] {
+        logger.debug(messagesFormatter.format(messages.parsing_converted_report));
+
+        const severityMap = {
+            'note': 'LOW',
+            'warning': 'MEDIUM',
+            'error': 'HIGH',
+            'critical': 'CRITICAL'
+        };
+
+        const rules: Record<string, types.Rule> = this.getRules(reportContent);
+        const vulnerabilities: types.VulnerabilityDetail[] = reportContent.runs[0].results.map(result => ({
+            external_id: uuidv4(),
+            annotation_type: "VULNERABILITY",
+            severity: severityMap[result.level],
+            path: this.getPath(result),
+            line: this.getLine(result),
+            summary: this.getSummary(result, rules),
+            details: result.message.text
+        }));
+
+        logger.debug(messagesFormatter.format(messages.parsed_converted_report, vulnerabilities.length));
+        return vulnerabilities;
+    }
+
+    private getRules(reportContents: types.ReportContents) {
+        const rules = reportContents.runs[0].tool.driver.rules;
+        const map: Record<string, typeof rules[0]> = {};
+        rules.forEach(rule => map[rule.id] = rule);
+        return map;
+    }
+
+    private getPath(reportResult: types.ReportResult): string {
+        return reportResult.locations[0].physicalLocation.artifactLocation.uri;
+    }
+
+    private getLine(reportResult: types.ReportResult): number {
+        const region = reportResult.locations[0].physicalLocation.region;
+        if (region.endLine != null) {
+            return region.endLine;
+        }
+
+        return region.startLine;
+    }
+
+    private getSummary(
+        reportResult: types.ReportResult,
+        rulesMap: ReturnType<typeof this.getRules>
+    ): string | undefined {
+        const ruleId = reportResult.ruleId;
+        const rule = rulesMap[ruleId];
+
+        if (rule.fullDescription != null) {
+            return rule.fullDescription.text;
+        }
+
+        if (rule.shortDescription != null) {
+            return rule.shortDescription.text;
+        }
     }
 }
