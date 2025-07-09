@@ -23,6 +23,8 @@ class Messages implements ISerializable<Messages> {
     converting_static_analysis_report_to_sarif!: string;
     converted_sarif_report!: string;
     failed_parse_report!: string;
+    parsing_converted_report!: string;
+    parsed_converted_report!: string;
 
     deserialize(jsonPath: string) : Messages {
         const buf = fs.readFileSync(jsonPath);

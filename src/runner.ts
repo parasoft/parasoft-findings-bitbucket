@@ -4,8 +4,9 @@ import * as fs from 'fs';
 import * as pt from 'path';
 import * as glob from 'glob';
 import * as sax from 'sax';
-import {logger} from "./logger";
-
+import * as types from './types';
+import {v4 as uuidv4} from 'uuid'
+import {logger} from './logger';
 import {messages, messagesFormatter} from './messages';
 
 export interface RunOptions {
@@ -41,10 +42,14 @@ export class StaticAnalysisParserRunner {
         }
 
         const outcome = await this.convertReportsWithJava(javaFilePath, parasoftReportPaths);
+        if (outcome.exitCode == 0 && outcome.convertedReportPaths) {
+            for (let convertedReportPath of outcome.convertedReportPaths) {
+                const convertedReportContent: types.ReportContents = await this.readConvertedReport(convertedReportPath);
+                this.parseConvertedReport(convertedReportContent);
 
-        // TODO: Implement obtaining violation results from converted sarif reports
-
-        // TODO: Implement uploading violation results to Bitbucket report module
+                // TODO: Implement uploading violation results to Bitbucket report module
+            }
+        }
 
         return { exitCode: outcome.exitCode };
     }
@@ -177,5 +182,71 @@ export class StaticAnalysisParserRunner {
         }
 
         return undefined;
+    }
+
+    private async readConvertedReport(reportPath: string): Promise<types.ReportContents> {
+        const reportContent = await fs.promises.readFile(reportPath, 'utf8');
+        return JSON.parse(reportContent);
+    }
+
+    private parseConvertedReport(reportContent: types.ReportContents): types.VulnerabilityDetail[] {
+        logger.debug(messagesFormatter.format(messages.parsing_converted_report));
+
+        const severityMap = {
+            'note': 'LOW',
+            'warning': 'MEDIUM',
+            'error': 'HIGH',
+            'critical': 'CRITICAL'
+        };
+
+        const rules: Record<string, types.Rule> = this.getRules(reportContent);
+        const vulnerabilities: types.VulnerabilityDetail[] = reportContent.runs[0].results.map(result => ({
+            external_id: uuidv4(),
+            annotation_type: "VULNERABILITY",
+            severity: severityMap[result.level],
+            path: this.getPath(result),
+            line: this.getLine(result),
+            summary: this.getSummary(result, rules),
+            details: result.message.text
+        }));
+
+        logger.debug(messagesFormatter.format(messages.parsed_converted_report, vulnerabilities.length));
+        return vulnerabilities;
+    }
+
+    private getRules(reportContents: types.ReportContents) {
+        const rules = reportContents.runs[0].tool.driver.rules;
+        const map: Record<string, typeof rules[0]> = {};
+        rules.forEach(rule => map[rule.id] = rule);
+        return map;
+    }
+
+    private getPath(reportResult: types.ReportResult): string {
+        return reportResult.locations[0].physicalLocation.artifactLocation.uri;
+    }
+
+    private getLine(reportResult: types.ReportResult): number {
+        const region = reportResult.locations[0].physicalLocation.region;
+        if (region.endLine != null) {
+            return region.endLine;
+        }
+
+        return region.startLine;
+    }
+
+    private getSummary(
+        reportResult: types.ReportResult,
+        rulesMap: ReturnType<typeof this.getRules>
+    ): string | undefined {
+        const ruleId = reportResult.ruleId;
+        const rule = rulesMap[ruleId];
+
+        if (rule.fullDescription != null) {
+            return rule.fullDescription.text;
+        }
+
+        if (rule.shortDescription != null) {
+            return rule.shortDescription.text;
+        }
     }
 }
