@@ -16,18 +16,23 @@ export interface RunOptions {
     parasoftToolOrJavaRootPath?: string;
 }
 
-export interface RunDetails {
+interface ConversionResultDetails {
     exitCode: number;
-    convertedSarifReportPaths?: string[];
+    convertedReportPaths?: string[];
+}
+
+export interface Result {
+    exitCode: number
 }
 
 export class StaticAnalysisParserRunner {
     WORKING_DIRECTORY = process.env.BITBUCKET_CLONE_DIR + '';
 
-    async run(runOptions: RunOptions) : Promise<RunDetails> {
+    async run(runOptions: RunOptions) : Promise<Result> {
         const parasoftReportPaths = await this.findParasoftStaticAnalysisReports(runOptions.report);
         if (!parasoftReportPaths || parasoftReportPaths.length == 0) {
-            return Promise.reject(messagesFormatter.format(messages.static_analysis_report_not_found, runOptions.report));
+            logger.warn(messagesFormatter.format(messages.static_analysis_report_not_found, runOptions.report));
+            return { exitCode: -1 };
         }
 
         const javaFilePath = this.getJavaFilePath(runOptions.parasoftToolOrJavaRootPath);
@@ -78,20 +83,19 @@ export class StaticAnalysisParserRunner {
         return staticReportPaths;
     }
 
-    private async convertReportsWithJava(javaPath: string, sourcePaths: string[]): Promise<RunDetails> {
-        logger.debug(messages.using_java_to_convert_report);
+    private async convertReportsWithJava(javaPath: string, sourcePaths: string[]): Promise<ConversionResultDetails> {
         const jarPath = pt.join(__dirname, "SaxonHE12-2J/saxon-he-12.2.jar");
         const xslPath = pt.join(__dirname, "sarif.xsl");
         const sarifReports: string[] = [];
         const workspace = pt.normalize(this.WORKING_DIRECTORY).replace(/\\/g, '/');
 
         for (const sourcePath of sourcePaths) {
-            logger.info(messagesFormatter.format(messages.converting_static_analysis_report_to_sarif, sourcePath));
+            logger.debug(messagesFormatter.format(messages.converting_static_analysis_report_to_sarif, sourcePath));
             const outPath = sourcePath.substring(0, sourcePath.toLocaleLowerCase().lastIndexOf('.xml')) + '.sarif';
 
             const commandLine = `${javaPath} -jar "${jarPath}" -s:"${sourcePath}" -xsl:"${xslPath}" -o:"${outPath}" -versionmsg:off projectRootPaths="${workspace}"`;
             logger.debug(commandLine);
-            const result = await new Promise<RunDetails>((resolve, reject) => {
+            const result = await new Promise<ConversionResultDetails>((resolve, reject) => {
                 const process = cp.spawn(`${commandLine}`, {shell: true, windowsHide: true });
                 this.handleProcess(process, resolve, reject);
             });
@@ -100,17 +104,17 @@ export class StaticAnalysisParserRunner {
                 return { exitCode: result.exitCode };
             }
             sarifReports.push(outPath);
-            logger.info(messagesFormatter.format(messages.converted_sarif_report, outPath));
+            logger.debug(messagesFormatter.format(messages.converted_sarif_report, outPath));
         }
 
-        return { exitCode: 0, convertedSarifReportPaths: sarifReports };
+        return { exitCode: 0, convertedReportPaths: sarifReports };
     }
 
     private handleProcess(process: any, resolve: any, reject: any) {
-        process.stdout?.on('data', (data: any) => { console.info(`${data}`.replace(/\s+$/g, '')); });
-        process.stderr?.on('data', (data: any) => { console.info(`${data}`.replace(/\s+$/g, '')); });
+        process.stdout?.on('data', (data: any) => { logger.error(`${data}`.replace(/\s+$/g, '')); });
+        process.stderr?.on('data', (data: any) => { logger.error(`${data}`.replace(/\s+$/g, '')); });
         process.on('close', (code: any) => {
-            const result : RunDetails = {
+            const result : ConversionResultDetails = {
                 exitCode: (code != null) ? code : 150 // 150 = signal received
             };
             resolve(result);
@@ -127,8 +131,8 @@ export class StaticAnalysisParserRunner {
                     isStaticReport = true;
                 }
             });
-            saxStream.on("error",() => {
-                logger.warn(messagesFormatter.format(messages.failed_to_parse_static_analysis_report, reportPath))
+            saxStream.on("error",(e) => {
+                logger.warn(messagesFormatter.format(messages.failed_to_parse_static_analysis_report, reportPath, e.message))
                 resolve(false);
             });
             saxStream.on("end", () => {

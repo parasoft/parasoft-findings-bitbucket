@@ -7,8 +7,9 @@ interface ISerializable<T> {
 }
 
 class Messages implements ISerializable<Messages> {
+    missing_parameter!: string;
     run_failed!: string;
-    exit_code!: string;
+    parse_finished!: string;
     finding_static_analysis_report!: string;
     finding_static_analysis_report_in_working_directory!:string;
     found_matching_file!: string;
@@ -16,13 +17,12 @@ class Messages implements ISerializable<Messages> {
     skipping_unrecognized_report_file!: string;
     failed_to_parse_static_analysis_report!: string;
     finding_java_in_java_or_parasoft_tool_install_dir!: string;
-    using_java_to_convert_report!:string;
     java_or_parasoft_tool_install_dir_not_found!: string;
     java_not_found_in_java_or_parasoft_tool_install_dir!: string;
     found_java_at!: string;
     converting_static_analysis_report_to_sarif!: string;
     converted_sarif_report!: string;
-    failed_convert_report!: string;
+    failed_parse_report!: string;
 
     deserialize(jsonPath: string) : Messages {
         const buf = fs.readFileSync(jsonPath);

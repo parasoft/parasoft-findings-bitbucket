@@ -77,7 +77,8 @@ class StaticAnalysisParserRunner {
     async run(runOptions) {
         const parasoftReportPaths = await this.findParasoftStaticAnalysisReports(runOptions.report);
         if (!parasoftReportPaths || parasoftReportPaths.length == 0) {
-            return Promise.reject(messages_1.messagesFormatter.format(messages_1.messages.static_analysis_report_not_found, runOptions.report));
+            logger_1.logger.warn(messages_1.messagesFormatter.format(messages_1.messages.static_analysis_report_not_found, runOptions.report));
+            return { exitCode: -1 };
         }
         const javaFilePath = this.getJavaFilePath(runOptions.parasoftToolOrJavaRootPath);
         if (!javaFilePath) {
@@ -119,13 +120,12 @@ class StaticAnalysisParserRunner {
         return staticReportPaths;
     }
     async convertReportsWithJava(javaPath, sourcePaths) {
-        logger_1.logger.debug(messages_1.messages.using_java_to_convert_report);
         const jarPath = pt.join(__dirname, "SaxonHE12-2J/saxon-he-12.2.jar");
         const xslPath = pt.join(__dirname, "sarif.xsl");
         const sarifReports = [];
         const workspace = pt.normalize(this.WORKING_DIRECTORY).replace(/\\/g, '/');
         for (const sourcePath of sourcePaths) {
-            logger_1.logger.info(messages_1.messagesFormatter.format(messages_1.messages.converting_static_analysis_report_to_sarif, sourcePath));
+            logger_1.logger.debug(messages_1.messagesFormatter.format(messages_1.messages.converting_static_analysis_report_to_sarif, sourcePath));
             const outPath = sourcePath.substring(0, sourcePath.toLocaleLowerCase().lastIndexOf('.xml')) + '.sarif';
             const commandLine = `${javaPath} -jar "${jarPath}" -s:"${sourcePath}" -xsl:"${xslPath}" -o:"${outPath}" -versionmsg:off projectRootPaths="${workspace}"`;
             logger_1.logger.debug(commandLine);
@@ -137,14 +137,14 @@ class StaticAnalysisParserRunner {
                 return { exitCode: result.exitCode };
             }
             sarifReports.push(outPath);
-            logger_1.logger.info(messages_1.messagesFormatter.format(messages_1.messages.converted_sarif_report, outPath));
+            logger_1.logger.debug(messages_1.messagesFormatter.format(messages_1.messages.converted_sarif_report, outPath));
         }
-        return { exitCode: 0, convertedSarifReportPaths: sarifReports };
+        return { exitCode: 0, convertedReportPaths: sarifReports };
     }
     handleProcess(process, resolve, reject) {
         var _a, _b;
-        (_a = process.stdout) === null || _a === void 0 ? void 0 : _a.on('data', (data) => { console.info(`${data}`.replace(/\s+$/g, '')); });
-        (_b = process.stderr) === null || _b === void 0 ? void 0 : _b.on('data', (data) => { console.info(`${data}`.replace(/\s+$/g, '')); });
+        (_a = process.stdout) === null || _a === void 0 ? void 0 : _a.on('data', (data) => { logger_1.logger.error(`${data}`.replace(/\s+$/g, '')); });
+        (_b = process.stderr) === null || _b === void 0 ? void 0 : _b.on('data', (data) => { logger_1.logger.error(`${data}`.replace(/\s+$/g, '')); });
         process.on('close', (code) => {
             const result = {
                 exitCode: (code != null) ? code : 150 // 150 = signal received
@@ -162,8 +162,8 @@ class StaticAnalysisParserRunner {
                     isStaticReport = true;
                 }
             });
-            saxStream.on("error", () => {
-                logger_1.logger.warn(messages_1.messagesFormatter.format(messages_1.messages.failed_to_parse_static_analysis_report, reportPath));
+            saxStream.on("error", (e) => {
+                logger_1.logger.warn(messages_1.messagesFormatter.format(messages_1.messages.failed_to_parse_static_analysis_report, reportPath, e.message));
                 resolve(false);
             });
             saxStream.on("end", () => {
@@ -28311,7 +28311,10 @@ const runner = __nccwpck_require__(1924);
 const messages_1 = __nccwpck_require__(6250);
 const logger_1 = __nccwpck_require__(3258);
 async function run() {
-    const args = minimist(process.argv.slice(2));
+    const args = minimist(process.argv.slice(2), {
+        boolean: ['debug'],
+        string: ['report', 'parasoftToolOrJavaRootPath'],
+    });
     // Configure log level to DEBUG if the '--debug' parameter is set
     if (args['debug']) {
         (0, logger_1.configureLogger)({ level: 'debug' });
@@ -28321,18 +28324,21 @@ async function run() {
             report: args['report'],
             parasoftToolOrJavaRootPath: args['parasoftToolOrJavaRootPath']
         };
+        if (!runOptions.report || runOptions.report.trim().length == 0) {
+            logger_1.logger.error(messages_1.messagesFormatter.format(messages_1.messages.missing_parameter, '--report'));
+            process.exit(1);
+        }
         const theRunner = new runner.StaticAnalysisParserRunner();
         const outcome = await theRunner.run(runOptions);
         if (outcome.exitCode != 0) {
-            logger_1.logger.error(messages_1.messagesFormatter.format(messages_1.messages.failed_convert_report, outcome.exitCode));
+            logger_1.logger.error(messages_1.messagesFormatter.format(messages_1.messages.failed_parse_report, outcome.exitCode));
             process.exit(1);
         }
-        logger_1.logger.info(messages_1.messagesFormatter.format(messages_1.messages.exit_code, outcome.exitCode));
+        logger_1.logger.info(messages_1.messagesFormatter.format(messages_1.messages.exit_code));
     }
     catch (error) {
         logger_1.logger.error(messages_1.messagesFormatter.format(messages_1.messages.run_failed, args['report']));
         if (error instanceof Error) {
-            logger_1.logger.info(error.message);
             logger_1.logger.error(error);
         }
         process.exit(1);
