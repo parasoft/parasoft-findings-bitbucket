@@ -1,7 +1,7 @@
 {
   "missing_parameter": "Missing required parameter or its value: {0}",
   "run_failed": "Failed to parse the XML Static Analysis report: {0}",
-  "exit_code": "The XML Static Analysis report parsing finished",
+  "parse_finished": "The XML Static Analysis report parsing finished",
   "finding_static_analysis_report": "Finding Parasoft XML Static Analysis report...",
   "finding_static_analysis_report_in_working_directory": "Finding Parasoft XML Static Analysis report in working directory {0}...",
   "found_matching_file": "Found Parasoft XML Static Analysis report: {0}",

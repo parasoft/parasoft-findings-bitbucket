@@ -43,7 +43,7 @@ describe('parasoft-bitbucket/main', () => {
 
             sinon.assert.notCalled(logError);
             sinon.assert.calledWith(fakeStaticAnalysisParserRunner, customOption);
-            sinon.assert.calledWith(logInfo, messagesFormatter.format(messages.exit_code, runnerExitCode));
+            sinon.assert.calledWith(logInfo, messagesFormatter.format(messages.parse_finished, runnerExitCode));
         });
     });
 });

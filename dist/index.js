@@ -28334,7 +28334,7 @@ async function run() {
             logger_1.logger.error(messages_1.messagesFormatter.format(messages_1.messages.failed_parse_report, outcome.exitCode));
             process.exit(1);
         }
-        logger_1.logger.info(messages_1.messagesFormatter.format(messages_1.messages.exit_code));
+        logger_1.logger.info(messages_1.messagesFormatter.format(messages_1.messages.parse_finished));
     }
     catch (error) {
         logger_1.logger.error(messages_1.messagesFormatter.format(messages_1.messages.run_failed, args['report']));
