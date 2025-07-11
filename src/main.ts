@@ -30,7 +30,7 @@ export async function run(): Promise<void> {
 
         if (outcome.exitCode != 0) {
             logger.error(messagesFormatter.format(messages.failed_parse_report, outcome.exitCode));
-            process.exit(1);
+            process.exit(outcome.exitCode);
         }
         logger.info(messagesFormatter.format(messages.parse_finished));
     } catch (error) {

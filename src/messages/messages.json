@@ -1,7 +1,7 @@
 {
-  "missing_parameter": "Missing required parameter or its value: {0}",
+  "missing_parameter": "Missing required parameter or value: {0}",
   "run_failed": "Failed to parse the XML Static Analysis report: {0}",
-  "parse_finished": "The XML Static Analysis report parsing finished",
+  "parse_finished": "Finished parsing the XML Static Analysis report",
   "finding_static_analysis_report": "Finding Parasoft XML Static Analysis report...",
   "finding_static_analysis_report_in_working_directory": "Finding Parasoft XML Static Analysis report in working directory {0}...",
   "found_matching_file": "Found Parasoft XML Static Analysis report: {0}",
@@ -14,5 +14,5 @@
   "found_java_at": "Found Java located at: {0}",
   "converting_static_analysis_report_to_sarif": "Converting Parasoft XML Static Analysis report {0} to a SARIF report...",
   "converted_sarif_report": "SARIF report generated successfully: {0}",
-  "failed_parse_report": "The XML Static Analysis report parsing failed with a non-zero exit code: {0}"
+  "failed_parse_report": "Failed to parse the XML Static Analysis report with exit code: {0}"
 }

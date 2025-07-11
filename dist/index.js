@@ -143,8 +143,8 @@ class StaticAnalysisParserRunner {
     }
     handleProcess(process, resolve, reject) {
         var _a, _b;
-        (_a = process.stdout) === null || _a === void 0 ? void 0 : _a.on('data', (data) => { logger_1.logger.error(`${data}`.replace(/\s+$/g, '')); });
-        (_b = process.stderr) === null || _b === void 0 ? void 0 : _b.on('data', (data) => { logger_1.logger.error(`${data}`.replace(/\s+$/g, '')); });
+        (_a = process.stdout) === null || _a === void 0 ? void 0 : _a.on('data', (data) => { logger_1.logger.info(`${data}`.replace(/\s+$/g, '')); });
+        (_b = process.stderr) === null || _b === void 0 ? void 0 : _b.on('data', (data) => { logger_1.logger.info(`${data}`.replace(/\s+$/g, '')); });
         process.on('close', (code) => {
             const result = {
                 exitCode: (code != null) ? code : 150 // 150 = signal received
@@ -28332,7 +28332,7 @@ async function run() {
         const outcome = await theRunner.run(runOptions);
         if (outcome.exitCode != 0) {
             logger_1.logger.error(messages_1.messagesFormatter.format(messages_1.messages.failed_parse_report, outcome.exitCode));
-            process.exit(1);
+            process.exit(outcome.exitCode);
         }
         logger_1.logger.info(messages_1.messagesFormatter.format(messages_1.messages.parse_finished));
     }

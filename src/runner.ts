@@ -111,8 +111,8 @@ export class StaticAnalysisParserRunner {
     }
 
     private handleProcess(process: any, resolve: any, reject: any) {
-        process.stdout?.on('data', (data: any) => { logger.error(`${data}`.replace(/\s+$/g, '')); });
-        process.stderr?.on('data', (data: any) => { logger.error(`${data}`.replace(/\s+$/g, '')); });
+        process.stdout?.on('data', (data: any) => { logger.info(`${data}`.replace(/\s+$/g, '')); });
+        process.stderr?.on('data', (data: any) => { logger.info(`${data}`.replace(/\s+$/g, '')); });
         process.on('close', (code: any) => {
             const result : ConversionResultDetails = {
                 exitCode: (code != null) ? code : 150 // 150 = signal received
