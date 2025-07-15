@@ -1,8 +1,8 @@
-export type ReportContents = {
-    runs: ReportContent[];
+export type SarifReportContents = {
+    runs: SarifReportContent[];
 }
 
-type ReportContent = {
+type SarifReportContent = {
     tool: {
         driver: {
             name: string;
@@ -16,13 +16,17 @@ export type Rule = {
     id: string;
     fullDescription?: { text: string };
     shortDescription?: { text: string };
+    properties: {
+        "security-severity"?: '9.5' | '8' | '6' | '4' | '2' | '0';
+    }
 }
 
 export type ReportResult = {
     ruleId: string;
-    level: 'note' | 'warning' | 'error' | 'critical';
+    level: 'note' | 'warning' | 'error' | 'none';
     message: { text: string };
-    locations: VulnerabilityLocation[]
+    partialFingerprints: PartialFingerprints;
+    locations: VulnerabilityLocation[];
 }
 
 type VulnerabilityLocation = {
@@ -35,7 +39,14 @@ type VulnerabilityLocation = {
     };
 }
 
+type PartialFingerprints = {
+    violType: string;
+    lineHash: string;
+    unbViolId: string;
+}
+
 export type VulnerabilityDetail = {
+    external_id: string;
     annotation_type: string;
     severity: string;
     path: string;

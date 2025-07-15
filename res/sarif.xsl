@@ -926,10 +926,7 @@
 
         <xsl:text>"level": "</xsl:text>
         <xsl:choose>
-            <xsl:when test="(($parsoft_severity='1'))">
-                <xsl:text>critical</xsl:text>
-            </xsl:when>
-            <xsl:when test="(($parsoft_severity='2'))">
+            <xsl:when test="(($parsoft_severity='1') or ($parsoft_severity='2'))">
                 <xsl:text>error</xsl:text>
             </xsl:when>
             <xsl:when test="(($parsoft_severity='3') or ($parsoft_severity='4'))">
