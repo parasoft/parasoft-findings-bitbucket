@@ -206,7 +206,7 @@ export class StaticAnalysisParserRunner {
         return {
             external_id: result.partialFingerprints.unbViolId ?? this.generateUnbViolId(result),
             annotation_type: 'VULNERABILITY',
-            severity: this.getSeverityLevel(result, rule),
+            severity: this.getSeverityLevel(rule),
             path: this.getPath(result),
             line: this.getLine(result),
             summary: this.getSummary(rule),
@@ -243,29 +243,16 @@ export class StaticAnalysisParserRunner {
         return rule.fullDescription?.text ?? rule.shortDescription?.text ?? '';
     }
 
-    private getSeverityLevel(result: types.ReportResult, rule: types.Rule): string {
-        const SEVERITY_MAP = {
-            'error': 'HIGH',
-            'warning': 'MEDIUM',
-            'note': 'LOW',
-            'none': 'NONE'
-        };
-
-        const SECURITY_SEVERITY_MAP = {
-            '9.5': 'CRITICAL',
-            '8': 'HIGH',
-            '6': 'MEDIUM',
+    private getSeverityLevel(rule: types.Rule): string {
+        const PARASOFT_SEV_LEVEL_MAP = {
+            '1': 'CRITICAL',
+            '2': 'HIGH',
+            '3': 'MEDIUM',
             '4': 'MEDIUM',
-            '2': 'LOW',
-            '0': 'NONE'
+            '5': 'LOW'
         };
 
-        const severityLevel = SEVERITY_MAP[result.level];
-        if (rule.properties['security-severity']) {
-            return SECURITY_SEVERITY_MAP[rule.properties['security-severity']];
-        }
-
-        return severityLevel;
+        return PARASOFT_SEV_LEVEL_MAP[rule.properties.parasoftSevLevel];
     }
 
     private mergeReportVulnerabilities(currentVulnerabilities: types.VulnerabilityDetail[], newVulnerabilities: types.VulnerabilityDetail[]): types.VulnerabilityDetail[] {

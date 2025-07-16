@@ -17,7 +17,7 @@ export type Rule = {
     fullDescription?: { text: string };
     shortDescription?: { text: string };
     properties: {
-        "security-severity"?: '9.5' | '8' | '6' | '4' | '2' | '0';
+        "parasoftSevLevel": '1' | '2' | '3' | '4' | '5';
     }
 }
 
