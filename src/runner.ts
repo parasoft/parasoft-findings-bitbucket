@@ -93,7 +93,7 @@ export class StaticAnalysisParserRunner {
             logger.debug(messagesFormatter.format(messages.converting_static_analysis_report_to_sarif, sourcePath));
             const outPath = sourcePath.substring(0, sourcePath.toLocaleLowerCase().lastIndexOf('.xml')) + '.sarif';
 
-            const commandLine = `${javaPath} -jar "${jarPath}" -s:"${sourcePath}" -xsl:"${xslPath}" -o:"${outPath}" -versionmsg:off projectRootPaths="${workspace}"`;
+            const commandLine = `"${javaPath}" -jar "${jarPath}" -s:"${sourcePath}" -xsl:"${xslPath}" -o:"${outPath}" -versionmsg:off projectRootPaths="${workspace}"`;
             logger.debug(commandLine);
             const result = await new Promise<ConversionResultDetails>((resolve, reject) => {
                 const process = cp.spawn(`${commandLine}`, {shell: true, windowsHide: true });
