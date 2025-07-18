@@ -74,29 +74,32 @@ const messages_1 = __nccwpck_require__(6250);
 class StaticAnalysisParserRunner {
     constructor() {
         this.WORKING_DIRECTORY = process.env.BITBUCKET_CLONE_DIR + '';
+        this.PARASOFT_SEV_LEVEL_MAP = {
+            '1': 'CRITICAL',
+            '2': 'HIGH',
+            '3': 'MEDIUM',
+            '4': 'MEDIUM',
+            '5': 'LOW'
+        };
         this.vulnerabilityMap = new Map();
-        this.toolNameList = new Array();
     }
     async run(runOptions) {
         const parasoftReportPaths = await this.findParasoftStaticAnalysisReports(runOptions.report);
-        if (!parasoftReportPaths || parasoftReportPaths.length == 0) {
-            logger_1.logger.warn(messages_1.messagesFormatter.format(messages_1.messages.static_analysis_report_not_found, runOptions.report));
-            return { exitCode: -1 };
-        }
         const javaFilePath = this.getJavaFilePath(runOptions.parasoftToolOrJavaRootPath);
-        if (!javaFilePath) {
-            return { exitCode: -1 };
-        }
-        let convertReportResult = { exitCode: 1 };
         for (const parasoftReportPath of parasoftReportPaths) {
             logger_1.logger.info(messages_1.messagesFormatter.format(messages_1.messages.parsing_parasoft_report, parasoftReportPath));
-            convertReportResult = await this.convertReportWithJava(javaFilePath, parasoftReportPath);
-            if (convertReportResult.exitCode == 0 && convertReportResult.convertedReportPath) {
-                await this.parseSarifReport(convertReportResult.convertedReportPath);
+            try {
+                const sarifReport = await this.convertReportWithJava(javaFilePath, parasoftReportPath);
+                await this.parseSarifReport(sarifReport);
                 // TODO: Implement uploading violation results to Bitbucket report module
             }
+            catch (error) {
+                if (error instanceof Error) {
+                    logger_1.logger.error(error);
+                }
+                logger_1.logger.warn(messages_1.messagesFormatter.format(messages_1.messages.skip_static_analysis_report, parasoftReportPath));
+            }
         }
-        return { exitCode: convertReportResult.exitCode };
     }
     async findParasoftStaticAnalysisReports(reportPath) {
         if (pt.isAbsolute(reportPath)) {
@@ -126,6 +129,9 @@ class StaticAnalysisParserRunner {
             logger_1.logger.info(messages_1.messagesFormatter.format(messages_1.messages.found_matching_file, reportPath));
             staticReportPaths.push(reportPath);
         }
+        if (!staticReportPaths || staticReportPaths.length == 0) {
+            throw new Error(messages_1.messagesFormatter.format(messages_1.messages.static_analysis_report_not_found, reportPath));
+        }
         return staticReportPaths;
     }
     async convertReportWithJava(javaPath, sourcePath) {
@@ -136,25 +142,23 @@ class StaticAnalysisParserRunner {
         const outPath = sourcePath.substring(0, sourcePath.toLocaleLowerCase().lastIndexOf('.xml')) + '.sarif';
         const commandLine = `"${javaPath}" -jar "${jarPath}" -s:"${sourcePath}" -xsl:"${xslPath}" -o:"${outPath}" -versionmsg:off projectRootPaths="${workspace}"`;
         logger_1.logger.debug(commandLine);
-        const result = await new Promise((resolve, reject) => {
+        const exitCode = await new Promise((resolve, reject) => {
             const process = cp.spawn(`${commandLine}`, { shell: true, windowsHide: true });
             this.handleProcess(process, resolve, reject);
         });
-        if (result.exitCode != 0) {
-            return { exitCode: result.exitCode };
+        if (exitCode != 0) {
+            throw new Error(messages_1.messagesFormatter.format(messages_1.messages.failed_parse_report, sourcePath));
         }
         logger_1.logger.debug(messages_1.messagesFormatter.format(messages_1.messages.converted_sarif_report, outPath));
-        return { exitCode: 0, convertedReportPath: outPath };
+        return outPath;
     }
     handleProcess(process, resolve, reject) {
         var _a, _b;
         (_a = process.stdout) === null || _a === void 0 ? void 0 : _a.on('data', (data) => { logger_1.logger.info(`${data}`.replace(/\s+$/g, '')); });
         (_b = process.stderr) === null || _b === void 0 ? void 0 : _b.on('data', (data) => { logger_1.logger.info(`${data}`.replace(/\s+$/g, '')); });
         process.on('close', (code) => {
-            const result = {
-                exitCode: (code != null) ? code : 150 // 150 = signal received
-            };
-            resolve(result);
+            const exitCode = (code != null) ? code : 150; // 150 = signal received
+            resolve(exitCode);
         });
         process.on('error', (err) => { reject(err); });
     }
@@ -180,12 +184,11 @@ class StaticAnalysisParserRunner {
     getJavaFilePath(parasoftToolOrJavaRootPath) {
         const javaInstallDir = parasoftToolOrJavaRootPath || process.env.JAVA_HOME;
         if (!javaInstallDir || !fs.existsSync(javaInstallDir)) {
-            logger_1.logger.warn(messages_1.messages.java_or_parasoft_tool_install_dir_not_found);
-            return undefined;
+            throw new Error(messages_1.messagesFormatter.format(messages_1.messages.java_or_parasoft_tool_install_dir_not_found));
         }
         const javaFilePath = this.doGetJavaFilePath(javaInstallDir);
         if (!javaFilePath) {
-            logger_1.logger.warn(messages_1.messagesFormatter.format(messages_1.messages.java_not_found_in_java_or_parasoft_tool_install_dir));
+            throw new Error(messages_1.messagesFormatter.format(messages_1.messages.java_not_found_in_java_or_parasoft_tool_install_dir));
         }
         else {
             logger_1.logger.debug(messages_1.messagesFormatter.format(messages_1.messages.found_java_at, javaFilePath));
@@ -209,37 +212,42 @@ class StaticAnalysisParserRunner {
         return undefined;
     }
     async parseSarifReport(sarifReportPath) {
-        logger_1.logger.debug(messages_1.messagesFormatter.format(messages_1.messages.parsing_sarif_report, sarifReportPath));
+        var _a;
         const reportContents = await this.readSarifReport(sarifReportPath);
         const { tool, results } = reportContents.runs[0];
-        const vulnerabilities = results.map(result => this.getVulnerability(result, this.getRules(reportContents)));
-        this.setVulnerabilities(tool.driver.name, vulnerabilities);
-        logger_1.logger.debug(messages_1.messagesFormatter.format(messages_1.messages.parsed_sarif_report, sarifReportPath, vulnerabilities.length));
+        const rules = this.getRules(reportContents);
+        const vulnerabilities = results.map(result => {
+            const rule = rules[result.ruleId];
+            return {
+                external_id: this.getUnbViolId(result),
+                annotation_type: 'VULNERABILITY',
+                severity: this.getSeverityLevel(rule),
+                path: this.getPath(result),
+                line: this.getLine(result),
+                summary: this.getSummary(rule),
+                details: result.message.text
+            };
+        });
+        const toolName = tool.driver.name;
+        const existing = (_a = this.vulnerabilityMap.get(toolName)) !== null && _a !== void 0 ? _a : [];
+        const mergedVulnerabilities = this.mergeReportVulnerabilities(existing, vulnerabilities);
+        this.vulnerabilityMap.set(toolName, mergedVulnerabilities);
+        const duplicatedVulnerabilities = (existing.length + vulnerabilities.length) - mergedVulnerabilities.length;
+        if (duplicatedVulnerabilities != 0) {
+            logger_1.logger.info(messages_1.messagesFormatter.format(messages_1.messages.parsed_parasoft_static_analysis_report, sarifReportPath, vulnerabilities.length, duplicatedVulnerabilities));
+        }
+        else {
+            logger_1.logger.info(messages_1.messagesFormatter.format(messages_1.messages.parsed_parasoft_static_analysis_report_no_duplication, sarifReportPath, vulnerabilities.length));
+        }
     }
     async readSarifReport(reportPath) {
         const reportContent = await fs.promises.readFile(reportPath, 'utf8');
         return JSON.parse(reportContent);
     }
-    getVulnerability(result, rules) {
-        var _a;
-        const rule = rules[result.ruleId];
-        return {
-            external_id: (_a = result.partialFingerprints.unbViolId) !== null && _a !== void 0 ? _a : this.generateUnbViolId(result),
-            annotation_type: 'VULNERABILITY',
-            severity: this.getSeverityLevel(rule),
-            path: this.getPath(result),
-            line: this.getLine(result),
-            summary: this.getSummary(rule),
-            details: result.message.text
-        };
-    }
-    setVulnerabilities(toolName, vulnerabilities) {
-        var _a;
-        const existing = (_a = this.vulnerabilityMap.get(toolName)) !== null && _a !== void 0 ? _a : [];
-        this.vulnerabilityMap.set(toolName, this.mergeReportVulnerabilities(existing, vulnerabilities));
-        if (!this.toolNameList.includes(toolName)) {
-            this.toolNameList.push(toolName);
-        }
+    mergeReportVulnerabilities(currentVulnerabilities, newVulnerabilities) {
+        const map = new Map();
+        [...currentVulnerabilities, ...newVulnerabilities].forEach(vulnerability => map.set(vulnerability.external_id, vulnerability));
+        return Array.from(map.values());
     }
     getRules(reportContents) {
         const rules = reportContents.runs[0].tool.driver.rules;
@@ -253,29 +261,21 @@ class StaticAnalysisParserRunner {
     getLine(result) {
         var _a;
         const { region } = result.locations[0].physicalLocation;
-        return (_a = region.endLine) !== null && _a !== void 0 ? _a : region.startLine;
+        return (_a = region.startLine) !== null && _a !== void 0 ? _a : region.endLine;
     }
     getSummary(rule) {
         var _a, _b, _c, _d;
         return (_d = (_b = (_a = rule.fullDescription) === null || _a === void 0 ? void 0 : _a.text) !== null && _b !== void 0 ? _b : (_c = rule.shortDescription) === null || _c === void 0 ? void 0 : _c.text) !== null && _d !== void 0 ? _d : '';
     }
     getSeverityLevel(rule) {
-        const PARASOFT_SEV_LEVEL_MAP = {
-            '1': 'CRITICAL',
-            '2': 'HIGH',
-            '3': 'MEDIUM',
-            '4': 'MEDIUM',
-            '5': 'LOW'
-        };
-        return PARASOFT_SEV_LEVEL_MAP[rule.properties.parasoftSevLevel];
+        return this.PARASOFT_SEV_LEVEL_MAP[rule.properties.parasoftSevLevel];
     }
-    mergeReportVulnerabilities(currentVulnerabilities, newVulnerabilities) {
-        const map = new Map();
-        [...currentVulnerabilities, ...newVulnerabilities].forEach(vulnerability => map.set(vulnerability.external_id, vulnerability));
-        return Array.from(map.values());
-    }
-    generateUnbViolId(result) {
+    getUnbViolId(result) {
         var _a, _b, _c, _d, _e, _f, _g;
+        const unbViolId = result.partialFingerprints.unbViolId;
+        if (unbViolId) {
+            return unbViolId;
+        }
         const namespace = '6af5b03d-5276-49ef-bfed-d445f2752b02';
         const violType = ((_a = result.partialFingerprints) === null || _a === void 0 ? void 0 : _a.violType) || '';
         const ruleId = result.ruleId || '';
@@ -29036,11 +29036,7 @@ async function run() {
             process.exit(1);
         }
         const theRunner = new runner.StaticAnalysisParserRunner();
-        const outcome = await theRunner.run(runOptions);
-        if (outcome.exitCode != 0) {
-            logger_1.logger.error(messages_1.messagesFormatter.format(messages_1.messages.failed_parse_report, outcome.exitCode));
-            process.exit(outcome.exitCode);
-        }
+        await theRunner.run(runOptions);
         logger_1.logger.info(messages_1.messagesFormatter.format(messages_1.messages.parse_finished));
     }
     catch (error) {

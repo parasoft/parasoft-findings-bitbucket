@@ -4,7 +4,7 @@ import * as fs from 'fs';
 import * as pt from 'path';
 import * as glob from 'glob';
 import * as sax from 'sax';
-import * as types from './types';
+import * as sarifReportTypes from './sarifReportTypes';
 import * as uuid from 'uuid'
 import {logger} from './logger';
 import {messages, messagesFormatter} from './messages';
@@ -17,44 +17,36 @@ export interface RunOptions {
     parasoftToolOrJavaRootPath?: string;
 }
 
-interface ConversionResultDetails {
-    exitCode: number;
-    convertedReportPath?: string;
-}
-
-export interface Result {
-    exitCode: number
-}
-
 export class StaticAnalysisParserRunner {
     WORKING_DIRECTORY = process.env.BITBUCKET_CLONE_DIR + '';
-    vulnerabilityMap = new Map<string, types.VulnerabilityDetail[]>();
-    toolNameList = new Array<string>();
+    PARASOFT_SEV_LEVEL_MAP = {
+        '1': 'CRITICAL',
+        '2': 'HIGH',
+        '3': 'MEDIUM',
+        '4': 'MEDIUM',
+        '5': 'LOW'
+    };
 
-    async run(runOptions: RunOptions) : Promise<Result> {
+    vulnerabilityMap = new Map<string, sarifReportTypes.VulnerabilityDetail[]>();
+
+    async run(runOptions: RunOptions) : Promise<void> {
         const parasoftReportPaths = await this.findParasoftStaticAnalysisReports(runOptions.report);
-        if (!parasoftReportPaths || parasoftReportPaths.length == 0) {
-            logger.warn(messagesFormatter.format(messages.static_analysis_report_not_found, runOptions.report));
-            return { exitCode: -1 };
-        }
-
         const javaFilePath = this.getJavaFilePath(runOptions.parasoftToolOrJavaRootPath);
-        if (!javaFilePath) {
-            return { exitCode: -1 }
-        }
 
-        let convertReportResult: ConversionResultDetails = {exitCode: 1};
         for (const parasoftReportPath of parasoftReportPaths) {
             logger.info(messagesFormatter.format(messages.parsing_parasoft_report, parasoftReportPath));
-            convertReportResult = await this.convertReportWithJava(javaFilePath, parasoftReportPath);
 
-            if (convertReportResult.exitCode == 0 && convertReportResult.convertedReportPath) {
-                await this.parseSarifReport(convertReportResult.convertedReportPath);
+            try {
+                const sarifReport = await this.convertReportWithJava(javaFilePath, parasoftReportPath);
+                await this.parseSarifReport(sarifReport);
                 // TODO: Implement uploading violation results to Bitbucket report module
+            } catch (error) {
+                if (error instanceof Error) {
+                    logger.error(error);
+                }
+                logger.warn(messagesFormatter.format(messages.skip_static_analysis_report, parasoftReportPath));
             }
         }
-
-        return { exitCode: convertReportResult.exitCode };
     }
 
     private async findParasoftStaticAnalysisReports(reportPath: string): Promise<string[]> {
@@ -88,11 +80,17 @@ export class StaticAnalysisParserRunner {
             logger.info(messagesFormatter.format(messages.found_matching_file, reportPath));
             staticReportPaths.push(reportPath);
         }
+
+         if (!staticReportPaths || staticReportPaths.length == 0) {
+            throw new Error(messagesFormatter.format(messages.static_analysis_report_not_found, reportPath));
+        }
+
         return staticReportPaths;
     }
 
-    private async convertReportWithJava(javaPath: string, sourcePath: string): Promise<ConversionResultDetails> {
+    private async convertReportWithJava(javaPath: string, sourcePath: string): Promise<string> {
         logger.debug(messagesFormatter.format(messages.converting_static_analysis_report_to_sarif, sourcePath));
+
         const jarPath = pt.join(__dirname, 'SaxonHE12-2J/saxon-he-12.2.jar');
         const xslPath = pt.join(__dirname, 'sarif.xsl');
         const workspace = pt.normalize(this.WORKING_DIRECTORY).replace(/\\/g, '/');
@@ -100,27 +98,25 @@ export class StaticAnalysisParserRunner {
 
         const commandLine = `"${javaPath}" -jar "${jarPath}" -s:"${sourcePath}" -xsl:"${xslPath}" -o:"${outPath}" -versionmsg:off projectRootPaths="${workspace}"`;
         logger.debug(commandLine);
-        const result = await new Promise<ConversionResultDetails>((resolve, reject) => {
-            const process = cp.spawn(`${commandLine}`, {shell: true, windowsHide: true });
+        const exitCode = await new Promise<number>((resolve, reject) => {
+            const process = cp.spawn(`${commandLine}`, { shell: true, windowsHide: true });
             this.handleProcess(process, resolve, reject);
         });
 
-        if (result.exitCode != 0) {
-            return { exitCode: result.exitCode };
+        if (exitCode != 0) {
+            throw new Error(messagesFormatter.format(messages.failed_parse_report, sourcePath));
         }
 
         logger.debug(messagesFormatter.format(messages.converted_sarif_report, outPath));
-        return { exitCode: 0, convertedReportPath: outPath };
+        return outPath;
     }
 
     private handleProcess(process: any, resolve: any, reject: any) {
         process.stdout?.on('data', (data: any) => { logger.info(`${data}`.replace(/\s+$/g, '')); });
         process.stderr?.on('data', (data: any) => { logger.info(`${data}`.replace(/\s+$/g, '')); });
         process.on('close', (code: any) => {
-            const result : ConversionResultDetails = {
-                exitCode: (code != null) ? code : 150 // 150 = signal received
-            };
-            resolve(result);
+            const exitCode = (code != null) ? code : 150 // 150 = signal received
+            resolve(exitCode);
         });
         process.on('error', (err: any) => { reject(err); });
     }
@@ -135,7 +131,7 @@ export class StaticAnalysisParserRunner {
                 }
             });
             saxStream.on('error',(e) => {
-                logger.warn(messagesFormatter.format(messages.failed_to_parse_static_analysis_report, reportPath, e.message))
+                logger.warn(messagesFormatter.format(messages.failed_to_parse_static_analysis_report, reportPath, e.message));
                 resolve(false);
             });
             saxStream.on('end', () => {
@@ -145,17 +141,16 @@ export class StaticAnalysisParserRunner {
         });
     }
 
-    private getJavaFilePath(parasoftToolOrJavaRootPath: string | undefined): string | undefined {
+    private getJavaFilePath(parasoftToolOrJavaRootPath: string | undefined): string {
         const javaInstallDir = parasoftToolOrJavaRootPath || process.env.JAVA_HOME;
 
         if (!javaInstallDir || !fs.existsSync(javaInstallDir)) {
-            logger.warn(messages.java_or_parasoft_tool_install_dir_not_found);
-            return undefined;
+            throw new Error(messagesFormatter.format(messages.java_or_parasoft_tool_install_dir_not_found));
         }
 
         const javaFilePath = this.doGetJavaFilePath(javaInstallDir);
         if (!javaFilePath) {
-            logger.warn(messagesFormatter.format(messages.java_not_found_in_java_or_parasoft_tool_install_dir));
+            throw new Error(messagesFormatter.format(messages.java_not_found_in_java_or_parasoft_tool_install_dir));
         } else {
             logger.debug(messagesFormatter.format(messages.found_java_at, javaFilePath));
         }
@@ -183,85 +178,77 @@ export class StaticAnalysisParserRunner {
     }
 
     private async parseSarifReport(sarifReportPath: string): Promise<void> {
-        logger.debug(messagesFormatter.format(messages.parsing_sarif_report, sarifReportPath));
-
         const reportContents = await this.readSarifReport(sarifReportPath);
         const { tool, results } = reportContents.runs[0];
+        const rules = this.getRules(reportContents);
 
-        const vulnerabilities = results.map(result =>
-            this.getVulnerability(result, this.getRules(reportContents))
-        );
+        const vulnerabilities = results.map(result => {
+            const rule = rules[result.ruleId];
+            return {
+                external_id: this.getUnbViolId(result),
+                annotation_type: 'VULNERABILITY',
+                severity: this.getSeverityLevel(rule),
+                path: this.getPath(result),
+                line: this.getLine(result),
+                summary: this.getSummary(rule),
+                details: result.message.text
+            };
+        });
 
-        this.setVulnerabilities(tool.driver.name, vulnerabilities);
-        logger.debug(messagesFormatter.format(messages.parsed_sarif_report, sarifReportPath, vulnerabilities.length));
+        const toolName = tool.driver.name;
+        const existing = this.vulnerabilityMap.get(toolName) ?? [];
+        const mergedVulnerabilities = this.mergeReportVulnerabilities(existing, vulnerabilities);
+        this.vulnerabilityMap.set(toolName, mergedVulnerabilities);
+
+        const duplicatedVulnerabilities = (existing.length + vulnerabilities.length) - mergedVulnerabilities.length;
+        if (duplicatedVulnerabilities != 0) {
+            logger.info(messagesFormatter.format(messages.parsed_parasoft_static_analysis_report, sarifReportPath, vulnerabilities.length, duplicatedVulnerabilities));
+        } else {
+            logger.info(messagesFormatter.format(messages.parsed_parasoft_static_analysis_report_no_duplication, sarifReportPath, vulnerabilities.length));
+        }
     }
 
-    private async readSarifReport(reportPath: string): Promise<types.SarifReportContents> {
+    private async readSarifReport(reportPath: string): Promise<sarifReportTypes.ReportContents> {
         const reportContent = await fs.promises.readFile(reportPath, 'utf8');
         return JSON.parse(reportContent);
     }
 
-    private getVulnerability(result: types.ReportResult, rules: Record<string, types.Rule>): types.VulnerabilityDetail {
-        const rule = rules[result.ruleId];
-        return {
-            external_id: result.partialFingerprints.unbViolId ?? this.generateUnbViolId(result),
-            annotation_type: 'VULNERABILITY',
-            severity: this.getSeverityLevel(rule),
-            path: this.getPath(result),
-            line: this.getLine(result),
-            summary: this.getSummary(rule),
-            details: result.message.text
-        };
+    private mergeReportVulnerabilities(currentVulnerabilities: sarifReportTypes.VulnerabilityDetail[], newVulnerabilities: sarifReportTypes.VulnerabilityDetail[]): sarifReportTypes.VulnerabilityDetail[] {
+        const map = new Map<string, sarifReportTypes.VulnerabilityDetail>();
+        [...currentVulnerabilities, ...newVulnerabilities].forEach(vulnerability => map.set(vulnerability.external_id, vulnerability));
+        return Array.from(map.values());
     }
 
-    private setVulnerabilities(toolName: string, vulnerabilities: types.VulnerabilityDetail[]) {
-        const existing = this.vulnerabilityMap.get(toolName) ?? [];
-        this.vulnerabilityMap.set(toolName, this.mergeReportVulnerabilities(existing, vulnerabilities));
-
-        if (!this.toolNameList.includes(toolName)) {
-            this.toolNameList.push(toolName);
-        }
-    }
-
-    private getRules(reportContents: types.SarifReportContents) {
+    private getRules(reportContents: sarifReportTypes.ReportContents) {
         const rules = reportContents.runs[0].tool.driver.rules;
         const map: Record<string, typeof rules[0]> = {};
         rules.forEach(rule => map[rule.id] = rule);
         return map;
     }
 
-    private getPath(result: types.ReportResult): string {
+    private getPath(result: sarifReportTypes.ReportResult): string {
         return result.locations[0].physicalLocation.artifactLocation.uri;
     }
 
-    private getLine(result: types.ReportResult): number {
+    private getLine(result: sarifReportTypes.ReportResult): number {
         const { region } = result.locations[0].physicalLocation;
-        return region.endLine ?? region.startLine;
+        return region.startLine ?? region.endLine;
     }
 
-    private getSummary(rule: types.Rule): string {
+    private getSummary(rule: sarifReportTypes.Rule): string {
         return rule.fullDescription?.text ?? rule.shortDescription?.text ?? '';
     }
 
-    private getSeverityLevel(rule: types.Rule): string {
-        const PARASOFT_SEV_LEVEL_MAP = {
-            '1': 'CRITICAL',
-            '2': 'HIGH',
-            '3': 'MEDIUM',
-            '4': 'MEDIUM',
-            '5': 'LOW'
-        };
-
-        return PARASOFT_SEV_LEVEL_MAP[rule.properties.parasoftSevLevel];
+    private getSeverityLevel(rule: sarifReportTypes.Rule): string {
+        return this.PARASOFT_SEV_LEVEL_MAP[rule.properties.parasoftSevLevel];
     }
 
-    private mergeReportVulnerabilities(currentVulnerabilities: types.VulnerabilityDetail[], newVulnerabilities: types.VulnerabilityDetail[]): types.VulnerabilityDetail[] {
-        const map = new Map<string, types.VulnerabilityDetail>();
-        [...currentVulnerabilities, ...newVulnerabilities].forEach(vulnerability => map.set(vulnerability.external_id, vulnerability));
-        return Array.from(map.values());
-    }
+    private getUnbViolId(result: sarifReportTypes.ReportResult): string {
+        const unbViolId = result.partialFingerprints.unbViolId;
+        if (unbViolId) {
+            return unbViolId;
+        }
 
-    private generateUnbViolId(result: types.ReportResult): string {
         const namespace = '6af5b03d-5276-49ef-bfed-d445f2752b02';
         const violType = result.partialFingerprints?.violType || '';
         const ruleId = result.ruleId || '';

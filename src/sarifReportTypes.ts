@@ -1,8 +1,8 @@
-export type SarifReportContents = {
-    runs: SarifReportContent[];
+export type ReportContents = {
+    runs: ReportContent[];
 }
 
-type SarifReportContent = {
+type ReportContent = {
     tool: {
         driver: {
             name: string;
