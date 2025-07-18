@@ -244,7 +244,9 @@
                     <xsl:with-param name="parasoft_severity" select="@sev"/>
                 </xsl:call-template>
             </xsl:if>
-            <xsl:text> }</xsl:text>
+            <xsl:text>, "parasoftSevLevel": "</xsl:text>
+                <xsl:value-of select="@sev" />
+            <xsl:text>" }</xsl:text>
         <xsl:text> }</xsl:text>
     </xsl:template>
 

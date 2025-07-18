@@ -1,7 +1,7 @@
 {
   "missing_parameter": "Missing required parameter or value: {0}",
   "run_failed": "Failed to parse the XML Static Analysis report: {0}",
-  "parse_finished": "Finished parsing the XML Static Analysis report",
+  "parse_finished": "Finished parsing all Parasoft XML Static Analysis reports",
   "finding_static_analysis_report": "Finding Parasoft XML Static Analysis report...",
   "finding_static_analysis_report_in_working_directory": "Finding Parasoft XML Static Analysis report in working directory {0}...",
   "found_matching_file": "Found Parasoft XML Static Analysis report: {0}",
@@ -12,7 +12,11 @@
   "java_or_parasoft_tool_install_dir_not_found": "Unable to process the XML report because the Java or Parasoft tool installation directory is missing",
   "java_not_found_in_java_or_parasoft_tool_install_dir": "Unable to process the XML report because Java is missing",
   "found_java_at": "Found Java located at: {0}",
+  "parsing_parasoft_report": "Parsing Parasoft XML Static Analysis report: {0}",
   "converting_static_analysis_report_to_sarif": "Converting Parasoft XML Static Analysis report {0} to a SARIF report...",
   "converted_sarif_report": "SARIF report generated successfully: {0}",
-  "failed_parse_report": "Failed to parse the XML Static Analysis report with exit code: {0}"
+  "failed_parse_report": "Failed to parse the XML Static Analysis report: {0}",
+  "parsed_parasoft_static_analysis_report": "Finished parsing Parasoft XML Static Analysis report: {0}. Found {1} vulnerabilities, {2} duplicate(s) removed",
+  "parsed_parasoft_static_analysis_report_no_duplication": "Finished parsing Parasoft XML Static Analysis report: {0}. Found {1} vulnerabilities",
+  "skip_static_analysis_report": "Skipped Parasoft XML Static Analysis report: {0} "
 }

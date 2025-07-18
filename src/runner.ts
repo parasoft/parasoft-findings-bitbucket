@@ -4,8 +4,9 @@ import * as fs from 'fs';
 import * as pt from 'path';
 import * as glob from 'glob';
 import * as sax from 'sax';
-import {logger} from "./logger";
-
+import * as sarifReportTypes from './sarifReportTypes';
+import * as uuid from 'uuid'
+import {logger} from './logger';
 import {messages, messagesFormatter} from './messages';
 
 export interface RunOptions {
@@ -16,37 +17,36 @@ export interface RunOptions {
     parasoftToolOrJavaRootPath?: string;
 }
 
-interface ConversionResultDetails {
-    exitCode: number;
-    convertedReportPaths?: string[];
-}
-
-export interface Result {
-    exitCode: number
-}
-
 export class StaticAnalysisParserRunner {
     WORKING_DIRECTORY = process.env.BITBUCKET_CLONE_DIR + '';
+    PARASOFT_SEV_LEVEL_MAP = {
+        '1': 'CRITICAL',
+        '2': 'HIGH',
+        '3': 'MEDIUM',
+        '4': 'MEDIUM',
+        '5': 'LOW'
+    };
 
-    async run(runOptions: RunOptions) : Promise<Result> {
+    vulnerabilityMap = new Map<string, sarifReportTypes.VulnerabilityDetail[]>();
+
+    async run(runOptions: RunOptions) : Promise<void> {
         const parasoftReportPaths = await this.findParasoftStaticAnalysisReports(runOptions.report);
-        if (!parasoftReportPaths || parasoftReportPaths.length == 0) {
-            logger.warn(messagesFormatter.format(messages.static_analysis_report_not_found, runOptions.report));
-            return { exitCode: -1 };
-        }
-
         const javaFilePath = this.getJavaFilePath(runOptions.parasoftToolOrJavaRootPath);
-        if (!javaFilePath) {
-            return { exitCode: -1 }
+
+        for (const parasoftReportPath of parasoftReportPaths) {
+            logger.info(messagesFormatter.format(messages.parsing_parasoft_report, parasoftReportPath));
+
+            try {
+                const sarifReport = await this.convertReportWithJava(javaFilePath, parasoftReportPath);
+                await this.parseSarifReport(sarifReport);
+                // TODO: Implement uploading violation results to Bitbucket report module
+            } catch (error) {
+                if (error instanceof Error) {
+                    logger.error(error);
+                }
+                logger.warn(messagesFormatter.format(messages.skip_static_analysis_report, parasoftReportPath));
+            }
         }
-
-        const outcome = await this.convertReportsWithJava(javaFilePath, parasoftReportPaths);
-
-        // TODO: Implement obtaining violation results from converted sarif reports
-
-        // TODO: Implement uploading violation results to Bitbucket report module
-
-        return { exitCode: outcome.exitCode };
     }
 
     private async findParasoftStaticAnalysisReports(reportPath: string): Promise<string[]> {
@@ -60,7 +60,7 @@ export class StaticAnalysisParserRunner {
             reportPath = pt.join(this.WORKING_DIRECTORY, reportPath);
         }
 
-        reportPath = reportPath.replace(/\\/g, "/");
+        reportPath = reportPath.replace(/\\/g, '/');
 
         // Use glob to find the matching report paths
         const reportPaths: string[] = glob.sync(reportPath);
@@ -80,79 +80,77 @@ export class StaticAnalysisParserRunner {
             logger.info(messagesFormatter.format(messages.found_matching_file, reportPath));
             staticReportPaths.push(reportPath);
         }
+
+         if (!staticReportPaths || staticReportPaths.length == 0) {
+            throw new Error(messagesFormatter.format(messages.static_analysis_report_not_found, reportPath));
+        }
+
         return staticReportPaths;
     }
 
-    private async convertReportsWithJava(javaPath: string, sourcePaths: string[]): Promise<ConversionResultDetails> {
-        const jarPath = pt.join(__dirname, "SaxonHE12-2J/saxon-he-12.2.jar");
-        const xslPath = pt.join(__dirname, "sarif.xsl");
-        const sarifReports: string[] = [];
+    private async convertReportWithJava(javaPath: string, sourcePath: string): Promise<string> {
+        logger.debug(messagesFormatter.format(messages.converting_static_analysis_report_to_sarif, sourcePath));
+
+        const jarPath = pt.join(__dirname, 'SaxonHE12-2J/saxon-he-12.2.jar');
+        const xslPath = pt.join(__dirname, 'sarif.xsl');
         const workspace = pt.normalize(this.WORKING_DIRECTORY).replace(/\\/g, '/');
+        const outPath = sourcePath.substring(0, sourcePath.toLocaleLowerCase().lastIndexOf('.xml')) + '.sarif';
 
-        for (const sourcePath of sourcePaths) {
-            logger.debug(messagesFormatter.format(messages.converting_static_analysis_report_to_sarif, sourcePath));
-            const outPath = sourcePath.substring(0, sourcePath.toLocaleLowerCase().lastIndexOf('.xml')) + '.sarif';
+        const commandLine = `"${javaPath}" -jar "${jarPath}" -s:"${sourcePath}" -xsl:"${xslPath}" -o:"${outPath}" -versionmsg:off projectRootPaths="${workspace}"`;
+        logger.debug(commandLine);
+        const exitCode = await new Promise<number>((resolve, reject) => {
+            const process = cp.spawn(`${commandLine}`, { shell: true, windowsHide: true });
+            this.handleProcess(process, resolve, reject);
+        });
 
-            const commandLine = `"${javaPath}" -jar "${jarPath}" -s:"${sourcePath}" -xsl:"${xslPath}" -o:"${outPath}" -versionmsg:off projectRootPaths="${workspace}"`;
-            logger.debug(commandLine);
-            const result = await new Promise<ConversionResultDetails>((resolve, reject) => {
-                const process = cp.spawn(`${commandLine}`, {shell: true, windowsHide: true });
-                this.handleProcess(process, resolve, reject);
-            });
-
-            if (result.exitCode != 0) {
-                return { exitCode: result.exitCode };
-            }
-            sarifReports.push(outPath);
-            logger.debug(messagesFormatter.format(messages.converted_sarif_report, outPath));
+        if (exitCode != 0) {
+            throw new Error(messagesFormatter.format(messages.failed_parse_report, sourcePath));
         }
 
-        return { exitCode: 0, convertedReportPaths: sarifReports };
+        logger.debug(messagesFormatter.format(messages.converted_sarif_report, outPath));
+        return outPath;
     }
 
     private handleProcess(process: any, resolve: any, reject: any) {
         process.stdout?.on('data', (data: any) => { logger.info(`${data}`.replace(/\s+$/g, '')); });
         process.stderr?.on('data', (data: any) => { logger.info(`${data}`.replace(/\s+$/g, '')); });
         process.on('close', (code: any) => {
-            const result : ConversionResultDetails = {
-                exitCode: (code != null) ? code : 150 // 150 = signal received
-            };
-            resolve(result);
+            const exitCode = (code != null) ? code : 150 // 150 = signal received
+            resolve(exitCode);
         });
-        process.on("error", (err: any) => { reject(err); });
+        process.on('error', (err: any) => { reject(err); });
     }
 
     private async isStaticReport(reportPath: string): Promise<boolean> {
         return new Promise((resolve) => {
             let isStaticReport = false;
             const saxStream = sax.createStream(true, {});
-            saxStream.on("opentag", (node: { name: string; }) => {
+            saxStream.on('opentag', (node: { name: string; }) => {
                 if (!isStaticReport && node.name == 'StdViols') {
                     isStaticReport = true;
                 }
             });
-            saxStream.on("error",(e) => {
-                logger.warn(messagesFormatter.format(messages.failed_to_parse_static_analysis_report, reportPath, e.message))
+            saxStream.on('error',(e) => {
+                logger.warn(messagesFormatter.format(messages.failed_to_parse_static_analysis_report, reportPath, e.message));
                 resolve(false);
             });
-            saxStream.on("end", () => {
+            saxStream.on('end', () => {
                 resolve(isStaticReport);
             });
             fs.createReadStream(reportPath).pipe(saxStream);
         });
     }
 
-    private getJavaFilePath(parasoftToolOrJavaRootPath: string | undefined): string | undefined {
+    private getJavaFilePath(parasoftToolOrJavaRootPath: string | undefined): string {
         const javaInstallDir = parasoftToolOrJavaRootPath || process.env.JAVA_HOME;
 
         if (!javaInstallDir || !fs.existsSync(javaInstallDir)) {
-            logger.warn(messages.java_or_parasoft_tool_install_dir_not_found);
-            return undefined;
+            throw new Error(messagesFormatter.format(messages.java_or_parasoft_tool_install_dir_not_found));
         }
 
         const javaFilePath = this.doGetJavaFilePath(javaInstallDir);
         if (!javaFilePath) {
-            logger.warn(messagesFormatter.format(messages.java_not_found_in_java_or_parasoft_tool_install_dir));
+            throw new Error(messagesFormatter.format(messages.java_not_found_in_java_or_parasoft_tool_install_dir));
         } else {
             logger.debug(messagesFormatter.format(messages.found_java_at, javaFilePath));
         }
@@ -162,11 +160,11 @@ export class StaticAnalysisParserRunner {
 
     private doGetJavaFilePath(installDir: string): string | undefined {
         logger.debug(messagesFormatter.format(messages.finding_java_in_java_or_parasoft_tool_install_dir, installDir));
-        const javaFileName = os.platform() == "win32" ? "java.exe" : "java";
+        const javaFileName = os.platform() == 'win32' ? 'java.exe' : 'java';
         const javaPaths = [
-            "bin", // Java installation
-            "bin/dottest/Jre_x64/bin", // dotTEST installation
-            "bin/jre/bin" // C/C++test or Jtest installation
+            'bin', // Java installation
+            'bin/dottest/Jre_x64/bin', // dotTEST installation
+            'bin/jre/bin' // C/C++test or Jtest installation
         ];
 
         for (const path of javaPaths) {
@@ -177,5 +175,88 @@ export class StaticAnalysisParserRunner {
         }
 
         return undefined;
+    }
+
+    private async parseSarifReport(sarifReportPath: string): Promise<void> {
+        const reportContents = await this.readSarifReport(sarifReportPath);
+        const { tool, results } = reportContents.runs[0];
+        const rules = this.getRules(reportContents);
+
+        const vulnerabilities = results.map(result => {
+            const rule = rules[result.ruleId];
+            return {
+                external_id: this.getUnbViolId(result),
+                annotation_type: 'VULNERABILITY',
+                severity: this.getSeverityLevel(rule),
+                path: this.getPath(result),
+                line: this.getLine(result),
+                summary: this.getSummary(rule),
+                details: result.message.text
+            };
+        });
+
+        const toolName = tool.driver.name;
+        const existing = this.vulnerabilityMap.get(toolName) ?? [];
+        const mergedVulnerabilities = this.mergeReportVulnerabilities(existing, vulnerabilities);
+        this.vulnerabilityMap.set(toolName, mergedVulnerabilities);
+
+        const duplicatedVulnerabilities = (existing.length + vulnerabilities.length) - mergedVulnerabilities.length;
+        if (duplicatedVulnerabilities != 0) {
+            logger.info(messagesFormatter.format(messages.parsed_parasoft_static_analysis_report, sarifReportPath, vulnerabilities.length, duplicatedVulnerabilities));
+        } else {
+            logger.info(messagesFormatter.format(messages.parsed_parasoft_static_analysis_report_no_duplication, sarifReportPath, vulnerabilities.length));
+        }
+    }
+
+    private async readSarifReport(reportPath: string): Promise<sarifReportTypes.ReportContents> {
+        const reportContent = await fs.promises.readFile(reportPath, 'utf8');
+        return JSON.parse(reportContent);
+    }
+
+    private mergeReportVulnerabilities(currentVulnerabilities: sarifReportTypes.VulnerabilityDetail[], newVulnerabilities: sarifReportTypes.VulnerabilityDetail[]): sarifReportTypes.VulnerabilityDetail[] {
+        const map = new Map<string, sarifReportTypes.VulnerabilityDetail>();
+        [...currentVulnerabilities, ...newVulnerabilities].forEach(vulnerability => map.set(vulnerability.external_id, vulnerability));
+        return Array.from(map.values());
+    }
+
+    private getRules(reportContents: sarifReportTypes.ReportContents) {
+        const rules = reportContents.runs[0].tool.driver.rules;
+        const map: Record<string, typeof rules[0]> = {};
+        rules.forEach(rule => map[rule.id] = rule);
+        return map;
+    }
+
+    private getPath(result: sarifReportTypes.ReportResult): string {
+        return result.locations[0].physicalLocation.artifactLocation.uri;
+    }
+
+    private getLine(result: sarifReportTypes.ReportResult): number {
+        const { region } = result.locations[0].physicalLocation;
+        return region.startLine ?? region.endLine;
+    }
+
+    private getSummary(rule: sarifReportTypes.Rule): string {
+        return rule.fullDescription?.text ?? rule.shortDescription?.text ?? '';
+    }
+
+    private getSeverityLevel(rule: sarifReportTypes.Rule): string {
+        return this.PARASOFT_SEV_LEVEL_MAP[rule.properties.parasoftSevLevel];
+    }
+
+    private getUnbViolId(result: sarifReportTypes.ReportResult): string {
+        const unbViolId = result.partialFingerprints.unbViolId;
+        if (unbViolId) {
+            return unbViolId;
+        }
+
+        const namespace = '6af5b03d-5276-49ef-bfed-d445f2752b02';
+        const violType = result.partialFingerprints?.violType || '';
+        const ruleId = result.ruleId || '';
+        const msg = result.message?.text || '';
+        const severity = result.level || '';
+        const lineHash = result.partialFingerprints?.lineHash || '';
+        const uri = result.locations?.[0]?.physicalLocation?.artifactLocation?.uri || '';
+
+        return uuid.v5(violType + ruleId + msg + severity + lineHash + uri, namespace);
     }
 }
