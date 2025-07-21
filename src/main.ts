@@ -26,12 +26,8 @@ export async function run(): Promise<void> {
         }
 
         const theRunner = new runner.StaticAnalysisParserRunner();
-        const outcome = await theRunner.run(runOptions);
+        await theRunner.run(runOptions);
 
-        if (outcome.exitCode != 0) {
-            logger.error(messagesFormatter.format(messages.failed_parse_report, outcome.exitCode));
-            process.exit(outcome.exitCode);
-        }
         logger.info(messagesFormatter.format(messages.parse_finished));
     } catch (error) {
         logger.error(messagesFormatter.format(messages.run_failed, args['report']));
