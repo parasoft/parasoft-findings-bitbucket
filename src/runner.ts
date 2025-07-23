@@ -6,7 +6,7 @@ import * as glob from 'glob';
 import * as sax from 'sax';
 import * as sarifReportTypes from './sarifReportTypes';
 import * as uuid from 'uuid'
-import axios, {AxiosBasicCredentials} from "axios";
+import axios, {AxiosBasicCredentials, AxiosError} from "axios";
 import {logger} from './logger';
 import {messages, messagesFormatter} from './messages';
 
@@ -51,7 +51,7 @@ export class StaticAnalysisParserRunner {
         this.vulnerabilityMap = new Map<string, ReportVulnerability>();
     }
 
-    async run(runOptions: RunOptions) : Promise<void> {
+    async run(runOptions: RunOptions): Promise<void> {
         const parasoftReportPaths = await this.findParasoftStaticAnalysisReports(runOptions.report);
         const javaFilePath = this.getJavaFilePath(runOptions.parasoftToolOrJavaRootPath);
 
@@ -123,7 +123,7 @@ export class StaticAnalysisParserRunner {
             staticReportPaths.push(reportPath);
         }
 
-         if (!staticReportPaths || staticReportPaths.length == 0) {
+        if (!staticReportPaths || staticReportPaths.length == 0) {
             throw new Error(messagesFormatter.format(messages.static_analysis_report_not_found, reportPath));
         }
 
@@ -141,7 +141,7 @@ export class StaticAnalysisParserRunner {
         const commandLine = `"${javaPath}" -jar "${jarPath}" -s:"${sourcePath}" -xsl:"${xslPath}" -o:"${outPath}" -versionmsg:off projectRootPaths="${workspace}"`;
         logger.debug(commandLine);
         const exitCode = await new Promise<number>((resolve, reject) => {
-            const process = cp.spawn(`${commandLine}`, { shell: true, windowsHide: true });
+            const process = cp.spawn(`${commandLine}`, {shell: true, windowsHide: true});
             this.handleProcess(process, resolve, reject);
         });
 
@@ -154,13 +154,19 @@ export class StaticAnalysisParserRunner {
     }
 
     private handleProcess(process: any, resolve: any, reject: any) {
-        process.stdout?.on('data', (data: any) => { logger.info(`${data}`.replace(/\s+$/g, '')); });
-        process.stderr?.on('data', (data: any) => { logger.info(`${data}`.replace(/\s+$/g, '')); });
+        process.stdout?.on('data', (data: any) => {
+            logger.info(`${data}`.replace(/\s+$/g, ''));
+        });
+        process.stderr?.on('data', (data: any) => {
+            logger.info(`${data}`.replace(/\s+$/g, ''));
+        });
         process.on('close', (code: any) => {
             const exitCode = (code != null) ? code : 150 // 150 = signal received
             resolve(exitCode);
         });
-        process.on('error', (err: any) => { reject(err); });
+        process.on('error', (err: any) => {
+            reject(err);
+        });
     }
 
     private async isStaticReport(reportPath: string): Promise<boolean> {
@@ -172,7 +178,7 @@ export class StaticAnalysisParserRunner {
                     isStaticReport = true;
                 }
             });
-            saxStream.on('error',(e) => {
+            saxStream.on('error', (e) => {
                 logger.warn(messagesFormatter.format(messages.failed_to_parse_static_analysis_report, reportPath, e.message));
                 resolve(false);
             });
@@ -221,15 +227,25 @@ export class StaticAnalysisParserRunner {
 
     private async parseSarifReport(sarifReportPath: string, parasoftReportPath: string): Promise<void> {
         const reportContents = await this.readSarifReport(sarifReportPath);
-        const { tool, results } = reportContents.runs[0];
+        const {tool, results} = reportContents.runs[0];
         const rules = this.getRules(reportContents);
+
+        const unbViolIdMap: Map<string, number> = new Map();
+        let order: number = 0;
 
         const vulnerabilities = results
             .filter(result => !result.suppressions)
             .map(result => {
                 const rule = rules[result.ruleId];
+                let unbViolId = this.getUnbViolId(result, order);
+                if (unbViolIdMap.has(unbViolId)) {
+                    order = <number> unbViolIdMap.get(unbViolId);
+                    unbViolId = this.getUnbViolId(result, order);
+                }
+                unbViolIdMap.set(unbViolId, order + 1);
+
                 return {
-                    external_id: this.getUnbViolId(result),
+                    external_id: unbViolId,
                     annotation_type: 'VULNERABILITY',
                     severity: this.getSeverityLevel(rule),
                     path: this.getPath(result),
@@ -239,7 +255,10 @@ export class StaticAnalysisParserRunner {
                 };
             });
 
-        this.vulnerabilityMap.set(parasoftReportPath, {toolName: tool.driver.name, vulnerabilityDetail: vulnerabilities});
+        this.vulnerabilityMap.set(parasoftReportPath, {
+            toolName: tool.driver.name,
+            vulnerabilityDetail: vulnerabilities
+        });
 
         logger.info(messagesFormatter.format(messages.parsed_parasoft_static_analysis_report, vulnerabilities.length, parasoftReportPath));
     }
@@ -261,7 +280,7 @@ export class StaticAnalysisParserRunner {
     }
 
     private getLine(result: sarifReportTypes.ReportResult): number {
-        const { region } = result.locations[0].physicalLocation;
+        const {region} = result.locations[0].physicalLocation;
         return region.startLine ?? region.endLine;
     }
 
@@ -273,7 +292,7 @@ export class StaticAnalysisParserRunner {
         return this.PARASOFT_SEV_LEVEL_MAP[rule.properties.parasoftSevLevel];
     }
 
-    private getUnbViolId(result: sarifReportTypes.ReportResult): string {
+    private getUnbViolId(result: sarifReportTypes.ReportResult, order: number): string {
         const unbViolId = result.partialFingerprints.unbViolId;
         if (unbViolId) {
             return unbViolId;
@@ -286,7 +305,7 @@ export class StaticAnalysisParserRunner {
         const lineHash = result.partialFingerprints?.lineHash || '';
         const uri = result.locations?.[0]?.physicalLocation?.artifactLocation?.uri || '';
 
-        return uuid.v5(violType + ruleId + msg + severity + lineHash + uri, this.UUID_NAMESPACE);
+        return uuid.v5(violType + ruleId + msg + severity + lineHash + uri + order, this.UUID_NAMESPACE);
     }
 
     private async uploadVulnerabilitiesToBitbucket(): Promise<void> {
@@ -303,7 +322,7 @@ export class StaticAnalysisParserRunner {
             let reportDetails;
             if (vulnerabilities.length > 100) {
                 vulnerabilities = vulnerabilities.slice(0, 100);
-                logger.info(messagesFormatter.format(messages.only_100_vulnerabilities_will_be_uploaded));
+                logger.info(messagesFormatter.format(messages.only_specified_vulnerabilities_will_be_uploaded, vulnerabilities.length));
                 reportDetails = messagesFormatter.format(messages.report_details_description_2, parasoftReportPath, totalVulnerabilities, vulnerabilities.length);
             } else {
                 reportDetails = messagesFormatter.format(messages.report_details_description_1, parasoftReportPath, totalVulnerabilities);
@@ -313,27 +332,39 @@ export class StaticAnalysisParserRunner {
             const reportId = uuid.v5(parasoftReportPath + this.BITBUCKET_ENVS.BITBUCKET_COMMIT, this.UUID_NAMESPACE);
 
             // Create report module
-            const createModuleResponse = await axios.put(this.getReportUrl(reportId), {
-                title: `Parasoft ${toolName}`,
-                details: reportDetails,
-                report_type: "SECURITY",
-                reporter: "parasoft",
-                result: hasHighOrCritical ? "FAILED" : "PASSED"
-            }, { auth: this.getAuth() });
-
-            if (createModuleResponse.status != 200) {
-                throw new Error(messagesFormatter.format(messages.failed_to_create_report_module, toolName, createModuleResponse.statusText));
+            try {
+                await axios.put(this.getReportUrl(reportId), {
+                    title: `Parasoft ${toolName}`,
+                    details: reportDetails,
+                    report_type: "SECURITY",
+                    reporter: "parasoft",
+                    result: hasHighOrCritical ? "FAILED" : "PASSED"
+                }, {auth: this.getAuth()});
+            } catch (error) {
+                if (error instanceof AxiosError) {
+                    const data = error.response?.data;
+                    if (data) {
+                        logger.error(JSON.stringify(data, null, 2));
+                    }
+                }
+                throw new Error(messagesFormatter.format(messages.failed_to_create_report_module, toolName, error));
             }
-
-            // Upload annotations (vulnerabilities)
-            const uploadResponse = await axios.post(
-                `${this.getReportUrl(reportId)}/annotations`,
-                vulnerabilities,
-                { auth: this.getAuth() }
-            );
-
-            if (uploadResponse.status != 200) {
-                throw new Error(messagesFormatter.format(messages.failed_to_upload_parasoft_report_results, toolName, uploadResponse.statusText));
+            
+            // Upload report results
+            try {
+                await axios.post(
+                    `${this.getReportUrl(reportId)}/annotations`,
+                    vulnerabilities,
+                    { auth: this.getAuth() }
+                );
+            } catch (error) {
+                if (error instanceof AxiosError) {
+                    const data = error.response?.data;
+                    if (data) {
+                        logger.error(JSON.stringify(data, null, 2));
+                    }
+                }
+                throw new Error(messagesFormatter.format(messages.failed_to_upload_parasoft_report_results, toolName, error));
             }
 
             logger.info(messagesFormatter.format(messages.uploaded_parasoft_report_results, toolName, vulnerabilities.length));
