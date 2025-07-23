@@ -27,6 +27,7 @@ export type ReportResult = {
     message: { text: string };
     partialFingerprints: PartialFingerprints;
     locations: VulnerabilityLocation[];
+    suppressions: object[];
 }
 
 type VulnerabilityLocation = {
@@ -53,12 +54,4 @@ export type VulnerabilityDetail = {
     line: number;
     summary?: string;
     details: string;
-}
-
-export type BitbucketEnv = {
-    BB_USER: string;
-    BB_APP_PASSWORD: string;
-    REPO: string;
-    COMMIT: string;
-    WORKSPACE: string;
 }

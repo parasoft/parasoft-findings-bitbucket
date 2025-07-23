@@ -23,9 +23,19 @@ interface ReportVulnerability {
     vulnerabilityDetail: sarifReportTypes.VulnerabilityDetail[];
 }
 
+interface BitbucketEnv {
+    BB_USER: string;
+    BB_APP_PASSWORD: string;
+    BITBUCKET_REPO_SLUG: string;
+    BITBUCKET_COMMIT: string;
+    BITBUCKET_WORKSPACE: string;
+    BITBUCKET_CLONE_DIR: string;
+    BITBUCKET_API_URL: string;
+}
+
 export class StaticAnalysisParserRunner {
-    BITBUCKET_ENVS: sarifReportTypes.BitbucketEnv;
-    WORKING_DIRECTORY = process.env.BITBUCKET_CLONE_DIR || '.';
+    UUID_NAMESPACE: string = '6af5b03d-5276-49ef-bfed-d445f2752b02';
+    BITBUCKET_ENVS: BitbucketEnv;
     PARASOFT_SEV_LEVEL_MAP = {
         '1': 'CRITICAL',
         '2': 'HIGH',
@@ -62,6 +72,25 @@ export class StaticAnalysisParserRunner {
         await this.uploadVulnerabilitiesToBitbucket();
     }
 
+    private getBitbucketEnvs(): BitbucketEnv {
+        const requiredEnvs: BitbucketEnv = {
+            BB_USER: process.env.BB_USER || '',
+            BB_APP_PASSWORD: process.env.BB_APP_PASSWORD || '',
+            BITBUCKET_REPO_SLUG: process.env.BITBUCKET_REPO_SLUG || '',
+            BITBUCKET_COMMIT: process.env.BITBUCKET_COMMIT || '',
+            BITBUCKET_WORKSPACE: process.env.BITBUCKET_WORKSPACE || '',
+            BITBUCKET_CLONE_DIR: process.env.BITBUCKET_CLONE_DIR || '',
+            BITBUCKET_API_URL: 'https://api.bitbucket.org/2.0/repositories'
+        }
+
+        const missingEnvs = Object.keys(requiredEnvs).filter(key => requiredEnvs[key as keyof BitbucketEnv] == '');
+        if (missingEnvs.length > 0) {
+            throw new Error(messagesFormatter.format(messages.missing_required_environment_variables, missingEnvs.join(', ')));
+        }
+
+        return requiredEnvs;
+    }
+
     private async findParasoftStaticAnalysisReports(reportPath: string): Promise<string[]> {
         if (pt.isAbsolute(reportPath)) {
             logger.info(messages.finding_static_analysis_report);
@@ -69,8 +98,8 @@ export class StaticAnalysisParserRunner {
             // Example: '/report.xml' -> 'C:/report.xml'
             reportPath = pt.resolve(reportPath);
         } else {
-            logger.info(messagesFormatter.format(messages.finding_static_analysis_report_in_working_directory, this.WORKING_DIRECTORY));
-            reportPath = pt.join(this.WORKING_DIRECTORY, reportPath);
+            logger.info(messagesFormatter.format(messages.finding_static_analysis_report_in_working_directory, this.BITBUCKET_ENVS.BITBUCKET_CLONE_DIR));
+            reportPath = pt.join(this.BITBUCKET_ENVS.BITBUCKET_CLONE_DIR, reportPath);
         }
 
         reportPath = reportPath.replace(/\\/g, '/');
@@ -106,7 +135,7 @@ export class StaticAnalysisParserRunner {
 
         const jarPath = pt.join(__dirname, 'SaxonHE12-2J/saxon-he-12.2.jar');
         const xslPath = pt.join(__dirname, 'sarif.xsl');
-        const workspace = pt.normalize(this.WORKING_DIRECTORY).replace(/\\/g, '/');
+        const workspace = pt.normalize(this.BITBUCKET_ENVS.BITBUCKET_CLONE_DIR).replace(/\\/g, '/');
         const outPath = sourcePath.substring(0, sourcePath.toLocaleLowerCase().lastIndexOf('.xml')) + '.sarif';
 
         const commandLine = `"${javaPath}" -jar "${jarPath}" -s:"${sourcePath}" -xsl:"${xslPath}" -o:"${outPath}" -versionmsg:off projectRootPaths="${workspace}"`;
@@ -195,22 +224,24 @@ export class StaticAnalysisParserRunner {
         const { tool, results } = reportContents.runs[0];
         const rules = this.getRules(reportContents);
 
-        const vulnerabilities = results.map(result => {
-            const rule = rules[result.ruleId];
-            return {
-                external_id: this.getUnbViolId(result),
-                annotation_type: 'VULNERABILITY',
-                severity: this.getSeverityLevel(rule),
-                path: this.getPath(result),
-                line: this.getLine(result),
-                summary: this.getSummary(rule),
-                details: result.message.text
-            };
-        });
+        const vulnerabilities = results
+            .filter(result => !result.suppressions)
+            .map(result => {
+                const rule = rules[result.ruleId];
+                return {
+                    external_id: this.getUnbViolId(result),
+                    annotation_type: 'VULNERABILITY',
+                    severity: this.getSeverityLevel(rule),
+                    path: this.getPath(result),
+                    line: this.getLine(result),
+                    summary: this.getSummary(rule),
+                    details: result.message.text
+                };
+            });
 
         this.vulnerabilityMap.set(parasoftReportPath, {toolName: tool.driver.name, vulnerabilityDetail: vulnerabilities});
 
-        logger.info(messagesFormatter.format(messages.parsed_parasoft_static_analysis_report, parasoftReportPath, vulnerabilities.length));
+        logger.info(messagesFormatter.format(messages.parsed_parasoft_static_analysis_report, vulnerabilities.length, parasoftReportPath));
     }
 
     private async readSarifReport(reportPath: string): Promise<sarifReportTypes.ReportContents> {
@@ -248,7 +279,6 @@ export class StaticAnalysisParserRunner {
             return unbViolId;
         }
 
-        const namespace = '6af5b03d-5276-49ef-bfed-d445f2752b02';
         const violType = result.partialFingerprints?.violType || '';
         const ruleId = result.ruleId || '';
         const msg = result.message?.text || '';
@@ -256,33 +286,44 @@ export class StaticAnalysisParserRunner {
         const lineHash = result.partialFingerprints?.lineHash || '';
         const uri = result.locations?.[0]?.physicalLocation?.artifactLocation?.uri || '';
 
-        return uuid.v5(violType + ruleId + msg + severity + lineHash + uri, namespace);
+        return uuid.v5(violType + ruleId + msg + severity + lineHash + uri, this.UUID_NAMESPACE);
     }
 
     private async uploadVulnerabilitiesToBitbucket(): Promise<void> {
         for (const [parasoftReportPath, vulnerability] of this.vulnerabilityMap) {
             const toolName = vulnerability.toolName;
             let vulnerabilities = this.sortVulnerabilitiesBySevLevel(vulnerability.vulnerabilityDetail);
-            const reportId = uuid.v5(parasoftReportPath + this.BITBUCKET_ENVS.COMMIT, '6ba7b811-9dad-11d1-80b4-00c04fd430c8');
+            const totalVulnerabilities = vulnerabilities.length;
+            if (totalVulnerabilities == 0) {
+                logger.info(messagesFormatter.format(messages.skip_static_analysis_report, parasoftReportPath));
+                continue;
+            }
+            logger.info(messagesFormatter.format(messages.uploading_parasoft_report_results, toolName, parasoftReportPath));
 
-            logger.info(messagesFormatter.format(messages.uploading_parasoft_report_results, toolName));
-
-            let reportDetails = messagesFormatter.format(messages.report_contains_vulnerabilities, vulnerabilities.length);
-            if (vulnerabilities && vulnerabilities.length > 100) {
+            let reportDetails;
+            if (vulnerabilities.length > 100) {
                 vulnerabilities = vulnerabilities.slice(0, 100);
-                reportDetails = messagesFormatter.format(messages.report_shows_vulnerabilities, reportDetails);
+                logger.info(messagesFormatter.format(messages.only_100_vulnerabilities_will_be_uploaded));
+                reportDetails = messagesFormatter.format(messages.report_details_description_2, parasoftReportPath, totalVulnerabilities, vulnerabilities.length);
+            } else {
+                reportDetails = messagesFormatter.format(messages.report_details_description_1, parasoftReportPath, totalVulnerabilities);
             }
 
             const hasHighOrCritical = vulnerabilities.some(v => ["CRITICAL", "HIGH"].includes(v.severity));
+            const reportId = uuid.v5(parasoftReportPath + this.BITBUCKET_ENVS.BITBUCKET_COMMIT, this.UUID_NAMESPACE);
 
             // Create report module
-            await axios.put(this.getReportUrl(reportId), {
+            const createModuleResponse = await axios.put(this.getReportUrl(reportId), {
                 title: `Parasoft ${toolName}`,
                 details: reportDetails,
                 report_type: "SECURITY",
                 reporter: "parasoft",
                 result: hasHighOrCritical ? "FAILED" : "PASSED"
             }, { auth: this.getAuth() });
+
+            if (createModuleResponse.status != 200) {
+                throw new Error(messagesFormatter.format(messages.failed_to_create_report_module, toolName, createModuleResponse.statusText));
+            }
 
             // Upload annotations (vulnerabilities)
             const uploadResponse = await axios.post(
@@ -295,36 +336,18 @@ export class StaticAnalysisParserRunner {
                 throw new Error(messagesFormatter.format(messages.failed_to_upload_parasoft_report_results, toolName, uploadResponse.statusText));
             }
 
-            logger.info(messagesFormatter.format(messages.uploaded_parasoft_report_results, toolName));
+            logger.info(messagesFormatter.format(messages.uploaded_parasoft_report_results, toolName, vulnerabilities.length));
         }
     }
 
     private getReportUrl(reportId: string): string {
-        const BB_API_URL = 'https://api.bitbucket.org/2.0/repositories'
-        const { WORKSPACE, REPO, COMMIT } = this.BITBUCKET_ENVS;
-        return `${BB_API_URL}/${WORKSPACE}/${REPO}/commit/${COMMIT}/reports/${reportId}`;
+        const { BITBUCKET_API_URL, BITBUCKET_WORKSPACE, BITBUCKET_REPO_SLUG, BITBUCKET_COMMIT } = this.BITBUCKET_ENVS;
+        return `${BITBUCKET_API_URL}/${BITBUCKET_WORKSPACE}/${BITBUCKET_REPO_SLUG}/commit/${BITBUCKET_COMMIT}/reports/${reportId}`;
     }
 
     private getAuth(): AxiosBasicCredentials {
         const { BB_USER, BB_APP_PASSWORD } = this.BITBUCKET_ENVS;
         return { username: BB_USER, password: BB_APP_PASSWORD };
-    }
-
-    getBitbucketEnvs(): sarifReportTypes.BitbucketEnv {
-        const requiredEnvs: { [key: string]: string | undefined } = {
-            BB_USER: process.env.BB_USER,
-            BB_APP_PASSWORD: process.env.BB_APP_PASSWORD,
-            REPO: process.env.BITBUCKET_REPO_SLUG,
-            COMMIT: process.env.BITBUCKET_COMMIT,
-            WORKSPACE: process.env.BITBUCKET_WORKSPACE
-        }
-
-        const missingEnvs = Object.keys(requiredEnvs).filter(key => requiredEnvs[key] == undefined);
-        if (missingEnvs.length > 0) {
-            throw new Error(messagesFormatter.format(messages.missing_required_environment_variables, missingEnvs.join(', ')));
-        }
-
-        return requiredEnvs as sarifReportTypes.BitbucketEnv;
     }
 
     private sortVulnerabilitiesBySevLevel(vulnerabilities: sarifReportTypes.VulnerabilityDetail[]): sarifReportTypes.VulnerabilityDetail[] {
