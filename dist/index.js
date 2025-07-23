@@ -172,13 +172,19 @@ class StaticAnalysisParserRunner {
     }
     handleProcess(process, resolve, reject) {
         var _a, _b;
-        (_a = process.stdout) === null || _a === void 0 ? void 0 : _a.on('data', (data) => { logger_1.logger.info(`${data}`.replace(/\s+$/g, '')); });
-        (_b = process.stderr) === null || _b === void 0 ? void 0 : _b.on('data', (data) => { logger_1.logger.info(`${data}`.replace(/\s+$/g, '')); });
+        (_a = process.stdout) === null || _a === void 0 ? void 0 : _a.on('data', (data) => {
+            logger_1.logger.info(`${data}`.replace(/\s+$/g, ''));
+        });
+        (_b = process.stderr) === null || _b === void 0 ? void 0 : _b.on('data', (data) => {
+            logger_1.logger.info(`${data}`.replace(/\s+$/g, ''));
+        });
         process.on('close', (code) => {
             const exitCode = (code != null) ? code : 150; // 150 = signal received
             resolve(exitCode);
         });
-        process.on('error', (err) => { reject(err); });
+        process.on('error', (err) => {
+            reject(err);
+        });
     }
     async isStaticReport(reportPath) {
         return new Promise((resolve) => {
@@ -233,12 +239,20 @@ class StaticAnalysisParserRunner {
         const reportContents = await this.readSarifReport(sarifReportPath);
         const { tool, results } = reportContents.runs[0];
         const rules = this.getRules(reportContents);
+        const unbViolIdMap = new Map();
+        let order = 0;
         const vulnerabilities = results
             .filter(result => !result.suppressions)
             .map(result => {
             const rule = rules[result.ruleId];
+            let unbViolId = this.getUnbViolId(result, order);
+            if (unbViolIdMap.has(unbViolId)) {
+                order = unbViolIdMap.get(unbViolId);
+                unbViolId = this.getUnbViolId(result, order);
+            }
+            unbViolIdMap.set(unbViolId, order + 1);
             return {
-                external_id: this.getUnbViolId(result),
+                external_id: unbViolId,
                 annotation_type: 'VULNERABILITY',
                 severity: this.getSeverityLevel(rule),
                 path: this.getPath(result),
@@ -247,7 +261,10 @@ class StaticAnalysisParserRunner {
                 details: result.message.text
             };
         });
-        this.vulnerabilityMap.set(parasoftReportPath, { toolName: tool.driver.name, vulnerabilityDetail: vulnerabilities });
+        this.vulnerabilityMap.set(parasoftReportPath, {
+            toolName: tool.driver.name,
+            vulnerabilityDetail: vulnerabilities
+        });
         logger_1.logger.info(messages_1.messagesFormatter.format(messages_1.messages.parsed_parasoft_static_analysis_report, vulnerabilities.length, parasoftReportPath));
     }
     async readSarifReport(reportPath) {
@@ -275,7 +292,7 @@ class StaticAnalysisParserRunner {
     getSeverityLevel(rule) {
         return this.PARASOFT_SEV_LEVEL_MAP[rule.properties.parasoftSevLevel];
     }
-    getUnbViolId(result) {
+    getUnbViolId(result, order) {
         var _a, _b, _c, _d, _e, _f, _g;
         const unbViolId = result.partialFingerprints.unbViolId;
         if (unbViolId) {
@@ -287,9 +304,10 @@ class StaticAnalysisParserRunner {
         const severity = result.level || '';
         const lineHash = ((_c = result.partialFingerprints) === null || _c === void 0 ? void 0 : _c.lineHash) || '';
         const uri = ((_g = (_f = (_e = (_d = result.locations) === null || _d === void 0 ? void 0 : _d[0]) === null || _e === void 0 ? void 0 : _e.physicalLocation) === null || _f === void 0 ? void 0 : _f.artifactLocation) === null || _g === void 0 ? void 0 : _g.uri) || '';
-        return uuid.v5(violType + ruleId + msg + severity + lineHash + uri, this.UUID_NAMESPACE);
+        return uuid.v5(violType + ruleId + msg + severity + lineHash + uri + order, this.UUID_NAMESPACE);
     }
     async uploadVulnerabilitiesToBitbucket() {
+        var _a, _b;
         for (const [parasoftReportPath, vulnerability] of this.vulnerabilityMap) {
             const toolName = vulnerability.toolName;
             let vulnerabilities = this.sortVulnerabilitiesBySevLevel(vulnerability.vulnerabilityDetail);
@@ -302,7 +320,7 @@ class StaticAnalysisParserRunner {
             let reportDetails;
             if (vulnerabilities.length > 100) {
                 vulnerabilities = vulnerabilities.slice(0, 100);
-                logger_1.logger.info(messages_1.messagesFormatter.format(messages_1.messages.only_100_vulnerabilities_will_be_uploaded));
+                logger_1.logger.info(messages_1.messagesFormatter.format(messages_1.messages.only_specified_vulnerabilities_will_be_uploaded, vulnerabilities.length));
                 reportDetails = messages_1.messagesFormatter.format(messages_1.messages.report_details_description_2, parasoftReportPath, totalVulnerabilities, vulnerabilities.length);
             }
             else {
@@ -311,20 +329,36 @@ class StaticAnalysisParserRunner {
             const hasHighOrCritical = vulnerabilities.some(v => ["CRITICAL", "HIGH"].includes(v.severity));
             const reportId = uuid.v5(parasoftReportPath + this.BITBUCKET_ENVS.BITBUCKET_COMMIT, this.UUID_NAMESPACE);
             // Create report module
-            const createModuleResponse = await axios_1.default.put(this.getReportUrl(reportId), {
-                title: `Parasoft ${toolName}`,
-                details: reportDetails,
-                report_type: "SECURITY",
-                reporter: "parasoft",
-                result: hasHighOrCritical ? "FAILED" : "PASSED"
-            }, { auth: this.getAuth() });
-            if (createModuleResponse.status != 200) {
-                throw new Error(messages_1.messagesFormatter.format(messages_1.messages.failed_to_create_report_module, toolName, createModuleResponse.statusText));
+            try {
+                await axios_1.default.put(this.getReportUrl(reportId), {
+                    title: `Parasoft ${toolName}`,
+                    details: reportDetails,
+                    report_type: "SECURITY",
+                    reporter: "parasoft",
+                    result: hasHighOrCritical ? "FAILED" : "PASSED"
+                }, { auth: this.getAuth() });
             }
-            // Upload annotations (vulnerabilities)
-            const uploadResponse = await axios_1.default.post(`${this.getReportUrl(reportId)}/annotations`, vulnerabilities, { auth: this.getAuth() });
-            if (uploadResponse.status != 200) {
-                throw new Error(messages_1.messagesFormatter.format(messages_1.messages.failed_to_upload_parasoft_report_results, toolName, uploadResponse.statusText));
+            catch (error) {
+                if (error instanceof axios_1.AxiosError) {
+                    const data = (_a = error.response) === null || _a === void 0 ? void 0 : _a.data;
+                    if (data) {
+                        logger_1.logger.error(JSON.stringify(data, null, 2));
+                    }
+                }
+                throw new Error(messages_1.messagesFormatter.format(messages_1.messages.failed_to_create_report_module, toolName, error));
+            }
+            // Upload report results
+            try {
+                await axios_1.default.post(`${this.getReportUrl(reportId)}/annotations`, vulnerabilities, { auth: this.getAuth() });
+            }
+            catch (error) {
+                if (error instanceof axios_1.AxiosError) {
+                    const data = (_b = error.response) === null || _b === void 0 ? void 0 : _b.data;
+                    if (data) {
+                        logger_1.logger.error(JSON.stringify(data, null, 2));
+                    }
+                }
+                throw new Error(messages_1.messagesFormatter.format(messages_1.messages.failed_to_upload_parasoft_report_results, toolName, error));
             }
             logger_1.logger.info(messages_1.messagesFormatter.format(messages_1.messages.uploaded_parasoft_report_results, toolName, vulnerabilities.length));
         }
@@ -38357,9 +38391,11 @@ async function run() {
         logger_1.logger.info(messages_1.messagesFormatter.format(messages_1.messages.complete));
     }
     catch (error) {
-        logger_1.logger.error(messages_1.messagesFormatter.format(messages_1.messages.run_failed, args['report']));
         if (error instanceof Error) {
             logger_1.logger.error(error);
+        }
+        else {
+            logger_1.logger.error(messages_1.messagesFormatter.format(messages_1.messages.run_failed, args['report']));
         }
         process.exit(1);
     }

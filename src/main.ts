@@ -30,9 +30,10 @@ export async function run(): Promise<void> {
 
         logger.info(messagesFormatter.format(messages.complete));
     } catch (error) {
-        logger.error(messagesFormatter.format(messages.run_failed, args['report']));
         if (error instanceof Error) {
             logger.error(error);
+        } else {
+            logger.error(messagesFormatter.format(messages.run_failed, args['report']));
         }
         process.exit(1);
     }
