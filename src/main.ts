@@ -28,7 +28,7 @@ export async function run(): Promise<void> {
         const theRunner = new runner.StaticAnalysisParserRunner();
         await theRunner.run(runOptions);
 
-        logger.info(messagesFormatter.format(messages.parse_finished));
+        logger.info(messagesFormatter.format(messages.complete));
     } catch (error) {
         logger.error(messagesFormatter.format(messages.run_failed, args['report']));
         if (error instanceof Error) {

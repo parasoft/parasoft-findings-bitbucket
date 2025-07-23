@@ -9,7 +9,7 @@ interface ISerializable<T> {
 class Messages implements ISerializable<Messages> {
     missing_parameter!: string;
     run_failed!: string;
-    parse_finished!: string;
+    complete!: string;
     finding_static_analysis_report!: string;
     finding_static_analysis_report_in_working_directory!:string;
     found_matching_file!: string;
@@ -26,11 +26,13 @@ class Messages implements ISerializable<Messages> {
     failed_parse_report!: string;
     parsed_parasoft_static_analysis_report!: string;
     skip_static_analysis_report!: string;
-    report_contains_vulnerabilities!: string;
-    report_shows_vulnerabilities!: string;
+    report_details_description_1!: string;
+    report_details_description_2!: string;
     missing_required_environment_variables!: string;
+
     uploading_parasoft_report_results!: string;
     uploaded_parasoft_report_results!: string;
+
     failed_to_create_report_module!: string;
     failed_to_upload_parasoft_report_results!: string;
 

@@ -107,11 +107,11 @@ class StaticAnalysisParserRunner {
         const requiredEnvs = {
             BB_USER: process.env.BB_USER || '',
             BB_APP_PASSWORD: process.env.BB_APP_PASSWORD || '',
-            REPO: process.env.BITBUCKET_REPO_SLUG || '',
-            COMMIT: process.env.BITBUCKET_COMMIT || '',
-            WORKSPACE: process.env.BITBUCKET_WORKSPACE || '',
-            CLONE_DIR: process.env.BITBUCKET_CLONE_DIR || '',
-            BB_API_URL: 'https://api.bitbucket.org/2.0/repositories'
+            BITBUCKET_REPO_SLUG: process.env.BITBUCKET_REPO_SLUG || '',
+            BITBUCKET_COMMIT: process.env.BITBUCKET_COMMIT || '',
+            BITBUCKET_WORKSPACE: process.env.BITBUCKET_WORKSPACE || '',
+            BITBUCKET_CLONE_DIR: process.env.BITBUCKET_CLONE_DIR || '',
+            BITBUCKET_API_URL: 'https://api.bitbucket.org/2.0/repositories'
         };
         const missingEnvs = Object.keys(requiredEnvs).filter(key => requiredEnvs[key] == '');
         if (missingEnvs.length > 0) {
@@ -127,8 +127,8 @@ class StaticAnalysisParserRunner {
             reportPath = pt.resolve(reportPath);
         }
         else {
-            logger_1.logger.info(messages_1.messagesFormatter.format(messages_1.messages.finding_static_analysis_report_in_working_directory, this.BITBUCKET_ENVS.CLONE_DIR));
-            reportPath = pt.join(this.BITBUCKET_ENVS.CLONE_DIR, reportPath);
+            logger_1.logger.info(messages_1.messagesFormatter.format(messages_1.messages.finding_static_analysis_report_in_working_directory, this.BITBUCKET_ENVS.BITBUCKET_CLONE_DIR));
+            reportPath = pt.join(this.BITBUCKET_ENVS.BITBUCKET_CLONE_DIR, reportPath);
         }
         reportPath = reportPath.replace(/\\/g, '/');
         // Use glob to find the matching report paths
@@ -156,7 +156,7 @@ class StaticAnalysisParserRunner {
         logger_1.logger.debug(messages_1.messagesFormatter.format(messages_1.messages.converting_static_analysis_report_to_sarif, sourcePath));
         const jarPath = pt.join(__dirname, 'SaxonHE12-2J/saxon-he-12.2.jar');
         const xslPath = pt.join(__dirname, 'sarif.xsl');
-        const workspace = pt.normalize(this.BITBUCKET_ENVS.CLONE_DIR).replace(/\\/g, '/');
+        const workspace = pt.normalize(this.BITBUCKET_ENVS.BITBUCKET_CLONE_DIR).replace(/\\/g, '/');
         const outPath = sourcePath.substring(0, sourcePath.toLocaleLowerCase().lastIndexOf('.xml')) + '.sarif';
         const commandLine = `"${javaPath}" -jar "${jarPath}" -s:"${sourcePath}" -xsl:"${xslPath}" -o:"${outPath}" -versionmsg:off projectRootPaths="${workspace}"`;
         logger_1.logger.debug(commandLine);
@@ -233,7 +233,9 @@ class StaticAnalysisParserRunner {
         const reportContents = await this.readSarifReport(sarifReportPath);
         const { tool, results } = reportContents.runs[0];
         const rules = this.getRules(reportContents);
-        const vulnerabilities = results.map(result => {
+        const vulnerabilities = results
+            .filter(result => !result.suppressions)
+            .map(result => {
             const rule = rules[result.ruleId];
             return {
                 external_id: this.getUnbViolId(result),
@@ -291,14 +293,18 @@ class StaticAnalysisParserRunner {
         for (const [parasoftReportPath, vulnerability] of this.vulnerabilityMap) {
             const toolName = vulnerability.toolName;
             let vulnerabilities = this.sortVulnerabilitiesBySevLevel(vulnerability.vulnerabilityDetail);
-            const reportId = uuid.v5(parasoftReportPath + this.BITBUCKET_ENVS.COMMIT, this.UUID_NAMESPACE);
-            logger_1.logger.info(messages_1.messagesFormatter.format(messages_1.messages.uploading_parasoft_report_results, toolName));
-            let reportDetails = messages_1.messagesFormatter.format(messages_1.messages.report_contains_vulnerabilities, vulnerabilities.length);
-            if (vulnerabilities && vulnerabilities.length > 100) {
+            const totalVulnerabilities = vulnerabilities.length;
+            logger_1.logger.info(messages_1.messagesFormatter.format(messages_1.messages.uploading_parasoft_report_results, toolName, parasoftReportPath));
+            let reportDetails;
+            if (vulnerabilities.length > 100) {
                 vulnerabilities = vulnerabilities.slice(0, 100);
-                reportDetails = messages_1.messagesFormatter.format(messages_1.messages.report_shows_vulnerabilities, reportDetails);
+                reportDetails = messages_1.messagesFormatter.format(messages_1.messages.report_details_description_2, parasoftReportPath, totalVulnerabilities, vulnerabilities.length);
+            }
+            else {
+                reportDetails = messages_1.messagesFormatter.format(messages_1.messages.report_details_description_1, parasoftReportPath, totalVulnerabilities);
             }
             const hasHighOrCritical = vulnerabilities.some(v => ["CRITICAL", "HIGH"].includes(v.severity));
+            const reportId = uuid.v5(parasoftReportPath + this.BITBUCKET_ENVS.BITBUCKET_COMMIT, this.UUID_NAMESPACE);
             // Create report module
             const createModuleResponse = await axios_1.default.put(this.getReportUrl(reportId), {
                 title: `Parasoft ${toolName}`,
@@ -315,12 +321,12 @@ class StaticAnalysisParserRunner {
             if (uploadResponse.status != 200) {
                 throw new Error(messages_1.messagesFormatter.format(messages_1.messages.failed_to_upload_parasoft_report_results, toolName, uploadResponse.statusText));
             }
-            logger_1.logger.info(messages_1.messagesFormatter.format(messages_1.messages.uploaded_parasoft_report_results, toolName));
+            logger_1.logger.info(messages_1.messagesFormatter.format(messages_1.messages.uploaded_parasoft_report_results, toolName, vulnerabilities.length));
         }
     }
     getReportUrl(reportId) {
-        const { WORKSPACE, REPO, COMMIT, BB_API_URL } = this.BITBUCKET_ENVS;
-        return `${BB_API_URL}/${WORKSPACE}/${REPO}/commit/${COMMIT}/reports/${reportId}`;
+        const { BITBUCKET_API_URL, BITBUCKET_WORKSPACE, BITBUCKET_REPO_SLUG, BITBUCKET_COMMIT } = this.BITBUCKET_ENVS;
+        return `${BITBUCKET_API_URL}/${BITBUCKET_WORKSPACE}/${BITBUCKET_REPO_SLUG}/commit/${BITBUCKET_COMMIT}/reports/${reportId}`;
     }
     getAuth() {
         const { BB_USER, BB_APP_PASSWORD } = this.BITBUCKET_ENVS;
@@ -38347,7 +38353,7 @@ async function run() {
         }
         const theRunner = new runner.StaticAnalysisParserRunner();
         await theRunner.run(runOptions);
-        logger_1.logger.info(messages_1.messagesFormatter.format(messages_1.messages.parse_finished));
+        logger_1.logger.info(messages_1.messagesFormatter.format(messages_1.messages.complete));
     }
     catch (error) {
         logger_1.logger.error(messages_1.messagesFormatter.format(messages_1.messages.run_failed, args['report']));
