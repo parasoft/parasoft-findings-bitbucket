@@ -296,7 +296,7 @@ export class StaticAnalysisParserRunner {
             const totalVulnerabilities = vulnerabilities.length;
             if (totalVulnerabilities == 0) {
                 logger.info(messagesFormatter.format(messages.skip_static_analysis_report, parasoftReportPath));
-                return;
+                continue;
             }
             logger.info(messagesFormatter.format(messages.uploading_parasoft_report_results, toolName, parasoftReportPath));
 
