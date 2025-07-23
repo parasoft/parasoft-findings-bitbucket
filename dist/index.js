@@ -302,6 +302,7 @@ class StaticAnalysisParserRunner {
             let reportDetails;
             if (vulnerabilities.length > 100) {
                 vulnerabilities = vulnerabilities.slice(0, 100);
+                logger_1.logger.info(messages_1.messagesFormatter.format(messages_1.messages.only_100_vulnerabilities_will_be_uploaded));
                 reportDetails = messages_1.messagesFormatter.format(messages_1.messages.report_details_description_2, parasoftReportPath, totalVulnerabilities, vulnerabilities.length);
             }
             else {
