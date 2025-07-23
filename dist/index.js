@@ -74,7 +74,7 @@ const logger_1 = __nccwpck_require__(3258);
 const messages_1 = __nccwpck_require__(6250);
 class StaticAnalysisParserRunner {
     constructor() {
-        this.WORKING_DIRECTORY = process.env.BITBUCKET_CLONE_DIR || '.';
+        this.UUID_NAMESPACE = '6af5b03d-5276-49ef-bfed-d445f2752b02';
         this.PARASOFT_SEV_LEVEL_MAP = {
             '1': 'CRITICAL',
             '2': 'HIGH',
@@ -103,6 +103,22 @@ class StaticAnalysisParserRunner {
         }
         await this.uploadVulnerabilitiesToBitbucket();
     }
+    getBitbucketEnvs() {
+        const requiredEnvs = {
+            BB_USER: process.env.BB_USER || '',
+            BB_APP_PASSWORD: process.env.BB_APP_PASSWORD || '',
+            REPO: process.env.BITBUCKET_REPO_SLUG || '',
+            COMMIT: process.env.BITBUCKET_COMMIT || '',
+            WORKSPACE: process.env.BITBUCKET_WORKSPACE || '',
+            CLONE_DIR: process.env.BITBUCKET_CLONE_DIR || '',
+            BB_API_URL: 'https://api.bitbucket.org/2.0/repositories'
+        };
+        const missingEnvs = Object.keys(requiredEnvs).filter(key => requiredEnvs[key] == '');
+        if (missingEnvs.length > 0) {
+            throw new Error(messages_1.messagesFormatter.format(messages_1.messages.missing_required_environment_variables, missingEnvs.join(', ')));
+        }
+        return requiredEnvs;
+    }
     async findParasoftStaticAnalysisReports(reportPath) {
         if (pt.isAbsolute(reportPath)) {
             logger_1.logger.info(messages_1.messages.finding_static_analysis_report);
@@ -111,8 +127,8 @@ class StaticAnalysisParserRunner {
             reportPath = pt.resolve(reportPath);
         }
         else {
-            logger_1.logger.info(messages_1.messagesFormatter.format(messages_1.messages.finding_static_analysis_report_in_working_directory, this.WORKING_DIRECTORY));
-            reportPath = pt.join(this.WORKING_DIRECTORY, reportPath);
+            logger_1.logger.info(messages_1.messagesFormatter.format(messages_1.messages.finding_static_analysis_report_in_working_directory, this.BITBUCKET_ENVS.CLONE_DIR));
+            reportPath = pt.join(this.BITBUCKET_ENVS.CLONE_DIR, reportPath);
         }
         reportPath = reportPath.replace(/\\/g, '/');
         // Use glob to find the matching report paths
@@ -140,7 +156,7 @@ class StaticAnalysisParserRunner {
         logger_1.logger.debug(messages_1.messagesFormatter.format(messages_1.messages.converting_static_analysis_report_to_sarif, sourcePath));
         const jarPath = pt.join(__dirname, 'SaxonHE12-2J/saxon-he-12.2.jar');
         const xslPath = pt.join(__dirname, 'sarif.xsl');
-        const workspace = pt.normalize(this.WORKING_DIRECTORY).replace(/\\/g, '/');
+        const workspace = pt.normalize(this.BITBUCKET_ENVS.CLONE_DIR).replace(/\\/g, '/');
         const outPath = sourcePath.substring(0, sourcePath.toLocaleLowerCase().lastIndexOf('.xml')) + '.sarif';
         const commandLine = `"${javaPath}" -jar "${jarPath}" -s:"${sourcePath}" -xsl:"${xslPath}" -o:"${outPath}" -versionmsg:off projectRootPaths="${workspace}"`;
         logger_1.logger.debug(commandLine);
@@ -263,20 +279,19 @@ class StaticAnalysisParserRunner {
         if (unbViolId) {
             return unbViolId;
         }
-        const namespace = '6af5b03d-5276-49ef-bfed-d445f2752b02';
         const violType = ((_a = result.partialFingerprints) === null || _a === void 0 ? void 0 : _a.violType) || '';
         const ruleId = result.ruleId || '';
         const msg = ((_b = result.message) === null || _b === void 0 ? void 0 : _b.text) || '';
         const severity = result.level || '';
         const lineHash = ((_c = result.partialFingerprints) === null || _c === void 0 ? void 0 : _c.lineHash) || '';
         const uri = ((_g = (_f = (_e = (_d = result.locations) === null || _d === void 0 ? void 0 : _d[0]) === null || _e === void 0 ? void 0 : _e.physicalLocation) === null || _f === void 0 ? void 0 : _f.artifactLocation) === null || _g === void 0 ? void 0 : _g.uri) || '';
-        return uuid.v5(violType + ruleId + msg + severity + lineHash + uri, namespace);
+        return uuid.v5(violType + ruleId + msg + severity + lineHash + uri, this.UUID_NAMESPACE);
     }
     async uploadVulnerabilitiesToBitbucket() {
         for (const [parasoftReportPath, vulnerability] of this.vulnerabilityMap) {
             const toolName = vulnerability.toolName;
             let vulnerabilities = this.sortVulnerabilitiesBySevLevel(vulnerability.vulnerabilityDetail);
-            const reportId = uuid.v5(parasoftReportPath + this.BITBUCKET_ENVS.COMMIT, '6ba7b811-9dad-11d1-80b4-00c04fd430c8');
+            const reportId = uuid.v5(parasoftReportPath + this.BITBUCKET_ENVS.COMMIT, this.UUID_NAMESPACE);
             logger_1.logger.info(messages_1.messagesFormatter.format(messages_1.messages.uploading_parasoft_report_results, toolName));
             let reportDetails = messages_1.messagesFormatter.format(messages_1.messages.report_contains_vulnerabilities, vulnerabilities.length);
             if (vulnerabilities && vulnerabilities.length > 100) {
@@ -285,13 +300,16 @@ class StaticAnalysisParserRunner {
             }
             const hasHighOrCritical = vulnerabilities.some(v => ["CRITICAL", "HIGH"].includes(v.severity));
             // Create report module
-            await axios_1.default.put(this.getReportUrl(reportId), {
+            const createModuleResponse = await axios_1.default.put(this.getReportUrl(reportId), {
                 title: `Parasoft ${toolName}`,
                 details: reportDetails,
                 report_type: "SECURITY",
                 reporter: "parasoft",
                 result: hasHighOrCritical ? "FAILED" : "PASSED"
             }, { auth: this.getAuth() });
+            if (createModuleResponse.status != 200) {
+                throw new Error(messages_1.messagesFormatter.format(messages_1.messages.failed_to_create_report_module, toolName, createModuleResponse.statusText));
+            }
             // Upload annotations (vulnerabilities)
             const uploadResponse = await axios_1.default.post(`${this.getReportUrl(reportId)}/annotations`, vulnerabilities, { auth: this.getAuth() });
             if (uploadResponse.status != 200) {
@@ -301,27 +319,12 @@ class StaticAnalysisParserRunner {
         }
     }
     getReportUrl(reportId) {
-        const BB_API_URL = 'https://api.bitbucket.org/2.0/repositories';
-        const { WORKSPACE, REPO, COMMIT } = this.BITBUCKET_ENVS;
+        const { WORKSPACE, REPO, COMMIT, BB_API_URL } = this.BITBUCKET_ENVS;
         return `${BB_API_URL}/${WORKSPACE}/${REPO}/commit/${COMMIT}/reports/${reportId}`;
     }
     getAuth() {
         const { BB_USER, BB_APP_PASSWORD } = this.BITBUCKET_ENVS;
         return { username: BB_USER, password: BB_APP_PASSWORD };
-    }
-    getBitbucketEnvs() {
-        const requiredEnvs = {
-            BB_USER: process.env.BB_USER,
-            BB_APP_PASSWORD: process.env.BB_APP_PASSWORD,
-            REPO: process.env.BITBUCKET_REPO_SLUG,
-            COMMIT: process.env.BITBUCKET_COMMIT,
-            WORKSPACE: process.env.BITBUCKET_WORKSPACE
-        };
-        const missingEnvs = Object.keys(requiredEnvs).filter(key => requiredEnvs[key] == undefined);
-        if (missingEnvs.length > 0) {
-            throw new Error(messages_1.messagesFormatter.format(messages_1.messages.missing_required_environment_variables, missingEnvs.join(', ')));
-        }
-        return requiredEnvs;
     }
     sortVulnerabilitiesBySevLevel(vulnerabilities) {
         const severityOrder = {
@@ -8118,7 +8121,6 @@ var https = __nccwpck_require__(5692);
 var parseUrl = (__nccwpck_require__(7016).parse);
 var fs = __nccwpck_require__(9896);
 var Stream = (__nccwpck_require__(2203).Stream);
-var crypto = __nccwpck_require__(6982);
 var mime = __nccwpck_require__(4096);
 var asynckit = __nccwpck_require__(1324);
 var setToStringTag = __nccwpck_require__(8700);
@@ -8456,7 +8458,12 @@ FormData.prototype._generateBoundary = function () {
   // This generates a 50 character boundary similar to those used by Firefox.
 
   // They are optimized for boyer-moore parsing.
-  this._boundary = '--------------------------' + crypto.randomBytes(12).toString('hex');
+  var boundary = '--------------------------';
+  for (var i = 0; i < 24; i++) {
+    boundary += Math.floor(Math.random() * 10).toString(16);
+  }
+
+  this._boundary = boundary;
 };
 
 // Note: getLengthSync DOESN'T calculate streams length

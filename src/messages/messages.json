@@ -23,5 +23,6 @@
   "missing_required_environment_variables": "Missing required Bitbucket environemnts: {0}",
   "uploading_parasoft_report_results": "Uploading Parasoft {0} Static Analysis results to Bitbucket...",
   "uploaded_parasoft_report_results": "Finished uploading Parasoft {0} Static Analysis results",
+  "failed_to_create_report_module": "Failed to create report module for Parasoft {0}. Error: {1}",
   "failed_to_upload_parasoft_report_results": "Failed to upload Parasoft {0} Static Analysis results. Error: {1}"
 }
