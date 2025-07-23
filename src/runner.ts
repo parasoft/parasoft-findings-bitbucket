@@ -6,6 +6,7 @@ import * as glob from 'glob';
 import * as sax from 'sax';
 import * as sarifReportTypes from './sarifReportTypes';
 import * as uuid from 'uuid'
+import axios, {AxiosBasicCredentials} from "axios";
 import {logger} from './logger';
 import {messages, messagesFormatter} from './messages';
 
@@ -17,8 +18,24 @@ export interface RunOptions {
     parasoftToolOrJavaRootPath?: string;
 }
 
+interface ReportVulnerability {
+    toolName: string;
+    vulnerabilityDetail: sarifReportTypes.VulnerabilityDetail[];
+}
+
+interface BitbucketEnv {
+    BB_USER: string;
+    BB_APP_PASSWORD: string;
+    BITBUCKET_REPO_SLUG: string;
+    BITBUCKET_COMMIT: string;
+    BITBUCKET_WORKSPACE: string;
+    BITBUCKET_CLONE_DIR: string;
+    BITBUCKET_API_URL: string;
+}
+
 export class StaticAnalysisParserRunner {
-    WORKING_DIRECTORY = process.env.BITBUCKET_CLONE_DIR + '';
+    UUID_NAMESPACE: string = '6af5b03d-5276-49ef-bfed-d445f2752b02';
+    BITBUCKET_ENVS: BitbucketEnv;
     PARASOFT_SEV_LEVEL_MAP = {
         '1': 'CRITICAL',
         '2': 'HIGH',
@@ -27,7 +44,12 @@ export class StaticAnalysisParserRunner {
         '5': 'LOW'
     };
 
-    vulnerabilityMap = new Map<string, sarifReportTypes.VulnerabilityDetail[]>();
+    vulnerabilityMap: Map<string, ReportVulnerability>;
+
+    constructor() {
+        this.BITBUCKET_ENVS = this.getBitbucketEnvs();
+        this.vulnerabilityMap = new Map<string, ReportVulnerability>();
+    }
 
     async run(runOptions: RunOptions) : Promise<void> {
         const parasoftReportPaths = await this.findParasoftStaticAnalysisReports(runOptions.report);
@@ -38,8 +60,7 @@ export class StaticAnalysisParserRunner {
 
             try {
                 const sarifReport = await this.convertReportWithJava(javaFilePath, parasoftReportPath);
-                await this.parseSarifReport(sarifReport);
-                // TODO: Implement uploading violation results to Bitbucket report module
+                await this.parseSarifReport(sarifReport, parasoftReportPath);
             } catch (error) {
                 if (error instanceof Error) {
                     logger.error(error);
@@ -47,6 +68,27 @@ export class StaticAnalysisParserRunner {
                 logger.warn(messagesFormatter.format(messages.skip_static_analysis_report, parasoftReportPath));
             }
         }
+
+        await this.uploadVulnerabilitiesToBitbucket();
+    }
+
+    private getBitbucketEnvs(): BitbucketEnv {
+        const requiredEnvs: BitbucketEnv = {
+            BB_USER: process.env.BB_USER || '',
+            BB_APP_PASSWORD: process.env.BB_APP_PASSWORD || '',
+            BITBUCKET_REPO_SLUG: process.env.BITBUCKET_REPO_SLUG || '',
+            BITBUCKET_COMMIT: process.env.BITBUCKET_COMMIT || '',
+            BITBUCKET_WORKSPACE: process.env.BITBUCKET_WORKSPACE || '',
+            BITBUCKET_CLONE_DIR: process.env.BITBUCKET_CLONE_DIR || '',
+            BITBUCKET_API_URL: 'https://api.bitbucket.org/2.0/repositories'
+        }
+
+        const missingEnvs = Object.keys(requiredEnvs).filter(key => requiredEnvs[key as keyof BitbucketEnv] == '');
+        if (missingEnvs.length > 0) {
+            throw new Error(messagesFormatter.format(messages.missing_required_environment_variables, missingEnvs.join(', ')));
+        }
+
+        return requiredEnvs;
     }
 
     private async findParasoftStaticAnalysisReports(reportPath: string): Promise<string[]> {
@@ -56,8 +98,8 @@ export class StaticAnalysisParserRunner {
             // Example: '/report.xml' -> 'C:/report.xml'
             reportPath = pt.resolve(reportPath);
         } else {
-            logger.info(messagesFormatter.format(messages.finding_static_analysis_report_in_working_directory, this.WORKING_DIRECTORY));
-            reportPath = pt.join(this.WORKING_DIRECTORY, reportPath);
+            logger.info(messagesFormatter.format(messages.finding_static_analysis_report_in_working_directory, this.BITBUCKET_ENVS.BITBUCKET_CLONE_DIR));
+            reportPath = pt.join(this.BITBUCKET_ENVS.BITBUCKET_CLONE_DIR, reportPath);
         }
 
         reportPath = reportPath.replace(/\\/g, '/');
@@ -93,7 +135,7 @@ export class StaticAnalysisParserRunner {
 
         const jarPath = pt.join(__dirname, 'SaxonHE12-2J/saxon-he-12.2.jar');
         const xslPath = pt.join(__dirname, 'sarif.xsl');
-        const workspace = pt.normalize(this.WORKING_DIRECTORY).replace(/\\/g, '/');
+        const workspace = pt.normalize(this.BITBUCKET_ENVS.BITBUCKET_CLONE_DIR).replace(/\\/g, '/');
         const outPath = sourcePath.substring(0, sourcePath.toLocaleLowerCase().lastIndexOf('.xml')) + '.sarif';
 
         const commandLine = `"${javaPath}" -jar "${jarPath}" -s:"${sourcePath}" -xsl:"${xslPath}" -o:"${outPath}" -versionmsg:off projectRootPaths="${workspace}"`;
@@ -177,46 +219,34 @@ export class StaticAnalysisParserRunner {
         return undefined;
     }
 
-    private async parseSarifReport(sarifReportPath: string): Promise<void> {
+    private async parseSarifReport(sarifReportPath: string, parasoftReportPath: string): Promise<void> {
         const reportContents = await this.readSarifReport(sarifReportPath);
         const { tool, results } = reportContents.runs[0];
         const rules = this.getRules(reportContents);
 
-        const vulnerabilities = results.map(result => {
-            const rule = rules[result.ruleId];
-            return {
-                external_id: this.getUnbViolId(result),
-                annotation_type: 'VULNERABILITY',
-                severity: this.getSeverityLevel(rule),
-                path: this.getPath(result),
-                line: this.getLine(result),
-                summary: this.getSummary(rule),
-                details: result.message.text
-            };
-        });
+        const vulnerabilities = results
+            .filter(result => !result.suppressions)
+            .map(result => {
+                const rule = rules[result.ruleId];
+                return {
+                    external_id: this.getUnbViolId(result),
+                    annotation_type: 'VULNERABILITY',
+                    severity: this.getSeverityLevel(rule),
+                    path: this.getPath(result),
+                    line: this.getLine(result),
+                    summary: this.getSummary(rule),
+                    details: result.message.text
+                };
+            });
 
-        const toolName = tool.driver.name;
-        const existing = this.vulnerabilityMap.get(toolName) ?? [];
-        const mergedVulnerabilities = this.mergeReportVulnerabilities(existing, vulnerabilities);
-        this.vulnerabilityMap.set(toolName, mergedVulnerabilities);
+        this.vulnerabilityMap.set(parasoftReportPath, {toolName: tool.driver.name, vulnerabilityDetail: vulnerabilities});
 
-        const duplicatedVulnerabilities = (existing.length + vulnerabilities.length) - mergedVulnerabilities.length;
-        if (duplicatedVulnerabilities != 0) {
-            logger.info(messagesFormatter.format(messages.parsed_parasoft_static_analysis_report, sarifReportPath, vulnerabilities.length, duplicatedVulnerabilities));
-        } else {
-            logger.info(messagesFormatter.format(messages.parsed_parasoft_static_analysis_report_no_duplication, sarifReportPath, vulnerabilities.length));
-        }
+        logger.info(messagesFormatter.format(messages.parsed_parasoft_static_analysis_report, vulnerabilities.length, parasoftReportPath));
     }
 
     private async readSarifReport(reportPath: string): Promise<sarifReportTypes.ReportContents> {
         const reportContent = await fs.promises.readFile(reportPath, 'utf8');
         return JSON.parse(reportContent);
-    }
-
-    private mergeReportVulnerabilities(currentVulnerabilities: sarifReportTypes.VulnerabilityDetail[], newVulnerabilities: sarifReportTypes.VulnerabilityDetail[]): sarifReportTypes.VulnerabilityDetail[] {
-        const map = new Map<string, sarifReportTypes.VulnerabilityDetail>();
-        [...currentVulnerabilities, ...newVulnerabilities].forEach(vulnerability => map.set(vulnerability.external_id, vulnerability));
-        return Array.from(map.values());
     }
 
     private getRules(reportContents: sarifReportTypes.ReportContents) {
@@ -249,7 +279,6 @@ export class StaticAnalysisParserRunner {
             return unbViolId;
         }
 
-        const namespace = '6af5b03d-5276-49ef-bfed-d445f2752b02';
         const violType = result.partialFingerprints?.violType || '';
         const ruleId = result.ruleId || '';
         const msg = result.message?.text || '';
@@ -257,6 +286,80 @@ export class StaticAnalysisParserRunner {
         const lineHash = result.partialFingerprints?.lineHash || '';
         const uri = result.locations?.[0]?.physicalLocation?.artifactLocation?.uri || '';
 
-        return uuid.v5(violType + ruleId + msg + severity + lineHash + uri, namespace);
+        return uuid.v5(violType + ruleId + msg + severity + lineHash + uri, this.UUID_NAMESPACE);
+    }
+
+    private async uploadVulnerabilitiesToBitbucket(): Promise<void> {
+        for (const [parasoftReportPath, vulnerability] of this.vulnerabilityMap) {
+            const toolName = vulnerability.toolName;
+            let vulnerabilities = this.sortVulnerabilitiesBySevLevel(vulnerability.vulnerabilityDetail);
+            const totalVulnerabilities = vulnerabilities.length;
+            if (totalVulnerabilities == 0) {
+                logger.info(messagesFormatter.format(messages.skip_static_analysis_report, parasoftReportPath));
+                continue;
+            }
+            logger.info(messagesFormatter.format(messages.uploading_parasoft_report_results, toolName, parasoftReportPath));
+
+            let reportDetails;
+            if (vulnerabilities.length > 100) {
+                vulnerabilities = vulnerabilities.slice(0, 100);
+                logger.info(messagesFormatter.format(messages.only_100_vulnerabilities_will_be_uploaded));
+                reportDetails = messagesFormatter.format(messages.report_details_description_2, parasoftReportPath, totalVulnerabilities, vulnerabilities.length);
+            } else {
+                reportDetails = messagesFormatter.format(messages.report_details_description_1, parasoftReportPath, totalVulnerabilities);
+            }
+
+            const hasHighOrCritical = vulnerabilities.some(v => ["CRITICAL", "HIGH"].includes(v.severity));
+            const reportId = uuid.v5(parasoftReportPath + this.BITBUCKET_ENVS.BITBUCKET_COMMIT, this.UUID_NAMESPACE);
+
+            // Create report module
+            const createModuleResponse = await axios.put(this.getReportUrl(reportId), {
+                title: `Parasoft ${toolName}`,
+                details: reportDetails,
+                report_type: "SECURITY",
+                reporter: "parasoft",
+                result: hasHighOrCritical ? "FAILED" : "PASSED"
+            }, { auth: this.getAuth() });
+
+            if (createModuleResponse.status != 200) {
+                throw new Error(messagesFormatter.format(messages.failed_to_create_report_module, toolName, createModuleResponse.statusText));
+            }
+
+            // Upload annotations (vulnerabilities)
+            const uploadResponse = await axios.post(
+                `${this.getReportUrl(reportId)}/annotations`,
+                vulnerabilities,
+                { auth: this.getAuth() }
+            );
+
+            if (uploadResponse.status != 200) {
+                throw new Error(messagesFormatter.format(messages.failed_to_upload_parasoft_report_results, toolName, uploadResponse.statusText));
+            }
+
+            logger.info(messagesFormatter.format(messages.uploaded_parasoft_report_results, toolName, vulnerabilities.length));
+        }
+    }
+
+    private getReportUrl(reportId: string): string {
+        const { BITBUCKET_API_URL, BITBUCKET_WORKSPACE, BITBUCKET_REPO_SLUG, BITBUCKET_COMMIT } = this.BITBUCKET_ENVS;
+        return `${BITBUCKET_API_URL}/${BITBUCKET_WORKSPACE}/${BITBUCKET_REPO_SLUG}/commit/${BITBUCKET_COMMIT}/reports/${reportId}`;
+    }
+
+    private getAuth(): AxiosBasicCredentials {
+        const { BB_USER, BB_APP_PASSWORD } = this.BITBUCKET_ENVS;
+        return { username: BB_USER, password: BB_APP_PASSWORD };
+    }
+
+    private sortVulnerabilitiesBySevLevel(vulnerabilities: sarifReportTypes.VulnerabilityDetail[]): sarifReportTypes.VulnerabilityDetail[] {
+        const severityOrder: { [key: string]: number } = {
+            LOW: 1,
+            MEDIUM: 2,
+            HIGH: 3,
+            CRITICAL: 4
+        };
+
+        return [...vulnerabilities].sort((currentVuln, nextVuln) => {
+            return severityOrder[nextVuln.severity] - severityOrder[currentVuln.severity];
+        });
     }
 }

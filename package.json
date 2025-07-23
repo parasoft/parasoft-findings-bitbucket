@@ -59,6 +59,7 @@
     "copyfiles": "^2.4.1"
   },
   "dependencies": {
+    "axios": "^1.10.0",
     "glob": "^11.0.0",
     "minimist": "^1.2.8",
     "sax": "^1.4.1",

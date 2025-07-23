@@ -27,6 +27,7 @@ export type ReportResult = {
     message: { text: string };
     partialFingerprints: PartialFingerprints;
     locations: VulnerabilityLocation[];
+    suppressions: object[];
 }
 
 type VulnerabilityLocation = {
