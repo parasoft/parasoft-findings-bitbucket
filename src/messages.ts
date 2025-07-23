@@ -29,10 +29,8 @@ class Messages implements ISerializable<Messages> {
     report_details_description_1!: string;
     report_details_description_2!: string;
     missing_required_environment_variables!: string;
-
     uploading_parasoft_report_results!: string;
     uploaded_parasoft_report_results!: string;
-
     failed_to_create_report_module!: string;
     failed_to_upload_parasoft_report_results!: string;
 

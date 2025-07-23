@@ -248,7 +248,7 @@ class StaticAnalysisParserRunner {
             };
         });
         this.vulnerabilityMap.set(parasoftReportPath, { toolName: tool.driver.name, vulnerabilityDetail: vulnerabilities });
-        logger_1.logger.info(messages_1.messagesFormatter.format(messages_1.messages.parsed_parasoft_static_analysis_report, parasoftReportPath, vulnerabilities.length));
+        logger_1.logger.info(messages_1.messagesFormatter.format(messages_1.messages.parsed_parasoft_static_analysis_report, vulnerabilities.length, parasoftReportPath));
     }
     async readSarifReport(reportPath) {
         const reportContent = await fs.promises.readFile(reportPath, 'utf8');

@@ -241,7 +241,7 @@ export class StaticAnalysisParserRunner {
 
         this.vulnerabilityMap.set(parasoftReportPath, {toolName: tool.driver.name, vulnerabilityDetail: vulnerabilities});
 
-        logger.info(messagesFormatter.format(messages.parsed_parasoft_static_analysis_report, parasoftReportPath, vulnerabilities.length));
+        logger.info(messagesFormatter.format(messages.parsed_parasoft_static_analysis_report, vulnerabilities.length, parasoftReportPath));
     }
 
     private async readSarifReport(reportPath: string): Promise<sarifReportTypes.ReportContents> {
