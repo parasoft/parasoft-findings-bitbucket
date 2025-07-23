@@ -294,6 +294,10 @@ class StaticAnalysisParserRunner {
             const toolName = vulnerability.toolName;
             let vulnerabilities = this.sortVulnerabilitiesBySevLevel(vulnerability.vulnerabilityDetail);
             const totalVulnerabilities = vulnerabilities.length;
+            if (totalVulnerabilities == 0) {
+                logger_1.logger.info(messages_1.messagesFormatter.format(messages_1.messages.skip_static_analysis_report, parasoftReportPath));
+                return;
+            }
             logger_1.logger.info(messages_1.messagesFormatter.format(messages_1.messages.uploading_parasoft_report_results, toolName, parasoftReportPath));
             let reportDetails;
             if (vulnerabilities.length > 100) {
