@@ -339,6 +339,7 @@ class StaticAnalysisParserRunner {
                     reporter: "parasoft",
                     result: hasHighOrCritical ? "FAILED" : "PASSED"
                 }, {
+                    httpAgent: this.proxyAgent,
                     httpsAgent: this.proxyAgent,
                     proxy: false
                 });
@@ -355,6 +356,7 @@ class StaticAnalysisParserRunner {
             // Upload report results
             try {
                 await axios_1.default.post(`${this.getReportUrl(reportId)}/annotations`, vulnerabilities, {
+                    httpAgent: this.proxyAgent,
                     httpsAgent: this.proxyAgent,
                     proxy: false
                 });

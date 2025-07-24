@@ -342,6 +342,7 @@ export class StaticAnalysisParserRunner {
                     reporter: "parasoft",
                     result: hasHighOrCritical ? "FAILED" : "PASSED"
                 }, {
+                    httpAgent: this.proxyAgent,
                     httpsAgent: this.proxyAgent,
                     proxy: false
                 });
@@ -361,6 +362,7 @@ export class StaticAnalysisParserRunner {
                     `${this.getReportUrl(reportId)}/annotations`,
                     vulnerabilities,
                     {
+                        httpAgent: this.proxyAgent,
                         httpsAgent: this.proxyAgent,
                         proxy: false
                     }
