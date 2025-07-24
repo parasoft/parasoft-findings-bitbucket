@@ -26,8 +26,8 @@ interface ReportVulnerability {
 }
 
 interface BitbucketEnv {
-    BB_USER: string;
-    BB_APP_PASSWORD: string;
+    USER_EMAIL: string;
+    API_TOKEN: string;
     BITBUCKET_REPO_SLUG: string;
     BITBUCKET_COMMIT: string;
     BITBUCKET_WORKSPACE: string;
@@ -76,8 +76,8 @@ export class StaticAnalysisParserRunner {
 
     private getBitbucketEnvs(): BitbucketEnv {
         const requiredEnvs: BitbucketEnv = {
-            BB_USER: process.env.BB_USER || '',
-            BB_APP_PASSWORD: process.env.BB_APP_PASSWORD || '',
+            USER_EMAIL: process.env.USER_EMAIL || '',
+            API_TOKEN: process.env.API_TOKEN || '',
             BITBUCKET_REPO_SLUG: process.env.BITBUCKET_REPO_SLUG || '',
             BITBUCKET_COMMIT: process.env.BITBUCKET_COMMIT || '',
             BITBUCKET_WORKSPACE: process.env.BITBUCKET_WORKSPACE || '',
@@ -388,8 +388,8 @@ export class StaticAnalysisParserRunner {
     }
 
     private getAuth(): AxiosBasicCredentials {
-        const { BB_USER, BB_APP_PASSWORD } = this.BITBUCKET_ENVS;
-        return { username: BB_USER, password: BB_APP_PASSWORD };
+        const { USER_EMAIL, API_TOKEN } = this.BITBUCKET_ENVS;
+        return { username: USER_EMAIL, password: API_TOKEN };
     }
 
     private sortVulnerabilitiesBySevLevel(vulnerabilities: sarifReportTypes.VulnerabilityDetail[]): sarifReportTypes.VulnerabilityDetail[] {
