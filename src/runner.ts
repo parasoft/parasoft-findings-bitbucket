@@ -352,7 +352,7 @@ export class StaticAnalysisParserRunner {
                         logger.error(JSON.stringify(data, null, 2));
                     }
                 }
-                throw new Error(messagesFormatter.format(messages.failed_to_create_report_module, toolName, error));
+                throw new Error(messagesFormatter.format(messages.failed_to_create_report_module, toolName, JSON.stringify(error)));
             }
             
             // Upload report results
@@ -372,7 +372,7 @@ export class StaticAnalysisParserRunner {
                         logger.error(JSON.stringify(data, null, 2));
                     }
                 }
-                throw new Error(messagesFormatter.format(messages.failed_to_upload_parasoft_report_results, toolName, error));
+                throw new Error(messagesFormatter.format(messages.failed_to_upload_parasoft_report_results, toolName, JSON.stringify(error)));
             }
 
             logger.info(messagesFormatter.format(messages.uploaded_parasoft_report_results, toolName, vulnerabilities.length));
