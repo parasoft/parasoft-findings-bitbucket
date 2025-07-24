@@ -82,7 +82,7 @@ export class StaticAnalysisParserRunner {
             BITBUCKET_COMMIT: process.env.BITBUCKET_COMMIT || '',
             BITBUCKET_WORKSPACE: process.env.BITBUCKET_WORKSPACE || '',
             BITBUCKET_CLONE_DIR: process.env.BITBUCKET_CLONE_DIR || '',
-            BITBUCKET_API_URL: 'https://api.bitbucket.org/2.0/repositories'
+            BITBUCKET_API_URL: 'http://api.bitbucket.org/2.0/repositories'
         }
 
         const missingEnvs = Object.keys(requiredEnvs).filter(key => requiredEnvs[key as keyof BitbucketEnv] == '');
