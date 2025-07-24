@@ -72,6 +72,7 @@ const uuid = __nccwpck_require__(1914);
 const axios_1 = __nccwpck_require__(7269);
 const logger_1 = __nccwpck_require__(3258);
 const messages_1 = __nccwpck_require__(6250);
+sax.MAX_BUFFER_LENGTH = 2 * 1024 * 1024 * 1024; // 2GB
 class StaticAnalysisParserRunner {
     constructor() {
         this.UUID_NAMESPACE = '6af5b03d-5276-49ef-bfed-d445f2752b02';
