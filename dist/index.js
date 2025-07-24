@@ -348,19 +348,15 @@ class StaticAnalysisParserRunner {
                 throw new Error(messages_1.messagesFormatter.format(messages_1.messages.failed_to_create_report_module, toolName, error));
             }
             try {
-                if (vulnerabilities.length > 100) {
-                    // Due to the limitation of Bitbucket API, split the vulnerabilities into batches
-                    // Each batch contains 100 vulnerabilities
-                    const vulnerabilityBatches = [];
-                    for (let i = 0; i < vulnerabilities.length; i += 100) {
-                        vulnerabilityBatches.push(vulnerabilities.slice(i, i + 100));
-                    }
-                    for (const vulnerabilityBatch of vulnerabilityBatches) {
-                        await this.uploadVulnerabilitiesToBitbucket(reportId, vulnerabilityBatch);
-                    }
+                // Due to the limitation of Bitbucket API, split the vulnerabilities into batches
+                // Each batch contains 100 vulnerabilities
+                const vulnerabilityBatches = [];
+                for (let i = 0; i < vulnerabilities.length; i += 100) {
+                    vulnerabilityBatches.push(vulnerabilities.slice(i, i + 100));
                 }
-                else {
-                    await this.uploadVulnerabilitiesToBitbucket(reportId, vulnerabilities);
+                for (const vulnerabilityBatch of vulnerabilityBatches) {
+                    // Upload report results
+                    await axios_1.default.post(`${this.getReportUrl(reportId)}/annotations`, vulnerabilityBatch, { auth: this.getAuth() });
                 }
             }
             catch (error) {
@@ -374,10 +370,6 @@ class StaticAnalysisParserRunner {
             }
             logger_1.logger.info(messages_1.messagesFormatter.format(messages_1.messages.uploaded_parasoft_report_results, toolName, vulnerabilities.length));
         }
-    }
-    async uploadVulnerabilitiesToBitbucket(reportId, vulnerabilities) {
-        // Upload report results
-        await axios_1.default.post(`${this.getReportUrl(reportId)}/annotations`, vulnerabilities, { auth: this.getAuth() });
     }
     getReportUrl(reportId) {
         const { BITBUCKET_API_URL, BITBUCKET_WORKSPACE, BITBUCKET_REPO_SLUG, BITBUCKET_COMMIT } = this.BITBUCKET_ENVS;

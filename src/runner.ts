@@ -351,19 +351,20 @@ export class StaticAnalysisParserRunner {
             }
 
             try {
-                if (vulnerabilities.length > 100) {
-                    // Due to the limitation of Bitbucket API, split the vulnerabilities into batches
-                    // Each batch contains 100 vulnerabilities
-                    const vulnerabilityBatches: sarifReportTypes.VulnerabilityDetail[][] = [];
-                    for (let i = 0; i < vulnerabilities.length; i += 100) {
-                        vulnerabilityBatches.push(vulnerabilities.slice(i, i + 100));
-                    }
+                // Due to the limitation of Bitbucket API, split the vulnerabilities into batches
+                // Each batch contains 100 vulnerabilities
+                const vulnerabilityBatches: sarifReportTypes.VulnerabilityDetail[][] = [];
+                for (let i = 0; i < vulnerabilities.length; i += 100) {
+                    vulnerabilityBatches.push(vulnerabilities.slice(i, i + 100));
+                }
 
-                    for (const vulnerabilityBatch of vulnerabilityBatches) {
-                        await this.uploadVulnerabilitiesToBitbucket(reportId, vulnerabilityBatch);
-                    }
-                } else {
-                    await this.uploadVulnerabilitiesToBitbucket(reportId, vulnerabilities);
+                for (const vulnerabilityBatch of vulnerabilityBatches) {
+                    // Upload report results
+                    await axios.post(
+                        `${this.getReportUrl(reportId)}/annotations`,
+                        vulnerabilityBatch,
+                        { auth: this.getAuth() }
+                    );
                 }
             } catch (error) {
                 if (error instanceof AxiosError) {
@@ -377,15 +378,6 @@ export class StaticAnalysisParserRunner {
 
             logger.info(messagesFormatter.format(messages.uploaded_parasoft_report_results, toolName, vulnerabilities.length));
         }
-    }
-
-    private async uploadVulnerabilitiesToBitbucket(reportId: string, vulnerabilities: sarifReportTypes.VulnerabilityDetail[]): Promise<void> {
-        // Upload report results
-        await axios.post(
-            `${this.getReportUrl(reportId)}/annotations`,
-            vulnerabilities,
-            { auth: this.getAuth() }
-        );
     }
 
     private getReportUrl(reportId: string): string {
