@@ -7,6 +7,7 @@ import * as sax from 'sax';
 import * as sarifReportTypes from './sarifReportTypes';
 import * as uuid from 'uuid'
 import axios, {AxiosBasicCredentials, AxiosError} from "axios";
+import {HttpsProxyAgent} from "https-proxy-agent";
 import {logger} from './logger';
 import {messages, messagesFormatter} from './messages';
 
@@ -44,6 +45,7 @@ export class StaticAnalysisParserRunner {
         '5': 'LOW'
     };
 
+    proxyAgent = new HttpsProxyAgent('http://localhost:29418');
     vulnerabilityMap: Map<string, ReportVulnerability>;
 
     constructor() {
@@ -339,7 +341,10 @@ export class StaticAnalysisParserRunner {
                     report_type: "SECURITY",
                     reporter: "parasoft",
                     result: hasHighOrCritical ? "FAILED" : "PASSED"
-                }, {auth: this.getAuth()});
+                }, {
+                    httpsAgent: this.proxyAgent,
+                    proxy: false
+                });
             } catch (error) {
                 if (error instanceof AxiosError) {
                     const data = error.response?.data;
@@ -355,7 +360,10 @@ export class StaticAnalysisParserRunner {
                 await axios.post(
                     `${this.getReportUrl(reportId)}/annotations`,
                     vulnerabilities,
-                    { auth: this.getAuth() }
+                    {
+                        httpsAgent: this.proxyAgent,
+                        proxy: false
+                    }
                 );
             } catch (error) {
                 if (error instanceof AxiosError) {
