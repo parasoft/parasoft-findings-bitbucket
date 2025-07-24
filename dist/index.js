@@ -70,7 +70,7 @@ const glob = __nccwpck_require__(1363);
 const sax = __nccwpck_require__(2560);
 const uuid = __nccwpck_require__(1914);
 const axios_1 = __nccwpck_require__(7269);
-const https_proxy_agent_1 = __nccwpck_require__(3669);
+const http_proxy_agent_1 = __nccwpck_require__(1970);
 const logger_1 = __nccwpck_require__(3258);
 const messages_1 = __nccwpck_require__(6250);
 class StaticAnalysisParserRunner {
@@ -83,7 +83,7 @@ class StaticAnalysisParserRunner {
             '4': 'MEDIUM',
             '5': 'LOW'
         };
-        this.proxyAgent = new https_proxy_agent_1.HttpsProxyAgent('http://localhost:29418');
+        this.proxyAgent = new http_proxy_agent_1.HttpProxyAgent('http://localhost:29418');
         this.BITBUCKET_ENVS = this.getBitbucketEnvs();
         this.vulnerabilityMap = new Map();
     }
@@ -340,7 +340,6 @@ class StaticAnalysisParserRunner {
                     result: hasHighOrCritical ? "FAILED" : "PASSED"
                 }, {
                     httpAgent: this.proxyAgent,
-                    httpsAgent: this.proxyAgent,
                     proxy: false
                 });
             }
@@ -357,7 +356,6 @@ class StaticAnalysisParserRunner {
             try {
                 await axios_1.default.post(`${this.getReportUrl(reportId)}/annotations`, vulnerabilities, {
                     httpAgent: this.proxyAgent,
-                    httpsAgent: this.proxyAgent,
                     proxy: false
                 });
             }
@@ -9650,7 +9648,7 @@ module.exports = bind.call(call, $hasOwn);
 
 /***/ }),
 
-/***/ 3669:
+/***/ 1970:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
 "use strict";
@@ -9682,45 +9680,24 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.HttpsProxyAgent = void 0;
+exports.HttpProxyAgent = void 0;
 const net = __importStar(__nccwpck_require__(9278));
 const tls = __importStar(__nccwpck_require__(4756));
-const assert_1 = __importDefault(__nccwpck_require__(2613));
 const debug_1 = __importDefault(__nccwpck_require__(2830));
+const events_1 = __nccwpck_require__(4434);
 const agent_base_1 = __nccwpck_require__(8894);
 const url_1 = __nccwpck_require__(7016);
-const parse_proxy_response_1 = __nccwpck_require__(7943);
-const debug = (0, debug_1.default)('https-proxy-agent');
-const setServernameFromNonIpHost = (options) => {
-    if (options.servername === undefined &&
-        options.host &&
-        !net.isIP(options.host)) {
-        return {
-            ...options,
-            servername: options.host,
-        };
-    }
-    return options;
-};
+const debug = (0, debug_1.default)('http-proxy-agent');
 /**
- * The `HttpsProxyAgent` implements an HTTP Agent subclass that connects to
- * the specified "HTTP(s) proxy server" in order to proxy HTTPS requests.
- *
- * Outgoing HTTP requests are first tunneled through the proxy server using the
- * `CONNECT` HTTP request method to establish a connection to the proxy server,
- * and then the proxy server connects to the destination target and issues the
- * HTTP request from the proxy server.
- *
- * `https:` requests have their socket connection upgraded to TLS once
- * the connection to the proxy server has been established.
+ * The `HttpProxyAgent` implements an HTTP Agent subclass that connects
+ * to the specified "HTTP proxy server" in order to proxy HTTP requests.
  */
-class HttpsProxyAgent extends agent_base_1.Agent {
+class HttpProxyAgent extends agent_base_1.Agent {
     constructor(proxy, opts) {
         super(opts);
-        this.options = { path: undefined };
         this.proxy = typeof proxy === 'string' ? new url_1.URL(proxy) : proxy;
         this.proxyHeaders = opts?.headers ?? {};
-        debug('Creating new HttpsProxyAgent instance: %o', this.proxy.href);
+        debug('Creating new HttpProxyAgent instance: %o', this.proxy.href);
         // Trim off the brackets from IPv6 addresses
         const host = (this.proxy.hostname || this.proxy.host).replace(/^\[|\]$/g, '');
         const port = this.proxy.port
@@ -9729,100 +9706,89 @@ class HttpsProxyAgent extends agent_base_1.Agent {
                 ? 443
                 : 80;
         this.connectOpts = {
-            // Attempt to negotiate http/1.1 for proxy servers that support http/2
-            ALPNProtocols: ['http/1.1'],
             ...(opts ? omit(opts, 'headers') : null),
             host,
             port,
         };
     }
-    /**
-     * Called when the node-core HTTP client library is creating a
-     * new HTTP request.
-     */
-    async connect(req, opts) {
+    addRequest(req, opts) {
+        req._header = null;
+        this.setRequestProps(req, opts);
+        // @ts-expect-error `addRequest()` isn't defined in `@types/node`
+        super.addRequest(req, opts);
+    }
+    setRequestProps(req, opts) {
         const { proxy } = this;
-        if (!opts.host) {
-            throw new TypeError('No "host" provided');
+        const protocol = opts.secureEndpoint ? 'https:' : 'http:';
+        const hostname = req.getHeader('host') || 'localhost';
+        const base = `${protocol}//${hostname}`;
+        const url = new url_1.URL(req.path, base);
+        if (opts.port !== 80) {
+            url.port = String(opts.port);
         }
-        // Create a socket connection to the proxy server.
-        let socket;
-        if (proxy.protocol === 'https:') {
-            debug('Creating `tls.Socket`: %o', this.connectOpts);
-            socket = tls.connect(setServernameFromNonIpHost(this.connectOpts));
-        }
-        else {
-            debug('Creating `net.Socket`: %o', this.connectOpts);
-            socket = net.connect(this.connectOpts);
-        }
+        // Change the `http.ClientRequest` instance's "path" field
+        // to the absolute path of the URL that will be requested.
+        req.path = String(url);
+        // Inject the `Proxy-Authorization` header if necessary.
         const headers = typeof this.proxyHeaders === 'function'
             ? this.proxyHeaders()
             : { ...this.proxyHeaders };
-        const host = net.isIPv6(opts.host) ? `[${opts.host}]` : opts.host;
-        let payload = `CONNECT ${host}:${opts.port} HTTP/1.1\r\n`;
-        // Inject the `Proxy-Authorization` header if necessary.
         if (proxy.username || proxy.password) {
             const auth = `${decodeURIComponent(proxy.username)}:${decodeURIComponent(proxy.password)}`;
             headers['Proxy-Authorization'] = `Basic ${Buffer.from(auth).toString('base64')}`;
         }
-        headers.Host = `${host}:${opts.port}`;
         if (!headers['Proxy-Connection']) {
             headers['Proxy-Connection'] = this.keepAlive
                 ? 'Keep-Alive'
                 : 'close';
         }
         for (const name of Object.keys(headers)) {
-            payload += `${name}: ${headers[name]}\r\n`;
-        }
-        const proxyResponsePromise = (0, parse_proxy_response_1.parseProxyResponse)(socket);
-        socket.write(`${payload}\r\n`);
-        const { connect, buffered } = await proxyResponsePromise;
-        req.emit('proxyConnect', connect);
-        this.emit('proxyConnect', connect, req);
-        if (connect.statusCode === 200) {
-            req.once('socket', resume);
-            if (opts.secureEndpoint) {
-                // The proxy is connecting to a TLS server, so upgrade
-                // this socket connection to a TLS connection.
-                debug('Upgrading socket connection to TLS');
-                return tls.connect({
-                    ...omit(setServernameFromNonIpHost(opts), 'host', 'path', 'port'),
-                    socket,
-                });
+            const value = headers[name];
+            if (value) {
+                req.setHeader(name, value);
             }
-            return socket;
         }
-        // Some other status code that's not 200... need to re-play the HTTP
-        // header "data" events onto the socket once the HTTP machinery is
-        // attached so that the node core `http` can parse and handle the
-        // error status code.
-        // Close the original socket, and a new "fake" socket is returned
-        // instead, so that the proxy doesn't get the HTTP request
-        // written to it (which may contain `Authorization` headers or other
-        // sensitive data).
-        //
-        // See: https://hackerone.com/reports/541502
-        socket.destroy();
-        const fakeSocket = new net.Socket({ writable: false });
-        fakeSocket.readable = true;
-        // Need to wait for the "socket" event to re-play the "data" events.
-        req.once('socket', (s) => {
-            debug('Replaying proxy buffer for failed request');
-            (0, assert_1.default)(s.listenerCount('data') > 0);
-            // Replay the "buffered" Buffer onto the fake `socket`, since at
-            // this point the HTTP module machinery has been hooked up for
-            // the user.
-            s.push(buffered);
-            s.push(null);
-        });
-        return fakeSocket;
+    }
+    async connect(req, opts) {
+        req._header = null;
+        if (!req.path.includes('://')) {
+            this.setRequestProps(req, opts);
+        }
+        // At this point, the http ClientRequest's internal `_header` field
+        // might have already been set. If this is the case then we'll need
+        // to re-generate the string since we just changed the `req.path`.
+        let first;
+        let endOfHeaders;
+        debug('Regenerating stored HTTP header string for request');
+        req._implicitHeader();
+        if (req.outputData && req.outputData.length > 0) {
+            debug('Patching connection write() output buffer with updated header');
+            first = req.outputData[0].data;
+            endOfHeaders = first.indexOf('\r\n\r\n') + 4;
+            req.outputData[0].data =
+                req._header + first.substring(endOfHeaders);
+            debug('Output buffer: %o', req.outputData[0].data);
+        }
+        // Create a socket connection to the proxy server.
+        let socket;
+        if (this.proxy.protocol === 'https:') {
+            debug('Creating `tls.Socket`: %o', this.connectOpts);
+            socket = tls.connect(this.connectOpts);
+        }
+        else {
+            debug('Creating `net.Socket`: %o', this.connectOpts);
+            socket = net.connect(this.connectOpts);
+        }
+        // Wait for the socket's `connect` event, so that this `callback()`
+        // function throws instead of the `http` request machinery. This is
+        // important for i.e. `PacProxyAgent` which determines a failed proxy
+        // connection via the `callback()` function throwing.
+        await (0, events_1.once)(socket, 'connect');
+        return socket;
     }
 }
-HttpsProxyAgent.protocols = ['http', 'https'];
-exports.HttpsProxyAgent = HttpsProxyAgent;
-function resume(socket) {
-    socket.resume();
-}
+HttpProxyAgent.protocols = ['http', 'https'];
+exports.HttpProxyAgent = HttpProxyAgent;
 function omit(obj, ...keys) {
     const ret = {};
     let key;
@@ -9834,114 +9800,6 @@ function omit(obj, ...keys) {
     return ret;
 }
 //# sourceMappingURL=index.js.map
-
-/***/ }),
-
-/***/ 7943:
-/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
-
-"use strict";
-
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.parseProxyResponse = void 0;
-const debug_1 = __importDefault(__nccwpck_require__(2830));
-const debug = (0, debug_1.default)('https-proxy-agent:parse-proxy-response');
-function parseProxyResponse(socket) {
-    return new Promise((resolve, reject) => {
-        // we need to buffer any HTTP traffic that happens with the proxy before we get
-        // the CONNECT response, so that if the response is anything other than an "200"
-        // response code, then we can re-play the "data" events on the socket once the
-        // HTTP parser is hooked up...
-        let buffersLength = 0;
-        const buffers = [];
-        function read() {
-            const b = socket.read();
-            if (b)
-                ondata(b);
-            else
-                socket.once('readable', read);
-        }
-        function cleanup() {
-            socket.removeListener('end', onend);
-            socket.removeListener('error', onerror);
-            socket.removeListener('readable', read);
-        }
-        function onend() {
-            cleanup();
-            debug('onend');
-            reject(new Error('Proxy connection ended before receiving CONNECT response'));
-        }
-        function onerror(err) {
-            cleanup();
-            debug('onerror %o', err);
-            reject(err);
-        }
-        function ondata(b) {
-            buffers.push(b);
-            buffersLength += b.length;
-            const buffered = Buffer.concat(buffers, buffersLength);
-            const endOfHeaders = buffered.indexOf('\r\n\r\n');
-            if (endOfHeaders === -1) {
-                // keep buffering
-                debug('have not received end of HTTP headers yet...');
-                read();
-                return;
-            }
-            const headerParts = buffered
-                .slice(0, endOfHeaders)
-                .toString('ascii')
-                .split('\r\n');
-            const firstLine = headerParts.shift();
-            if (!firstLine) {
-                socket.destroy();
-                return reject(new Error('No header received from proxy CONNECT response'));
-            }
-            const firstLineParts = firstLine.split(' ');
-            const statusCode = +firstLineParts[1];
-            const statusText = firstLineParts.slice(2).join(' ');
-            const headers = {};
-            for (const header of headerParts) {
-                if (!header)
-                    continue;
-                const firstColon = header.indexOf(':');
-                if (firstColon === -1) {
-                    socket.destroy();
-                    return reject(new Error(`Invalid header from proxy CONNECT response: "${header}"`));
-                }
-                const key = header.slice(0, firstColon).toLowerCase();
-                const value = header.slice(firstColon + 1).trimStart();
-                const current = headers[key];
-                if (typeof current === 'string') {
-                    headers[key] = [current, value];
-                }
-                else if (Array.isArray(current)) {
-                    current.push(value);
-                }
-                else {
-                    headers[key] = value;
-                }
-            }
-            debug('got proxy server response: %o %o', firstLine, headers);
-            cleanup();
-            resolve({
-                connect: {
-                    statusCode,
-                    statusText,
-                    headers,
-                },
-                buffered,
-            });
-        }
-        socket.on('error', onerror);
-        socket.on('end', onend);
-        read();
-    });
-}
-exports.parseProxyResponse = parseProxyResponse;
-//# sourceMappingURL=parse-proxy-response.js.map
 
 /***/ }),
 
@@ -22193,7 +22051,7 @@ if (debugUtil && debugUtil.debuglog) {
 
 var BufferList = __nccwpck_require__(576);
 var destroyImpl = __nccwpck_require__(6505);
-var _require = __nccwpck_require__(1970),
+var _require = __nccwpck_require__(9589),
   getHighWaterMark = _require.getHighWaterMark;
 var _require$codes = (__nccwpck_require__(4948)/* .codes */ .F),
   ERR_INVALID_ARG_TYPE = _require$codes.ERR_INVALID_ARG_TYPE,
@@ -23435,7 +23293,7 @@ function _isUint8Array(obj) {
   return Buffer.isBuffer(obj) || obj instanceof OurUint8Array;
 }
 var destroyImpl = __nccwpck_require__(6505);
-var _require = __nccwpck_require__(1970),
+var _require = __nccwpck_require__(9589),
   getHighWaterMark = _require.getHighWaterMark;
 var _require$codes = (__nccwpck_require__(4948)/* .codes */ .F),
   ERR_INVALID_ARG_TYPE = _require$codes.ERR_INVALID_ARG_TYPE,
@@ -24731,7 +24589,7 @@ module.exports = pipeline;
 
 /***/ }),
 
-/***/ 1970:
+/***/ 9589:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
 "use strict";

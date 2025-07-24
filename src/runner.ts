@@ -7,7 +7,7 @@ import * as sax from 'sax';
 import * as sarifReportTypes from './sarifReportTypes';
 import * as uuid from 'uuid'
 import axios, {AxiosBasicCredentials, AxiosError} from "axios";
-import {HttpsProxyAgent} from "https-proxy-agent";
+import {HttpProxyAgent} from "http-proxy-agent";
 import {logger} from './logger';
 import {messages, messagesFormatter} from './messages';
 
@@ -45,7 +45,7 @@ export class StaticAnalysisParserRunner {
         '5': 'LOW'
     };
 
-    proxyAgent = new HttpsProxyAgent('http://localhost:29418');
+    proxyAgent = new HttpProxyAgent('http://localhost:29418');
     vulnerabilityMap: Map<string, ReportVulnerability>;
 
     constructor() {
@@ -343,7 +343,6 @@ export class StaticAnalysisParserRunner {
                     result: hasHighOrCritical ? "FAILED" : "PASSED"
                 }, {
                     httpAgent: this.proxyAgent,
-                    httpsAgent: this.proxyAgent,
                     proxy: false
                 });
             } catch (error) {
@@ -363,7 +362,6 @@ export class StaticAnalysisParserRunner {
                     vulnerabilities,
                     {
                         httpAgent: this.proxyAgent,
-                        httpsAgent: this.proxyAgent,
                         proxy: false
                     }
                 );
