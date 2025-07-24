@@ -10,6 +10,8 @@ import axios, {AxiosBasicCredentials, AxiosError} from "axios";
 import {logger} from './logger';
 import {messages, messagesFormatter} from './messages';
 
+(sax as any).MAX_BUFFER_LENGTH = 2 * 1024 * 1024 * 1024; // 2GB
+
 export interface RunOptions {
     /* Specify a path or minimatch pattern to locate Parasoft static analysis report files */
     report: string;
