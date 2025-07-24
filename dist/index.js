@@ -101,7 +101,7 @@ class StaticAnalysisParserRunner {
                 logger_1.logger.warn(messages_1.messagesFormatter.format(messages_1.messages.skip_static_analysis_report, parasoftReportPath));
             }
         }
-        await this.uploadVulnerabilitiesToBitbucket();
+        await this.uploadReportResultsToBitbucket();
     }
     getBitbucketEnvs() {
         const requiredEnvs = {
@@ -306,7 +306,7 @@ class StaticAnalysisParserRunner {
         const uri = ((_g = (_f = (_e = (_d = result.locations) === null || _d === void 0 ? void 0 : _d[0]) === null || _e === void 0 ? void 0 : _e.physicalLocation) === null || _f === void 0 ? void 0 : _f.artifactLocation) === null || _g === void 0 ? void 0 : _g.uri) || '';
         return uuid.v5(violType + ruleId + msg + severity + lineHash + uri + order, this.UUID_NAMESPACE);
     }
-    async uploadVulnerabilitiesToBitbucket() {
+    async uploadReportResultsToBitbucket() {
         var _a, _b;
         for (const [parasoftReportPath, vulnerability] of this.vulnerabilityMap) {
             const toolName = vulnerability.toolName;
@@ -318,8 +318,8 @@ class StaticAnalysisParserRunner {
             }
             logger_1.logger.info(messages_1.messagesFormatter.format(messages_1.messages.uploading_parasoft_report_results, toolName, parasoftReportPath));
             let reportDetails;
-            if (vulnerabilities.length > 100) {
-                vulnerabilities = vulnerabilities.slice(0, 100);
+            if (vulnerabilities.length > 1000) {
+                vulnerabilities = vulnerabilities.slice(0, 1000);
                 logger_1.logger.info(messages_1.messagesFormatter.format(messages_1.messages.only_specified_vulnerabilities_will_be_uploaded, vulnerabilities.length));
                 reportDetails = messages_1.messagesFormatter.format(messages_1.messages.report_details_description_2, parasoftReportPath, totalVulnerabilities, vulnerabilities.length);
             }
@@ -347,9 +347,17 @@ class StaticAnalysisParserRunner {
                 }
                 throw new Error(messages_1.messagesFormatter.format(messages_1.messages.failed_to_create_report_module, toolName, error));
             }
-            // Upload report results
             try {
-                await axios_1.default.post(`${this.getReportUrl(reportId)}/annotations`, vulnerabilities, { auth: this.getAuth() });
+                // Due to the limitation of Bitbucket API, split the vulnerabilities into batches
+                // Each batch contains 100 vulnerabilities
+                const vulnerabilityBatches = [];
+                for (let i = 0; i < vulnerabilities.length; i += 100) {
+                    vulnerabilityBatches.push(vulnerabilities.slice(i, i + 100));
+                }
+                for (const vulnerabilityBatch of vulnerabilityBatches) {
+                    // Upload report results
+                    await axios_1.default.post(`${this.getReportUrl(reportId)}/annotations`, vulnerabilityBatch, { auth: this.getAuth() });
+                }
             }
             catch (error) {
                 if (error instanceof axios_1.AxiosError) {
