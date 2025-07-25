@@ -106,8 +106,8 @@ class StaticAnalysisParserRunner {
     }
     getBitbucketEnvs() {
         const requiredEnvs = {
-            BB_USER: process.env.BB_USER || '',
-            BB_APP_PASSWORD: process.env.BB_APP_PASSWORD || '',
+            USER_EMAIL: process.env.USER_EMAIL || '',
+            API_TOKEN: process.env.API_TOKEN || '',
             BITBUCKET_REPO_SLUG: process.env.BITBUCKET_REPO_SLUG || '',
             BITBUCKET_COMMIT: process.env.BITBUCKET_COMMIT || '',
             BITBUCKET_WORKSPACE: process.env.BITBUCKET_WORKSPACE || '',
@@ -319,6 +319,8 @@ class StaticAnalysisParserRunner {
             }
             logger_1.logger.info(messages_1.messagesFormatter.format(messages_1.messages.uploading_parasoft_report_results, toolName, parasoftReportPath));
             let reportDetails;
+            //  A report module can contain up to 1000 annotations(vulnerabilities).
+            // Reference: https://support.atlassian.com/bitbucket-cloud/docs/code-insights/#Annotations
             if (vulnerabilities.length > 1000) {
                 vulnerabilities = vulnerabilities.slice(0, 1000);
                 logger_1.logger.info(messages_1.messagesFormatter.format(messages_1.messages.only_specified_vulnerabilities_will_be_uploaded, vulnerabilities.length));
@@ -335,7 +337,7 @@ class StaticAnalysisParserRunner {
                     title: `Parasoft ${toolName}`,
                     details: reportDetails,
                     report_type: "SECURITY",
-                    reporter: "parasoft",
+                    reporter: "Parasoft",
                     result: hasHighOrCritical ? "FAILED" : "PASSED"
                 }, { auth: this.getAuth() });
             }
@@ -349,8 +351,9 @@ class StaticAnalysisParserRunner {
                 throw new Error(messages_1.messagesFormatter.format(messages_1.messages.failed_to_create_report_module, toolName, error));
             }
             try {
-                // Due to the limitation of Bitbucket API, split the vulnerabilities into batches
-                // Each batch contains 100 vulnerabilities
+                // With POST …/annotations endpoint up to 100 annotations can be created or updated at once.
+                // Reference: https://support.atlassian.com/bitbucket-cloud/docs/code-insights/#Annotations
+                // Split the vulnerabilities into batches and each batch contains 100 vulnerabilities
                 const vulnerabilityBatches = [];
                 for (let i = 0; i < vulnerabilities.length; i += 100) {
                     vulnerabilityBatches.push(vulnerabilities.slice(i, i + 100));
@@ -377,8 +380,8 @@ class StaticAnalysisParserRunner {
         return `${BITBUCKET_API_URL}/${BITBUCKET_WORKSPACE}/${BITBUCKET_REPO_SLUG}/commit/${BITBUCKET_COMMIT}/reports/${reportId}`;
     }
     getAuth() {
-        const { BB_USER, BB_APP_PASSWORD } = this.BITBUCKET_ENVS;
-        return { username: BB_USER, password: BB_APP_PASSWORD };
+        const { USER_EMAIL, API_TOKEN } = this.BITBUCKET_ENVS;
+        return { username: USER_EMAIL, password: API_TOKEN };
     }
     sortVulnerabilitiesBySevLevel(vulnerabilities) {
         const severityOrder = {
