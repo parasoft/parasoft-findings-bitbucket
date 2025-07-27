@@ -22,12 +22,12 @@ export interface RunOptions {
 
 interface ReportVulnerability {
     toolName: string;
-    vulnerabilityDetail: sarifReportTypes.VulnerabilityDetail[];
+    vulnerabilityDetails: sarifReportTypes.VulnerabilityDetail[];
 }
 
-interface BitbucketEnv {
-    USER_EMAIL: string;
-    API_TOKEN: string;
+interface BitbucketEnvs {
+    USERNAME: string;
+    APP_PASSWORD: string;
     BITBUCKET_REPO_SLUG: string;
     BITBUCKET_COMMIT: string;
     BITBUCKET_WORKSPACE: string;
@@ -37,8 +37,8 @@ interface BitbucketEnv {
 
 export class StaticAnalysisParserRunner {
     UUID_NAMESPACE: string = '6af5b03d-5276-49ef-bfed-d445f2752b02';
-    BITBUCKET_ENVS: BitbucketEnv;
-    PARASOFT_SEV_LEVEL_MAP = {
+    BITBUCKET_ENVS: BitbucketEnvs;
+    PARASOFT_SEV_LEVEL_MAP = { // Map Parasoft severity level to Bitbucket severity level
         '1': 'CRITICAL',
         '2': 'HIGH',
         '3': 'MEDIUM',
@@ -55,13 +55,13 @@ export class StaticAnalysisParserRunner {
 
     async run(runOptions: RunOptions): Promise<void> {
         const parasoftReportPaths = await this.findParasoftStaticAnalysisReports(runOptions.report);
-        const javaFilePath = this.getJavaFilePath(runOptions.parasoftToolOrJavaRootPath);
+        const javaExePath = this.getJavaPath(runOptions.parasoftToolOrJavaRootPath);
 
         for (const parasoftReportPath of parasoftReportPaths) {
             logger.info(messagesFormatter.format(messages.parsing_parasoft_report, parasoftReportPath));
 
             try {
-                const sarifReport = await this.convertReportWithJava(javaFilePath, parasoftReportPath);
+                const sarifReport = await this.convertReportWithJava(javaExePath, parasoftReportPath);
                 await this.parseSarifReport(sarifReport, parasoftReportPath);
             } catch (error) {
                 if (error instanceof Error) {
@@ -74,10 +74,10 @@ export class StaticAnalysisParserRunner {
         await this.uploadReportResultsToBitbucket();
     }
 
-    private getBitbucketEnvs(): BitbucketEnv {
-        const requiredEnvs: BitbucketEnv = {
-            USER_EMAIL: process.env.USER_EMAIL || '',
-            API_TOKEN: process.env.API_TOKEN || '',
+    private getBitbucketEnvs(): BitbucketEnvs {
+        const requiredEnvs: BitbucketEnvs = {
+            USERNAME: process.env.USERNAME || '',
+            APP_PASSWORD: process.env.APP_PASSWORD || '',
             BITBUCKET_REPO_SLUG: process.env.BITBUCKET_REPO_SLUG || '',
             BITBUCKET_COMMIT: process.env.BITBUCKET_COMMIT || '',
             BITBUCKET_WORKSPACE: process.env.BITBUCKET_WORKSPACE || '',
@@ -85,7 +85,7 @@ export class StaticAnalysisParserRunner {
             BITBUCKET_API_URL: 'https://api.bitbucket.org/2.0/repositories'
         }
 
-        const missingEnvs = Object.keys(requiredEnvs).filter(key => requiredEnvs[key as keyof BitbucketEnv] == '');
+        const missingEnvs = Object.keys(requiredEnvs).filter(key => requiredEnvs[key as keyof BitbucketEnvs] == '');
         if (missingEnvs.length > 0) {
             throw new Error(messagesFormatter.format(messages.missing_required_environment_variables, missingEnvs.join(', ')));
         }
@@ -191,24 +191,24 @@ export class StaticAnalysisParserRunner {
         });
     }
 
-    private getJavaFilePath(parasoftToolOrJavaRootPath: string | undefined): string {
+    private getJavaPath(parasoftToolOrJavaRootPath: string | undefined): string {
         const javaInstallDir = parasoftToolOrJavaRootPath || process.env.JAVA_HOME;
 
         if (!javaInstallDir || !fs.existsSync(javaInstallDir)) {
             throw new Error(messagesFormatter.format(messages.java_or_parasoft_tool_install_dir_not_found));
         }
 
-        const javaFilePath = this.doGetJavaFilePath(javaInstallDir);
-        if (!javaFilePath) {
+        const javaExePath = this.doGetJavaPath(javaInstallDir);
+        if (!javaExePath) {
             throw new Error(messagesFormatter.format(messages.java_not_found_in_java_or_parasoft_tool_install_dir));
         } else {
-            logger.debug(messagesFormatter.format(messages.found_java_at, javaFilePath));
+            logger.debug(messagesFormatter.format(messages.found_java_at, javaExePath));
         }
 
-        return javaFilePath;
+        return javaExePath;
     }
 
-    private doGetJavaFilePath(installDir: string): string | undefined {
+    private doGetJavaPath(installDir: string): string | undefined {
         logger.debug(messagesFormatter.format(messages.finding_java_in_java_or_parasoft_tool_install_dir, installDir));
         const javaFileName = os.platform() == 'win32' ? 'java.exe' : 'java';
         const javaPaths = [
@@ -218,9 +218,9 @@ export class StaticAnalysisParserRunner {
         ];
 
         for (const path of javaPaths) {
-            const javaFilePath = pt.join(installDir, path, javaFileName);
-            if (fs.existsSync(javaFilePath)) {
-                return javaFilePath;
+            const javaExePath = pt.join(installDir, path, javaFileName);
+            if (fs.existsSync(javaExePath)) {
+                return javaExePath;
             }
         }
 
@@ -259,7 +259,7 @@ export class StaticAnalysisParserRunner {
 
         this.vulnerabilityMap.set(parasoftReportPath, {
             toolName: tool.driver.name,
-            vulnerabilityDetail: vulnerabilities
+            vulnerabilityDetails: vulnerabilities
         });
 
         logger.info(messagesFormatter.format(messages.parsed_parasoft_static_analysis_report, vulnerabilities.length, parasoftReportPath));
@@ -313,7 +313,7 @@ export class StaticAnalysisParserRunner {
     private async uploadReportResultsToBitbucket(): Promise<void> {
         for (const [parasoftReportPath, vulnerability] of this.vulnerabilityMap) {
             const toolName = vulnerability.toolName;
-            let vulnerabilities = this.sortVulnerabilitiesBySevLevel(vulnerability.vulnerabilityDetail);
+            let vulnerabilities = this.sortVulnerabilitiesBySevLevel(vulnerability.vulnerabilityDetails);
             const totalVulnerabilities = vulnerabilities.length;
             if (totalVulnerabilities == 0) {
                 logger.info(messagesFormatter.format(messages.skip_static_analysis_report, parasoftReportPath));
@@ -391,8 +391,8 @@ export class StaticAnalysisParserRunner {
     }
 
     private getAuth(): AxiosBasicCredentials {
-        const { USER_EMAIL, API_TOKEN } = this.BITBUCKET_ENVS;
-        return { username: USER_EMAIL, password: API_TOKEN };
+        const { USERNAME, APP_PASSWORD } = this.BITBUCKET_ENVS;
+        return { username: USERNAME, password: APP_PASSWORD };
     }
 
     private sortVulnerabilitiesBySevLevel(vulnerabilities: sarifReportTypes.VulnerabilityDetail[]): sarifReportTypes.VulnerabilityDetail[] {
