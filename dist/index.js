@@ -106,8 +106,8 @@ class StaticAnalysisParserRunner {
     }
     getBitbucketEnvs() {
         const requiredEnvs = {
-            USERNAME: process.env.USERNAME || '',
-            APP_PASSWORD: process.env.APP_PASSWORD || '',
+            USER_EMAIL: process.env.USER_EMAIL || '',
+            API_TOKEN: process.env.API_TOKEN || '',
             BITBUCKET_REPO_SLUG: process.env.BITBUCKET_REPO_SLUG || '',
             BITBUCKET_COMMIT: process.env.BITBUCKET_COMMIT || '',
             BITBUCKET_WORKSPACE: process.env.BITBUCKET_WORKSPACE || '',
@@ -380,8 +380,8 @@ class StaticAnalysisParserRunner {
         return `${BITBUCKET_API_URL}/${BITBUCKET_WORKSPACE}/${BITBUCKET_REPO_SLUG}/commit/${BITBUCKET_COMMIT}/reports/${reportId}`;
     }
     getAuth() {
-        const { USERNAME, APP_PASSWORD } = this.BITBUCKET_ENVS;
-        return { username: USERNAME, password: APP_PASSWORD };
+        const { USER_EMAIL, API_TOKEN } = this.BITBUCKET_ENVS;
+        return { username: USER_EMAIL, password: API_TOKEN };
     }
     sortVulnerabilitiesBySevLevel(vulnerabilities) {
         const severityOrder = {
