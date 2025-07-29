@@ -6,7 +6,8 @@
     "rootDir": "./src",
     "strict": true,
     "noImplicitAny": true,
-    "sourceMap": true
+    "sourceMap": true,
+    "resolveJsonModule": true // Enable to import json file
   },
   "exclude": [
     "node_modules",

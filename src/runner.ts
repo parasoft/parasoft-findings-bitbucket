@@ -9,6 +9,7 @@ import * as uuid from 'uuid'
 import axios, {AxiosBasicCredentials, AxiosError} from "axios";
 import {logger} from './logger';
 import {messages, messagesFormatter} from './messages';
+import {BitbucketEnvs} from './main'
 
 (sax as any).MAX_BUFFER_LENGTH = 2 * 1024 * 1024 * 1024; // 2GB
 
@@ -25,19 +26,9 @@ interface ReportVulnerability {
     vulnerabilityDetails: sarifReportTypes.VulnerabilityDetail[];
 }
 
-interface BitbucketEnvs {
-    USER_EMAIL: string;
-    API_TOKEN: string;
-    BITBUCKET_REPO_SLUG: string;
-    BITBUCKET_COMMIT: string;
-    BITBUCKET_WORKSPACE: string;
-    BITBUCKET_CLONE_DIR: string;
-    BITBUCKET_API_URL: string;
-}
-
 export class StaticAnalysisParserRunner {
     UUID_NAMESPACE: string = '6af5b03d-5276-49ef-bfed-d445f2752b02';
-    BITBUCKET_ENVS: BitbucketEnvs;
+    BITBUCKET_ENVS!: BitbucketEnvs;
     PARASOFT_SEV_LEVEL_MAP = { // Map Parasoft severity level to Bitbucket severity level
         '1': 'CRITICAL',
         '2': 'HIGH',
@@ -49,11 +40,11 @@ export class StaticAnalysisParserRunner {
     vulnerabilityMap: Map<string, ReportVulnerability>;
 
     constructor() {
-        this.BITBUCKET_ENVS = this.getBitbucketEnvs();
         this.vulnerabilityMap = new Map<string, ReportVulnerability>();
     }
 
-    async run(runOptions: RunOptions): Promise<void> {
+    async run(runOptions: RunOptions, bitbucketEnvs: BitbucketEnvs): Promise<void> {
+        this.BITBUCKET_ENVS = bitbucketEnvs;
         const parasoftReportPaths = await this.findParasoftStaticAnalysisReports(runOptions.report);
         const javaExePath = this.getJavaPath(runOptions.parasoftToolOrJavaRootPath);
 
@@ -72,25 +63,6 @@ export class StaticAnalysisParserRunner {
         }
 
         await this.uploadReportResultsToBitbucket();
-    }
-
-    private getBitbucketEnvs(): BitbucketEnvs {
-        const requiredEnvs: BitbucketEnvs = {
-            USER_EMAIL: process.env.USER_EMAIL || '',
-            API_TOKEN: process.env.API_TOKEN || '',
-            BITBUCKET_REPO_SLUG: process.env.BITBUCKET_REPO_SLUG || '',
-            BITBUCKET_COMMIT: process.env.BITBUCKET_COMMIT || '',
-            BITBUCKET_WORKSPACE: process.env.BITBUCKET_WORKSPACE || '',
-            BITBUCKET_CLONE_DIR: process.env.BITBUCKET_CLONE_DIR || '',
-            BITBUCKET_API_URL: 'https://api.bitbucket.org/2.0/repositories'
-        }
-
-        const missingEnvs = Object.keys(requiredEnvs).filter(key => requiredEnvs[key as keyof BitbucketEnvs] == '');
-        if (missingEnvs.length > 0) {
-            throw new Error(messagesFormatter.format(messages.missing_required_environment_variables, missingEnvs.join(', ')));
-        }
-
-        return requiredEnvs;
     }
 
     private async findParasoftStaticAnalysisReports(reportPath: string): Promise<string[]> {
@@ -278,12 +250,12 @@ export class StaticAnalysisParserRunner {
     }
 
     private getPath(result: sarifReportTypes.ReportResult): string {
-        return result.locations[0].physicalLocation.artifactLocation.uri;
+        return result.locations[0]?.physicalLocation?.artifactLocation?.uri;
     }
 
     private getLine(result: sarifReportTypes.ReportResult): number {
-        const {region} = result.locations[0].physicalLocation;
-        return region.startLine ?? region.endLine;
+        const region = result.locations[0]?.physicalLocation?.region;
+        return region?.startLine ?? region?.endLine;
     }
 
     private getSummary(rule: sarifReportTypes.Rule): string {
