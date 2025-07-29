@@ -267,9 +267,9 @@ class StaticAnalysisParserRunner {
         return (_c = (_b = (_a = result.locations[0]) === null || _a === void 0 ? void 0 : _a.physicalLocation) === null || _b === void 0 ? void 0 : _b.artifactLocation) === null || _c === void 0 ? void 0 : _c.uri;
     }
     getLine(result) {
-        var _a;
-        const { region } = result.locations[0].physicalLocation;
-        return (_a = region === null || region === void 0 ? void 0 : region.startLine) !== null && _a !== void 0 ? _a : region === null || region === void 0 ? void 0 : region.endLine;
+        var _a, _b, _c;
+        const region = (_b = (_a = result.locations[0]) === null || _a === void 0 ? void 0 : _a.physicalLocation) === null || _b === void 0 ? void 0 : _b.region;
+        return (_c = region === null || region === void 0 ? void 0 : region.startLine) !== null && _c !== void 0 ? _c : region === null || region === void 0 ? void 0 : region.endLine;
     }
     getSummary(rule) {
         var _a, _b, _c, _d;
@@ -38379,13 +38379,13 @@ async function run() {
         boolean: ['debug', 'help', 'version'],
         string: ['report', 'parasoftToolOrJavaRootPath'],
     });
+    if (args['version']) {
+        console.log(pkg.version);
+        process.exit(0);
+    }
     // Show help messages if no parameters are set or '--help' parameter is set
     if (process.argv.length <= 2 || args['help']) {
         showHelp();
-        process.exit(0);
-    }
-    if (args['version']) {
-        logger_1.logger.info(pkg.version);
         process.exit(0);
     }
     // Configure log level to DEBUG if the '--debug' parameter is set
@@ -38430,12 +38430,13 @@ function showHelp() {
         --report                            Path or minimatch pattern to locate Parasoft static analysis report files. (required)
         --parasoftToolOrJavaRootPath        Path to Java installation or Parasoft tool (required if JAVA_HOME not set) for report processing.
         --debug                             Enable debug logging.
-        --version                           Print version number.
-        --help                              Show this help information.
+        --version                           Print version number and exit.
+        --help                              Show this help information and exit.
 
     Examples:
-        parasoft-findings-bitbucket --report "D:/report/static/report.xml" --parasoftToolOrJavaRootPath "C:/Java/jdk-17"
-        parasoft-findings-bitbucket --report "**/report.xml" --parasoftToolOrJavaRootPath "D:/Parasoft/jtest_2025.1" --debug`);
+        parasoft-findings-bitbucket --report "</path/to/report.xml>"
+        parasoft-findings-bitbucket --report "</path/to/report.xml>" --parasoftToolOrJavaRootPath "<path/to/java_home>"
+        parasoft-findings-bitbucket --report "</path/to/report.xml>" --parasoftToolOrJavaRootPath "<path/to/parasoft/tool/installation/dir>" --debug`);
 }
 function getBitbucketEnvs() {
     const requiredEnvs = {

@@ -20,14 +20,14 @@ export async function run(): Promise<void> {
         string: ['report', 'parasoftToolOrJavaRootPath'],
     });
 
-    // Show help messages if no parameters are set or '--help' parameter is set
-    if (process.argv.length <= 2 || args['help']) {
-        showHelp();
+    if (args['version']) {
+        console.log(pkg.version);
         process.exit(0);
     }
 
-    if (args['version']) {
-        logger.info(pkg.version);
+    // Show help messages if no parameters are set or '--help' parameter is set
+    if (process.argv.length <= 2 || args['help']) {
+        showHelp();
         process.exit(0);
     }
 
@@ -80,12 +80,13 @@ function showHelp() {
         --report                            Path or minimatch pattern to locate Parasoft static analysis report files. (required)
         --parasoftToolOrJavaRootPath        Path to Java installation or Parasoft tool (required if JAVA_HOME not set) for report processing.
         --debug                             Enable debug logging.
-        --version                           Print version number.
-        --help                              Show this help information.
+        --version                           Print version number and exit.
+        --help                              Show this help information and exit.
 
     Examples:
-        parasoft-findings-bitbucket --report "D:/report/static/report.xml" --parasoftToolOrJavaRootPath "C:/Java/jdk-17"
-        parasoft-findings-bitbucket --report "**/report.xml" --parasoftToolOrJavaRootPath "D:/Parasoft/jtest_2025.1" --debug`
+        parasoft-findings-bitbucket --report "</path/to/report.xml>"
+        parasoft-findings-bitbucket --report "</path/to/report.xml>" --parasoftToolOrJavaRootPath "<path/to/java_home>"
+        parasoft-findings-bitbucket --report "</path/to/report.xml>" --parasoftToolOrJavaRootPath "<path/to/parasoft/tool/installation/dir>" --debug`
     );
 }
 
