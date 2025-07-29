@@ -83,10 +83,10 @@ class StaticAnalysisParserRunner {
             '4': 'MEDIUM',
             '5': 'LOW'
         };
-        this.BITBUCKET_ENVS = this.getBitbucketEnvs();
         this.vulnerabilityMap = new Map();
     }
-    async run(runOptions) {
+    async run(runOptions, bitbucketEnvs) {
+        this.BITBUCKET_ENVS = bitbucketEnvs;
         const parasoftReportPaths = await this.findParasoftStaticAnalysisReports(runOptions.report);
         const javaExePath = this.getJavaPath(runOptions.parasoftToolOrJavaRootPath);
         for (const parasoftReportPath of parasoftReportPaths) {
@@ -103,22 +103,6 @@ class StaticAnalysisParserRunner {
             }
         }
         await this.uploadReportResultsToBitbucket();
-    }
-    getBitbucketEnvs() {
-        const requiredEnvs = {
-            USER_EMAIL: process.env.USER_EMAIL || '',
-            API_TOKEN: process.env.API_TOKEN || '',
-            BITBUCKET_REPO_SLUG: process.env.BITBUCKET_REPO_SLUG || '',
-            BITBUCKET_COMMIT: process.env.BITBUCKET_COMMIT || '',
-            BITBUCKET_WORKSPACE: process.env.BITBUCKET_WORKSPACE || '',
-            BITBUCKET_CLONE_DIR: process.env.BITBUCKET_CLONE_DIR || '',
-            BITBUCKET_API_URL: 'https://api.bitbucket.org/2.0/repositories'
-        };
-        const missingEnvs = Object.keys(requiredEnvs).filter(key => requiredEnvs[key] == '');
-        if (missingEnvs.length > 0) {
-            throw new Error(messages_1.messagesFormatter.format(messages_1.messages.missing_required_environment_variables, missingEnvs.join(', ')));
-        }
-        return requiredEnvs;
     }
     async findParasoftStaticAnalysisReports(reportPath) {
         if (pt.isAbsolute(reportPath)) {
@@ -279,12 +263,13 @@ class StaticAnalysisParserRunner {
         return map;
     }
     getPath(result) {
-        return result.locations[0].physicalLocation.artifactLocation.uri;
+        var _a, _b, _c;
+        return (_c = (_b = (_a = result.locations[0]) === null || _a === void 0 ? void 0 : _a.physicalLocation) === null || _b === void 0 ? void 0 : _b.artifactLocation) === null || _c === void 0 ? void 0 : _c.uri;
     }
     getLine(result) {
-        var _a;
-        const { region } = result.locations[0].physicalLocation;
-        return (_a = region.startLine) !== null && _a !== void 0 ? _a : region.endLine;
+        var _a, _b, _c;
+        const region = (_b = (_a = result.locations[0]) === null || _a === void 0 ? void 0 : _a.physicalLocation) === null || _b === void 0 ? void 0 : _b.region;
+        return (_c = region === null || region === void 0 ? void 0 : region.startLine) !== null && _c !== void 0 ? _c : region === null || region === void 0 ? void 0 : region.endLine;
     }
     getSummary(rule) {
         var _a, _b, _c, _d;
@@ -38328,6 +38313,14 @@ module.exports = /*#__PURE__*/JSON.parse('{"application/1d-interleaved-parityfec
 "use strict";
 module.exports = {"version":"3.17.0"};
 
+/***/ }),
+
+/***/ 8330:
+/***/ ((module) => {
+
+"use strict";
+module.exports = /*#__PURE__*/JSON.parse('{"name":"parasoft-findings-bitbucket","version":"1.0.0","description":"A CLI tool to read Parasoft static analysis reports and upload results to Bitbucket.","main":"lib/main.js","files":["dist"],"bin":{"parasoft-findings-bitbucket":"./dist/index.js"},"scripts":{"postbuild":"node ./scripts/prepend.mjs","compile":"npx tsc -p ./","watch":"npx tsc -watch -p ./","lint":"npx eslint -f checkstyle -o eslint/eslint-report.xml src/**/*.ts || echo ESLint failed, but continuing...","test":"nyc mocha","copy-files":"copyfiles --flat ./src/messages/*.json ./dist/messages && copyfiles --flat ./res/*.xsl ./dist && copyfiles --up 1 ./libs/SaxonHE12-2J/**/* ./dist","package":"ncc build --license licenses.txt && npm run copy-files","clean":"rimraf ./dist ./lib ./eslint ./coverage ./.nyc_output test-results.xml","all":"npm run clean && npm run compile && npm run lint && npm run test && npm run package && npm run postbuild"},"nyc":{"reporter":["html","cobertura"]},"repository":{"type":"git","url":"git+https://github.com/parasoft/parasoft-findings-bitbucket"},"author":"Parasoft Corp.","license":"Apache-2.0","bugs":{"url":"https://github.com/parasoft/parasoft-findings-bitbucket/issues"},"homepage":"https://github.com/parasoft/parasoft-findings-bitbucket#readme","devDependencies":{"@eslint/js":"^9.30.1","@types/minimist":"^1.2.5","@types/mocha":"^10.0.6","@types/sax":"^1.2.7","@types/sinon":"^17.0.3","@types/string-format":"^2.0.3","@vercel/ncc":"^0.38.1","eslint":"^9.30.1","eslint-formatter-checkstyle":"^8.40.0","fs-extra":"^11.3.0","mocha":"^11.7.1","mocha-junit-reporter":"^2.2.1","mocha-multi-reporters":"^1.5.1","nyc":"^17.1.0","rimraf":"^5.0.5","sinon":"^21.0.0","ts-node":"^10.9.2","typescript":"^5.8.3","typescript-eslint":"^8.35.1","copyfiles":"^2.4.1"},"dependencies":{"axios":"^1.10.0","glob":"^11.0.0","minimist":"^1.2.8","sax":"^1.4.1","string-format":"^2.0.0","uuid":"^11.1.0","winston":"^3.17.0"}}');
+
 /***/ })
 
 /******/ 	});
@@ -38378,13 +38371,23 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.run = run;
 const minimist = __nccwpck_require__(994);
 const runner = __nccwpck_require__(1924);
+const pkg = __nccwpck_require__(8330);
 const messages_1 = __nccwpck_require__(6250);
 const logger_1 = __nccwpck_require__(3258);
 async function run() {
     const args = minimist(process.argv.slice(2), {
-        boolean: ['debug'],
+        boolean: ['debug', 'help', 'version'],
         string: ['report', 'parasoftToolOrJavaRootPath'],
     });
+    if (args['version']) {
+        console.log(pkg.version);
+        process.exit(0);
+    }
+    // Show help messages if no parameters are set or '--help' parameter is set
+    if (process.argv.length <= 2 || args['help']) {
+        showHelp();
+        process.exit(0);
+    }
     // Configure log level to DEBUG if the '--debug' parameter is set
     if (args['debug']) {
         (0, logger_1.configureLogger)({ level: 'debug' });
@@ -38398,8 +38401,13 @@ async function run() {
             logger_1.logger.error(messages_1.messagesFormatter.format(messages_1.messages.missing_parameter, '--report'));
             process.exit(1);
         }
+        if (!runOptions.parasoftToolOrJavaRootPath && !process.env.JAVA_HOME) {
+            logger_1.logger.error(messages_1.messagesFormatter.format(messages_1.messages.missing_parameter, '--parasoftToolOrJavaRootPath'));
+            process.exit(1);
+        }
+        const bitbucketEnvs = getBitbucketEnvs();
         const theRunner = new runner.StaticAnalysisParserRunner();
-        await theRunner.run(runOptions);
+        await theRunner.run(runOptions, bitbucketEnvs);
         logger_1.logger.info(messages_1.messagesFormatter.format(messages_1.messages.complete));
     }
     catch (error) {
@@ -38414,6 +38422,37 @@ async function run() {
 }
 if (require.main === require.cache[eval('__filename')]) {
     run();
+}
+function showHelp() {
+    console.log(`    Usage: parasoft-findings-bitbucket --report <xmlReportPath> [--parasoftToolOrJavaRootPath <javaInstallDirPath>] [--debug]
+
+    Options:
+        --report                            Path or minimatch pattern to locate Parasoft static analysis report files. (required)
+        --parasoftToolOrJavaRootPath        Path to Java installation or Parasoft tool (required if JAVA_HOME not set) for report processing.
+        --debug                             Enable debug logging.
+        --version                           Print version number and exit.
+        --help                              Show this help information and exit.
+
+    Examples:
+        parasoft-findings-bitbucket --report "</path/to/report.xml>"
+        parasoft-findings-bitbucket --report "</path/to/report.xml>" --parasoftToolOrJavaRootPath "<path/to/java_home>"
+        parasoft-findings-bitbucket --report "</path/to/report.xml>" --parasoftToolOrJavaRootPath "<path/to/parasoft/tool/installation/dir>" --debug`);
+}
+function getBitbucketEnvs() {
+    const requiredEnvs = {
+        USER_EMAIL: process.env.USER_EMAIL || '',
+        API_TOKEN: process.env.API_TOKEN || '',
+        BITBUCKET_REPO_SLUG: process.env.BITBUCKET_REPO_SLUG || '',
+        BITBUCKET_COMMIT: process.env.BITBUCKET_COMMIT || '',
+        BITBUCKET_WORKSPACE: process.env.BITBUCKET_WORKSPACE || '',
+        BITBUCKET_CLONE_DIR: process.env.BITBUCKET_CLONE_DIR || '',
+        BITBUCKET_API_URL: 'https://api.bitbucket.org/2.0/repositories'
+    };
+    const missingEnvs = Object.keys(requiredEnvs).filter(key => requiredEnvs[key] == '');
+    if (missingEnvs.length > 0) {
+        throw new Error(messages_1.messagesFormatter.format(messages_1.messages.missing_required_environment_variables, missingEnvs.join(', ')));
+    }
+    return requiredEnvs;
 }
 //# sourceMappingURL=main.js.map
 })();

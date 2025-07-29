@@ -27,7 +27,7 @@ describe('parasoft-bitbucket/main', () => {
             runnerExitCode = 0;
             customOption = {
                 report: "D:/test/report.xml",
-                parasoftToolOrJavaRootPath: "C:/Java",
+                parasoftToolOrJavaRootPath: "C:/Java"
             }
         });
 
@@ -36,15 +36,27 @@ describe('parasoft-bitbucket/main', () => {
             process.argv = [];
         });
 
+        const setBitbucketEnv = () => {
+            process.env.USER_EMAIL = 'user@mail.com';
+            process.env.API_TOKEN = 'api-token';
+            process.env.BITBUCKET_REPO_SLUG = 'repo';
+            process.env.BITBUCKET_COMMIT = 'commit';
+            process.env.BITBUCKET_WORKSPACE = 'workspace';
+            process.env.BITBUCKET_CLONE_DIR = __dirname;
+            process.env.BITBUCKET_API_URL = 'https://api.bitbucket.org/2.0/repositories';
+        };
+
+        const setUpFakeRunner = () => {
+            fakeStaticAnalysisParserRunner = sandbox.fake.resolves({ exitCode: runnerExitCode });
         const setUpFakeRunner = (fakeRunner: sinon.SinonSpy) => {
             fakeStaticAnalysisParserRunner = fakeRunner;
             sandbox.replace(runner.StaticAnalysisParserRunner.prototype, 'run', fakeStaticAnalysisParserRunner);
-            sandbox.stub(runner.StaticAnalysisParserRunner.prototype, 'getBitbucketEnvs' as any)
-                .returns({API_TOKEN: "", USER_EMAIL: "", BITBUCKET_COMMIT: "", BITBUCKET_REPO_SLUG: "", BITBUCKET_WORKSPACE: "", BITBUCKET_CLONE_DIR: "", BITBUCKET_API_URL: ""});
         }
 
         it('Parse static analysis report with exit code 0', async () => {
             process.argv = ['node', 'dist/script.js', '--report=D:/test/report.xml', '--parasoftToolOrJavaRootPath=C:/Java'];
+            setBitbucketEnv();
+            setUpFakeRunner();
             setUpFakeRunner(sandbox.fake.resolves({exitCode: runnerExitCode}));
 
             await main.run();
