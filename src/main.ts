@@ -6,17 +6,22 @@ import {logger, configureLogger} from "./logger";
 export interface BitbucketEnvs {
     USER_EMAIL: string;
     API_TOKEN: string;
+    BITBUCKET_BUILD_NUMBER: string;
     BITBUCKET_REPO_SLUG: string;
     BITBUCKET_COMMIT: string;
     BITBUCKET_WORKSPACE: string;
     BITBUCKET_CLONE_DIR: string;
     BITBUCKET_API_URL: string;
+    BITBUCKET_PR_ID: string | undefined;
 }
 
 export async function run(): Promise<void> {
     const args = minimist(process.argv.slice(2), {
          boolean: ['debug', 'help'],
-         string: ['report', 'parasoftToolOrJavaRootPath'],
+         string: ['report', 'parasoftToolOrJavaRootPath', 'failTheBuild'],
+         default: {
+            failTheBuild: []
+        }
     });
 
     // Show help messages if no parameters are set or '--help' parameter is set
@@ -24,6 +29,8 @@ export async function run(): Promise<void> {
         showHelp();
         process.exit(0);
     }
+
+    console.log(args['failTheBuild']);
 
     // Configure log level to DEBUG if the '--debug' parameter is set
     if (args['debug']) {
@@ -41,7 +48,7 @@ export async function run(): Promise<void> {
             process.exit(1);
         }
 
-        if (!runOptions.parasoftToolOrJavaRootPath || !process.env.JAVA_HOME) {
+        if (!runOptions.parasoftToolOrJavaRootPath && !process.env.JAVA_HOME) {
             logger.error(messagesFormatter.format(messages.missing_parameter, '--parasoftToolOrJavaRootPath'));
             process.exit(1);
         }
@@ -81,6 +88,8 @@ function getBitbucketEnvs(): BitbucketEnvs {
     const requiredEnvs: BitbucketEnvs = {
         USER_EMAIL: process.env.USER_EMAIL || '',
         API_TOKEN: process.env.API_TOKEN || '',
+        BITBUCKET_BUILD_NUMBER: process.env.BITBUCKET_BUILD_NUMBER || '',
+        BITBUCKET_PR_ID: process.env.BITBUCKET_PR_ID || '',
         BITBUCKET_REPO_SLUG: process.env.BITBUCKET_REPO_SLUG || '',
         BITBUCKET_COMMIT: process.env.BITBUCKET_COMMIT || '',
         BITBUCKET_WORKSPACE: process.env.BITBUCKET_WORKSPACE || '',

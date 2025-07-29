@@ -33,6 +33,8 @@ describe('parasoft-bitbucket/main', () => {
         const setBitbucketEnv = () => {
             process.env.USER_EMAIL = 'user@mail.com';
             process.env.API_TOKEN = 'api-token';
+            process.env.BITBUCKET_BUILD_NUMBER = '123';
+             process.env.BITBUCKET_PR_ID = '456';
             process.env.BITBUCKET_REPO_SLUG = 'repo';
             process.env.BITBUCKET_COMMIT = 'commit';
             process.env.BITBUCKET_WORKSPACE = 'workspace';

@@ -267,9 +267,9 @@ class StaticAnalysisParserRunner {
         return (_c = (_b = (_a = result.locations[0]) === null || _a === void 0 ? void 0 : _a.physicalLocation) === null || _b === void 0 ? void 0 : _b.artifactLocation) === null || _c === void 0 ? void 0 : _c.uri;
     }
     getLine(result) {
-        var _a, _b;
-        const { region } = (_a = result.locations[0]) === null || _a === void 0 ? void 0 : _a.physicalLocation;
-        return (_b = region === null || region === void 0 ? void 0 : region.startLine) !== null && _b !== void 0 ? _b : region === null || region === void 0 ? void 0 : region.endLine;
+        var _a, _b, _c;
+        const region = (_b = (_a = result.locations[0]) === null || _a === void 0 ? void 0 : _a.physicalLocation) === null || _b === void 0 ? void 0 : _b.region;
+        return (_c = region === null || region === void 0 ? void 0 : region.startLine) !== null && _c !== void 0 ? _c : region === null || region === void 0 ? void 0 : region.endLine;
     }
     getSummary(rule) {
         var _a, _b, _c, _d;
@@ -293,7 +293,8 @@ class StaticAnalysisParserRunner {
         return uuid.v5(violType + ruleId + msg + severity + lineHash + uri + order, this.UUID_NAMESPACE);
     }
     async uploadReportResultsToBitbucket() {
-        var _a, _b;
+        var _a, _b, _c, _d, _e;
+        let vulnerabilityNum = 0;
         for (const [parasoftReportPath, vulnerability] of this.vulnerabilityMap) {
             const toolName = vulnerability.toolName;
             let vulnerabilities = this.sortVulnerabilitiesBySevLevel(vulnerability.vulnerabilityDetails);
@@ -302,6 +303,7 @@ class StaticAnalysisParserRunner {
                 logger_1.logger.info(messages_1.messagesFormatter.format(messages_1.messages.skip_static_analysis_report, parasoftReportPath));
                 continue;
             }
+            vulnerabilityNum += totalVulnerabilities;
             logger_1.logger.info(messages_1.messagesFormatter.format(messages_1.messages.uploading_parasoft_report_results, toolName, parasoftReportPath));
             let reportDetails;
             //  A report module can contain up to 1000 annotations(vulnerabilities).
@@ -359,10 +361,79 @@ class StaticAnalysisParserRunner {
             }
             logger_1.logger.info(messages_1.messagesFormatter.format(messages_1.messages.uploaded_parasoft_report_results, toolName, vulnerabilities.length));
         }
+        if (vulnerabilityNum > 0) {
+            try {
+                await axios_1.default.post(this.getBuildStatusUrl(), {
+                    key: `Parasoft Findings`,
+                    state: "FAILED",
+                    description: "Quality gate failed",
+                    url: this.getBuildUrl()
+                }, { auth: this.getAuth() });
+            }
+            catch (error) {
+                if (error instanceof axios_1.AxiosError) {
+                    const data = (_c = error.response) === null || _c === void 0 ? void 0 : _c.data;
+                    if (data) {
+                        logger_1.logger.error(JSON.stringify(data, null, 2));
+                    }
+                }
+                throw new Error("Error uploading build status: " + error);
+            }
+            try {
+                await axios_1.default.post(this.getBuildStatusUrl(), {
+                    key: `Parasoft Findings`,
+                    state: "FAILED",
+                    description: "Quality gate failed",
+                    url: this.getBuildUrl()
+                }, { auth: this.getAuth() });
+            }
+            catch (error) {
+                if (error instanceof axios_1.AxiosError) {
+                    const data = (_d = error.response) === null || _d === void 0 ? void 0 : _d.data;
+                    if (data) {
+                        logger_1.logger.error(JSON.stringify(data, null, 2));
+                    }
+                }
+                throw new Error("Error uploading build status: " + error);
+            }
+            if (this.BITBUCKET_ENVS.BITBUCKET_PR_ID) {
+                logger_1.logger.info(" Create a comment on the pull request " + this.BITBUCKET_ENVS.BITBUCKET_PR_ID);
+                try {
+                    await axios_1.default.post(this.getCommentsUrl(), {
+                        content: {
+                            raw: `Parasoft Findings: Quality gate failed. Please check the report at ${this.getBuildUrl()}`
+                        }
+                    }, { auth: this.getAuth() });
+                }
+                catch (error) {
+                    if (error instanceof axios_1.AxiosError) {
+                        const data = (_e = error.response) === null || _e === void 0 ? void 0 : _e.data;
+                        if (data) {
+                            logger_1.logger.error(JSON.stringify(data, null, 2));
+                        }
+                    }
+                    throw new Error("Error post the comment: " + error);
+                }
+            }
+            logger_1.logger.info("Fail the build due to quality gate failure");
+            process.exit(1);
+        }
+    }
+    getCommentsUrl() {
+        const { BITBUCKET_API_URL, BITBUCKET_WORKSPACE, BITBUCKET_REPO_SLUG, BITBUCKET_PR_ID } = this.BITBUCKET_ENVS;
+        return `${BITBUCKET_API_URL}/${BITBUCKET_WORKSPACE}/${BITBUCKET_REPO_SLUG}/pullrequests/${BITBUCKET_PR_ID}/comments`;
     }
     getReportUrl(reportId) {
         const { BITBUCKET_API_URL, BITBUCKET_WORKSPACE, BITBUCKET_REPO_SLUG, BITBUCKET_COMMIT } = this.BITBUCKET_ENVS;
         return `${BITBUCKET_API_URL}/${BITBUCKET_WORKSPACE}/${BITBUCKET_REPO_SLUG}/commit/${BITBUCKET_COMMIT}/reports/${reportId}`;
+    }
+    getBuildUrl() {
+        const { BITBUCKET_BUILD_NUMBER, BITBUCKET_WORKSPACE, BITBUCKET_REPO_SLUG } = this.BITBUCKET_ENVS;
+        return `https://bitbucket.org/${BITBUCKET_WORKSPACE}/${BITBUCKET_REPO_SLUG}/pipelines/results/${BITBUCKET_BUILD_NUMBER}`;
+    }
+    getBuildStatusUrl() {
+        const { BITBUCKET_API_URL, BITBUCKET_WORKSPACE, BITBUCKET_REPO_SLUG, BITBUCKET_COMMIT } = this.BITBUCKET_ENVS;
+        return `${BITBUCKET_API_URL}/${BITBUCKET_WORKSPACE}/${BITBUCKET_REPO_SLUG}/commit/${BITBUCKET_COMMIT}/statuses/build/`;
     }
     getAuth() {
         const { USER_EMAIL, API_TOKEN } = this.BITBUCKET_ENVS;
@@ -38368,13 +38439,17 @@ const logger_1 = __nccwpck_require__(3258);
 async function run() {
     const args = minimist(process.argv.slice(2), {
         boolean: ['debug', 'help'],
-        string: ['report', 'parasoftToolOrJavaRootPath'],
+        string: ['report', 'parasoftToolOrJavaRootPath', 'failTheBuild'],
+        default: {
+            failTheBuild: []
+        }
     });
     // Show help messages if no parameters are set or '--help' parameter is set
     if (args.length < 0 || args['help']) {
         showHelp();
         process.exit(0);
     }
+    console.log(args['failTheBuild']);
     // Configure log level to DEBUG if the '--debug' parameter is set
     if (args['debug']) {
         (0, logger_1.configureLogger)({ level: 'debug' });
@@ -38388,7 +38463,7 @@ async function run() {
             logger_1.logger.error(messages_1.messagesFormatter.format(messages_1.messages.missing_parameter, '--report'));
             process.exit(1);
         }
-        if (!runOptions.parasoftToolOrJavaRootPath || !process.env.JAVA_HOME) {
+        if (!runOptions.parasoftToolOrJavaRootPath && !process.env.JAVA_HOME) {
             logger_1.logger.error(messages_1.messagesFormatter.format(messages_1.messages.missing_parameter, '--parasoftToolOrJavaRootPath'));
             process.exit(1);
         }
@@ -38422,6 +38497,8 @@ function getBitbucketEnvs() {
     const requiredEnvs = {
         USER_EMAIL: process.env.USER_EMAIL || '',
         API_TOKEN: process.env.API_TOKEN || '',
+        BITBUCKET_BUILD_NUMBER: process.env.BITBUCKET_BUILD_NUMBER || '',
+        BITBUCKET_PR_ID: process.env.BITBUCKET_PR_ID || '',
         BITBUCKET_REPO_SLUG: process.env.BITBUCKET_REPO_SLUG || '',
         BITBUCKET_COMMIT: process.env.BITBUCKET_COMMIT || '',
         BITBUCKET_WORKSPACE: process.env.BITBUCKET_WORKSPACE || '',

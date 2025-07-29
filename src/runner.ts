@@ -254,7 +254,7 @@ export class StaticAnalysisParserRunner {
     }
 
     private getLine(result: sarifReportTypes.ReportResult): number {
-        const {region} = result.locations[0]?.physicalLocation;
+        const region = result.locations[0]?.physicalLocation?.region;
         return region?.startLine ?? region?.endLine;
     }
 
@@ -283,6 +283,7 @@ export class StaticAnalysisParserRunner {
     }
 
     private async uploadReportResultsToBitbucket(): Promise<void> {
+        let vulnerabilityNum = 0;
         for (const [parasoftReportPath, vulnerability] of this.vulnerabilityMap) {
             const toolName = vulnerability.toolName;
             let vulnerabilities = this.sortVulnerabilitiesBySevLevel(vulnerability.vulnerabilityDetails);
@@ -291,6 +292,7 @@ export class StaticAnalysisParserRunner {
                 logger.info(messagesFormatter.format(messages.skip_static_analysis_report, parasoftReportPath));
                 continue;
             }
+            vulnerabilityNum += totalVulnerabilities;
             logger.info(messagesFormatter.format(messages.uploading_parasoft_report_results, toolName, parasoftReportPath));
 
             let reportDetails;
@@ -355,11 +357,84 @@ export class StaticAnalysisParserRunner {
 
             logger.info(messagesFormatter.format(messages.uploaded_parasoft_report_results, toolName, vulnerabilities.length));
         }
+
+        if (vulnerabilityNum > 0) {
+            try {
+                await axios.post(this.getBuildStatusUrl(), {
+                    key: `Parasoft Findings`,
+                    state: "FAILED",
+                    description: "Quality gate failed",
+                    url: this.getBuildUrl()
+                }, {auth: this.getAuth()});
+            } catch (error) {
+                if (error instanceof AxiosError) {
+                    const data = error.response?.data;
+                    if (data) {
+                        logger.error(JSON.stringify(data, null, 2));
+                    }
+                }
+                throw new Error("Error uploading build status: " + error);
+            }
+
+            try {
+                await axios.post(this.getBuildStatusUrl(), {
+                    key: `Parasoft Findings`,
+                    state: "FAILED",
+                    description: "Quality gate failed",
+                    url: this.getBuildUrl()
+                }, {auth: this.getAuth()});
+            } catch (error) {
+                if (error instanceof AxiosError) {
+                    const data = error.response?.data;
+                    if (data) {
+                        logger.error(JSON.stringify(data, null, 2));
+                    }
+                }
+                throw new Error("Error uploading build status: " + error);
+            }
+
+            if (this.BITBUCKET_ENVS.BITBUCKET_PR_ID) {
+                logger.info(" Create a comment on the pull request " + this.BITBUCKET_ENVS.BITBUCKET_PR_ID);
+                try {
+                    await axios.post(this.getCommentsUrl(), {
+                        content: {
+                            raw: `Parasoft Findings: Quality gate failed. Please check the report at ${this.getBuildUrl()}`
+                        }
+                    }, {auth: this.getAuth()});
+                } catch (error) {
+                    if (error instanceof AxiosError) {
+                        const data = error.response?.data;
+                        if (data) {
+                            logger.error(JSON.stringify(data, null, 2));
+                        }
+                    }
+                    throw new Error("Error post the comment: " + error);
+                }
+            }
+
+            logger.info("Fail the build due to quality gate failure");
+            process.exit(1);
+        }
+    }
+
+    private getCommentsUrl(): string {
+        const { BITBUCKET_API_URL, BITBUCKET_WORKSPACE, BITBUCKET_REPO_SLUG, BITBUCKET_PR_ID } = this.BITBUCKET_ENVS;
+        return `${BITBUCKET_API_URL}/${BITBUCKET_WORKSPACE}/${BITBUCKET_REPO_SLUG}/pullrequests/${BITBUCKET_PR_ID}/comments`;
     }
 
     private getReportUrl(reportId: string): string {
         const { BITBUCKET_API_URL, BITBUCKET_WORKSPACE, BITBUCKET_REPO_SLUG, BITBUCKET_COMMIT } = this.BITBUCKET_ENVS;
         return `${BITBUCKET_API_URL}/${BITBUCKET_WORKSPACE}/${BITBUCKET_REPO_SLUG}/commit/${BITBUCKET_COMMIT}/reports/${reportId}`;
+    }
+
+    private getBuildUrl(): string {
+        const { BITBUCKET_BUILD_NUMBER, BITBUCKET_WORKSPACE, BITBUCKET_REPO_SLUG } = this.BITBUCKET_ENVS;
+        return `https://bitbucket.org/${BITBUCKET_WORKSPACE}/${BITBUCKET_REPO_SLUG}/pipelines/results/${BITBUCKET_BUILD_NUMBER}`;
+    }
+
+    private getBuildStatusUrl(): string {
+        const { BITBUCKET_API_URL, BITBUCKET_WORKSPACE, BITBUCKET_REPO_SLUG, BITBUCKET_COMMIT } = this.BITBUCKET_ENVS;
+        return `${BITBUCKET_API_URL}/${BITBUCKET_WORKSPACE}/${BITBUCKET_REPO_SLUG}/commit/${BITBUCKET_COMMIT}/statuses/build/`;
     }
 
     private getAuth(): AxiosBasicCredentials {
