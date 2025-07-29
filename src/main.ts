@@ -1,7 +1,8 @@
-import * as minimist from "minimist";
-import * as runner from "./runner";
+import * as minimist from 'minimist';
+import * as runner from './runner';
+import * as pkg from '../package.json';
 import {messages, messagesFormatter} from './messages';
-import {logger, configureLogger} from "./logger";
+import {logger, configureLogger} from './logger';
 
 export interface BitbucketEnvs {
     USER_EMAIL: string;
@@ -15,13 +16,18 @@ export interface BitbucketEnvs {
 
 export async function run(): Promise<void> {
     const args = minimist(process.argv.slice(2), {
-         boolean: ['debug', 'help'],
-         string: ['report', 'parasoftToolOrJavaRootPath'],
+        boolean: ['debug', 'help', 'version'],
+        string: ['report', 'parasoftToolOrJavaRootPath'],
     });
 
     // Show help messages if no parameters are set or '--help' parameter is set
-    if (args.length < 0 || args['help']) {
+    if (process.argv.length <= 2 || args['help']) {
         showHelp();
+        process.exit(0);
+    }
+
+    if (args['version']) {
+        logger.info(pkg.version);
         process.exit(0);
     }
 
@@ -41,7 +47,7 @@ export async function run(): Promise<void> {
             process.exit(1);
         }
 
-        if (!runOptions.parasoftToolOrJavaRootPath || !process.env.JAVA_HOME) {
+        if (!runOptions.parasoftToolOrJavaRootPath && !process.env.JAVA_HOME) {
             logger.error(messagesFormatter.format(messages.missing_parameter, '--parasoftToolOrJavaRootPath'));
             process.exit(1);
         }
@@ -68,12 +74,18 @@ if (require.main === module) {
 
 function showHelp() {
     console.log(
-    `Usage: parasoft-findings-bitbucket --report <xmlReportPath> [--parasoftToolOrJavaRootPath <javaInstallDirPath>] [--debug]
+        `    Usage: parasoft-findings-bitbucket --report <xmlReportPath> [--parasoftToolOrJavaRootPath <javaInstallDirPath>] [--debug]
 
     Options:
-        --report  Path or minimatch pattern to locate Parasoft static analysis report files. (required)
-        --parasoftToolOrJavaRootPath  Root path to the Parasoft tool or Java installation required to locate the Java environment for report processing.
-        --debug  Set log level to DEBUG.`
+        --report                            Path or minimatch pattern to locate Parasoft static analysis report files. (required)
+        --parasoftToolOrJavaRootPath        Path to Java installation or Parasoft tool (required if JAVA_HOME not set) for report processing.
+        --debug                             Enable debug logging.
+        --version                           Print version number.
+        --help                              Show this help information.
+
+    Examples:
+        parasoft-findings-bitbucket --report "D:/report/static/report.xml" --parasoftToolOrJavaRootPath "C:/Java/jdk-17"
+        parasoft-findings-bitbucket --report "**/report.xml" --parasoftToolOrJavaRootPath "D:/Parasoft/jtest_2025.1" --debug`
     );
 }
 

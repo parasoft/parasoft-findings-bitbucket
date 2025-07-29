@@ -254,7 +254,7 @@ export class StaticAnalysisParserRunner {
     }
 
     private getLine(result: sarifReportTypes.ReportResult): number {
-        const {region} = result.locations[0]?.physicalLocation;
+        const {region} = result.locations[0].physicalLocation;
         return region?.startLine ?? region?.endLine;
     }
 
