@@ -2,12 +2,10 @@ import * as sinon from "sinon";
 import {RunOptions, StaticAnalysisParserRunner} from "../src/runner";
 import axios, {AxiosError, AxiosHeaders, AxiosResponse} from "axios";
 import {logger} from "../src/logger";
-import {messages, messagesFormatter} from "../src/messages";
 import * as pt from 'path';
 import * as cp from 'child_process';
 import * as path from "node:path";
 import * as fs from "node:fs";
-
 
 describe('parasoft-bitbucket/runnner', () => {
     describe('run', () => {
@@ -25,28 +23,11 @@ describe('parasoft-bitbucket/runnner', () => {
             sandbox.replace(logger, 'error', logError);
             logWarn = sandbox.fake();
             sandbox.replace(logger, 'warn', logWarn);
-
-            setBitbucketEnv();
         });
 
         afterEach(() => {
             sandbox.restore();
         })
-
-        it('missing Bitbucket envs', async () => {
-            setBitbucketEnv('');
-
-            try {
-                new StaticAnalysisParserRunner();
-            } catch (error) {
-                if (error instanceof Error) {
-                    sinon.assert.match(error.message, messagesFormatter.format(messages.missing_required_environment_variables, ''));
-                    return;
-                }
-                sinon.assert.fail("Expected error to be thrown but it was not.");
-            }
-            sinon.assert.fail("Expected error to be thrown but it was not.");
-        });
 
         it('no static analysis reports found', async () => {
             const put = sandbox.fake.resolves({status: 200, data: {}});
@@ -58,7 +39,7 @@ describe('parasoft-bitbucket/runnner', () => {
 
             try {
                 const staticAnalysisParserRunner = new StaticAnalysisParserRunner();
-                await staticAnalysisParserRunner.run(runOptions);
+                await staticAnalysisParserRunner.run(runOptions, createBitbucketEnv());
             } catch (error) {
                 if (error instanceof Error) {
                     sinon.assert.match(error.message, 'Parasoft XML Static Analysis report not found. No files matched the specified minimatch pattern or path: D:/github/parasoft-findings-bitbucket/tests/res/reports/SARIF.*');
@@ -72,30 +53,60 @@ describe('parasoft-bitbucket/runnner', () => {
             sinon.assert.fail("Expected error to be thrown but it was not.");
         });
 
-        it('no Java execute file found', async () => {
-            process.env.JAVA_HOME = undefined;
+        it('no Java execute file found in tool home', async () => {
             const put = sandbox.fake.resolves({status: 200, data: {}});
             sandbox.replace(axios, 'put', put);
             const runOptions: RunOptions = {
                 report: __dirname + '/res/reports/*.xml',
-                parasoftToolOrJavaRootPath: __dirname + '/res/toolRootPath/nojava'
+                parasoftToolOrJavaRootPath: path.join(__dirname, '/res/toolRootPaths/nojava')
             };
 
             try {
                 const staticAnalysisParserRunner = new StaticAnalysisParserRunner();
-                await staticAnalysisParserRunner.run(runOptions);
+                await staticAnalysisParserRunner.run(runOptions, createBitbucketEnv());
             } catch (error) {
                 if (error instanceof Error) {
                     sinon.assert.calledWith(logInfo, 'Finding Parasoft XML Static Analysis report...');
                     sinon.assert.calledWith(logWarn, 'Skipping unrecognized report file: D:\\github\\parasoft-findings-bitbucket\\tests\\res\\reports\\XML_COVERAGE.xml');
                     sinon.assert.calledWith(logInfo, 'Found Parasoft XML Static Analysis report: D:\\github\\parasoft-findings-bitbucket\\tests\\res\\reports\\XML_STATIC.xml');
                     sinon.assert.notCalled(put);
-                    sinon.assert.match(error.message, 'Unable to process the XML report because Java or Parasoft tool installation directory is not found');
+                    sinon.assert.match(error.message, 'Unable to process the XML report because Java is not found');
                     return;
                 }
                 sinon.assert.fail("Expected error to be thrown but it was not.");
             }
             sinon.assert.fail("Expected error to be thrown but it was not.");
+        });
+
+        it('no Java execute file found', async () => {
+            const javahome = process.env.JAVA_HOME;
+            try {
+                delete process.env.JAVA_HOME;
+
+                const put = sandbox.fake.resolves({status: 200, data: {}});
+                sandbox.replace(axios, 'put', put);
+                const runOptions: RunOptions = {
+                    report: __dirname + '/res/reports/*.xml'
+                };
+
+                try {
+                    const staticAnalysisParserRunner = new StaticAnalysisParserRunner();
+                    await staticAnalysisParserRunner.run(runOptions, createBitbucketEnv());
+                } catch (error) {
+                    if (error instanceof Error) {
+                        sinon.assert.calledWith(logInfo, 'Finding Parasoft XML Static Analysis report...');
+                        sinon.assert.calledWith(logWarn, 'Skipping unrecognized report file: D:\\github\\parasoft-findings-bitbucket\\tests\\res\\reports\\XML_COVERAGE.xml');
+                        sinon.assert.calledWith(logInfo, 'Found Parasoft XML Static Analysis report: D:\\github\\parasoft-findings-bitbucket\\tests\\res\\reports\\XML_STATIC.xml');
+                        sinon.assert.notCalled(put);
+                        sinon.assert.match(error.message, 'Unable to process the XML report because Java or Parasoft tool installation directory is not found');
+                        return;
+                    }
+                    sinon.assert.fail("Expected error to be thrown but it was not.");
+                }
+                sinon.assert.fail("Expected error to be thrown but it was not.");
+            } finally {
+                process.env.JAVA_HOME = javahome;
+            }
         });
 
         describe('parse and upload static analysis result', () => {
@@ -144,13 +155,12 @@ describe('parasoft-bitbucket/runnner', () => {
                 sandbox.replace(axios, 'post', post);
 
                 const staticAnalysisParserRunner = new StaticAnalysisParserRunner();
-                await staticAnalysisParserRunner.run(runOptions);
+                await staticAnalysisParserRunner.run(runOptions, createBitbucketEnv());
 
                 sinon.assert.calledWith(logInfo, 'Found 1552 vulnerabilities for report: D:\\github\\parasoft-findings-bitbucket\\tests\\res\\reports\\XML_STATIC.xml');
                 sinon.assert.calledOnce(put);
                 sinon.assert.callCount(post, 10);
                 sinon.assert.calledWith(logInfo, 'Uploaded Parasoft dotTEST Static Analysis results: 1000 vulnerabilities');
-
             });
 
             it('parse report failed', async () => {
@@ -164,7 +174,7 @@ describe('parasoft-bitbucket/runnner', () => {
                 sandbox.replace(cp, 'spawn', spawn);
 
                 const staticAnalysisParserRunner = new StaticAnalysisParserRunner();
-                await staticAnalysisParserRunner.run(runOptions);
+                await staticAnalysisParserRunner.run(runOptions, createBitbucketEnv());
 
                 sinon.assert.calledWith(logError, parseError);
                 sinon.assert.calledWith(logWarn, 'Skipped Parasoft XML Static Analysis report: D:\\github\\parasoft-findings-bitbucket\\tests\\res\\reports\\XML_STATIC.xml');
@@ -189,7 +199,7 @@ describe('parasoft-bitbucket/runnner', () => {
                 sandbox.replace(axios, 'post', post);
                 try {
                     const staticAnalysisParserRunner = new StaticAnalysisParserRunner();
-                    await staticAnalysisParserRunner.run(runOptions);
+                    await staticAnalysisParserRunner.run(runOptions, createBitbucketEnv());
                 } catch (error) {
                     if (error instanceof Error) {
                         sinon.assert.calledWith(logError, "{\n  \"message\": \"Something went wrong\"\n}");
@@ -220,7 +230,7 @@ describe('parasoft-bitbucket/runnner', () => {
                 sandbox.replace(axios, 'post', post);
                 try {
                     const staticAnalysisParserRunner = new StaticAnalysisParserRunner();
-                    await staticAnalysisParserRunner.run(runOptions);
+                    await staticAnalysisParserRunner.run(runOptions, createBitbucketEnv());
                 } catch (error) {
                     if (error instanceof Error) {
                         sinon.assert.calledWith(logError, "{\n  \"message\": \"Something went wrong\"\n}");
@@ -235,22 +245,16 @@ describe('parasoft-bitbucket/runnner', () => {
             });
         });
 
-        const setBitbucketEnv = (
-            userMail?: string,
-            apiToken?: string,
-            repoSlug?: string,
-            commit?: string,
-            workspace?: string,
-            cloneDir?: string,
-            apiUrl?: string
-        ) => {
-            process.env.USER_EMAIL = userMail === undefined ? 'user@mail.com' : userMail;
-            process.env.API_TOKEN = apiToken === undefined ? 'api-token' : apiToken;
-            process.env.BITBUCKET_REPO_SLUG = repoSlug === undefined ? 'repo' : repoSlug;
-            process.env.BITBUCKET_COMMIT = commit === undefined ? 'commit' : commit;
-            process.env.BITBUCKET_WORKSPACE = workspace === undefined ? 'workspace' : workspace;
-            process.env.BITBUCKET_CLONE_DIR = cloneDir === undefined ? __dirname : cloneDir;
-            process.env.BITBUCKET_API_URL = apiUrl == undefined ? 'https://api.bitbucket.org/2.0/repositories' : apiUrl;
+        const createBitbucketEnv = () => {
+            return {
+                USER_EMAIL: 'user@mail.com',
+                API_TOKEN: 'api-token',
+                BITBUCKET_REPO_SLUG: 'repo',
+                BITBUCKET_COMMIT: 'commit',
+                BITBUCKET_WORKSPACE: 'workspace',
+                BITBUCKET_CLONE_DIR: __dirname,
+                BITBUCKET_API_URL: 'https://api.bitbucket.org/2.0/repositories'
+            };
         };
     });
 })
