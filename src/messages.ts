@@ -34,6 +34,7 @@ class Messages implements ISerializable<Messages> {
     uploaded_parasoft_report_results!: string;
     failed_to_create_report_module!: string;
     failed_to_upload_parasoft_report_results!: string;
+    mark_build_to_failed_due_to_vulnerability!: string;
 
     deserialize(jsonPath: string) : Messages {
         const buf = fs.readFileSync(jsonPath);
