@@ -13,6 +13,10 @@ import {BitbucketEnvs} from './main'
 
 (sax as any).MAX_BUFFER_LENGTH = 2 * 1024 * 1024 * 1024; // 2GB
 
+export interface Result {
+    exitCode: number;
+}
+
 export interface RunOptions {
     /* Specify a path or minimatch pattern to locate Parasoft static analysis report files */
     report: string;
@@ -43,7 +47,7 @@ export class StaticAnalysisParserRunner {
         this.vulnerabilityMap = new Map<string, ReportVulnerability>();
     }
 
-    async run(runOptions: RunOptions, bitbucketEnvs: BitbucketEnvs): Promise<void> {
+    async run(runOptions: RunOptions, bitbucketEnvs: BitbucketEnvs): Promise<Result> {
         this.BITBUCKET_ENVS = bitbucketEnvs;
         const parasoftReportPaths = await this.findParasoftStaticAnalysisReports(runOptions.report);
         const javaExePath = this.getJavaPath(runOptions.parasoftToolOrJavaRootPath);
@@ -62,7 +66,7 @@ export class StaticAnalysisParserRunner {
             }
         }
 
-        await this.uploadReportResultsToBitbucket();
+        return await this.uploadReportResultsToBitbucket();
     }
 
     private async findParasoftStaticAnalysisReports(reportPath: string): Promise<string[]> {
@@ -282,15 +286,18 @@ export class StaticAnalysisParserRunner {
         return uuid.v5(violType + ruleId + msg + severity + lineHash + uri + order, this.UUID_NAMESPACE);
     }
 
-    private async uploadReportResultsToBitbucket(): Promise<void> {
+    private async uploadReportResultsToBitbucket(): Promise<Result> {
+        let vulnerabilityNum = 0;
         for (const [parasoftReportPath, vulnerability] of this.vulnerabilityMap) {
             const toolName = vulnerability.toolName;
             let vulnerabilities = this.sortVulnerabilitiesBySevLevel(vulnerability.vulnerabilityDetails);
-            const totalVulnerabilities = vulnerabilities.length;
-            if (totalVulnerabilities == 0) {
+            const originalVulnerabilityNum = vulnerabilities.length;
+            if (originalVulnerabilityNum == 0) {
                 logger.info(messagesFormatter.format(messages.skip_static_analysis_report, parasoftReportPath));
                 continue;
             }
+
+            vulnerabilityNum += originalVulnerabilityNum;
             logger.info(messagesFormatter.format(messages.uploading_parasoft_report_results, toolName, parasoftReportPath));
 
             let reportDetails;
@@ -299,12 +306,11 @@ export class StaticAnalysisParserRunner {
             if (vulnerabilities.length > 1000) {
                 vulnerabilities = vulnerabilities.slice(0, 1000);
                 logger.info(messagesFormatter.format(messages.only_specified_vulnerabilities_will_be_uploaded, vulnerabilities.length));
-                reportDetails = messagesFormatter.format(messages.report_details_description_2, parasoftReportPath, totalVulnerabilities, vulnerabilities.length);
+                reportDetails = messagesFormatter.format(messages.report_details_description_2, parasoftReportPath, originalVulnerabilityNum, vulnerabilities.length);
             } else {
-                reportDetails = messagesFormatter.format(messages.report_details_description_1, parasoftReportPath, totalVulnerabilities);
+                reportDetails = messagesFormatter.format(messages.report_details_description_1, parasoftReportPath, originalVulnerabilityNum);
             }
 
-            const hasHighOrCritical = vulnerabilities.some(v => ["CRITICAL", "HIGH"].includes(v.severity));
             const reportId = uuid.v5(parasoftReportPath + this.BITBUCKET_ENVS.BITBUCKET_COMMIT, this.UUID_NAMESPACE);
 
             // Create report module
@@ -314,7 +320,7 @@ export class StaticAnalysisParserRunner {
                     details: reportDetails,
                     report_type: "SECURITY",
                     reporter: "Parasoft",
-                    result: hasHighOrCritical ? "FAILED" : "PASSED"
+                    result: "FAILED"
                 }, {auth: this.getAuth()});
             } catch (error) {
                 if (error instanceof AxiosError) {
@@ -355,6 +361,15 @@ export class StaticAnalysisParserRunner {
 
             logger.info(messagesFormatter.format(messages.uploaded_parasoft_report_results, toolName, vulnerabilities.length));
         }
+
+        const uploadResult: Result = {
+            exitCode: 0,
+        }
+        if (vulnerabilityNum > 0) {
+            uploadResult.exitCode = 1;
+            logger.info(messagesFormatter.format(messages.mark_build_to_failed_due_to_vulnerability));
+        }
+        return uploadResult;
     }
 
     private getReportUrl(reportId: string): string {

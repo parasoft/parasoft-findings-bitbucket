@@ -55,9 +55,10 @@ export async function run(): Promise<void> {
         const bitbucketEnvs = getBitbucketEnvs();
 
         const theRunner = new runner.StaticAnalysisParserRunner();
-        await theRunner.run(runOptions, bitbucketEnvs);
+        const result = await theRunner.run(runOptions, bitbucketEnvs);
 
         logger.info(messagesFormatter.format(messages.complete));
+        process.exit(result.exitCode);
     } catch (error) {
         if (error instanceof Error) {
             logger.error(error);
