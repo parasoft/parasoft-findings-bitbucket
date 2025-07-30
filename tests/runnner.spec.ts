@@ -59,7 +59,7 @@ describe('runnner', () => {
             const put = sandbox.fake.resolves({status: 200, data: {}});
             sandbox.replace(axios, 'put', put);
             const runOptions: RunOptions = {
-                report: __dirname + '/res/reports/*.xml',
+                report: pt.join(__dirname, '/res/reports/*.xml'),
                 parasoftToolOrJavaRootPath: path.join(__dirname, '/res/toolRootPaths/nojava')
             };
 
@@ -114,6 +114,7 @@ describe('runnner', () => {
         describe('parse and upload static analysis result', () => {
             let runOptions: RunOptions;
             let joinStub: sinon.SinonStub;
+            let reportPath: string;
 
             before(() => {
                 const realJoin = pt.join;
@@ -135,18 +136,19 @@ describe('runnner', () => {
             });
 
             beforeEach(() => {
-                if (fs.existsSync(__dirname + '/res/reports/XML_STATIC.sarif')) {
-                    fs.rmSync(__dirname + '/res/reports/XML_STATIC.sarif');
+                reportPath = path.join(__dirname, '/res/reports/XML_STATIC')
+                if (fs.existsSync(reportPath + '.sarif')) {
+                    fs.rmSync(reportPath + '.sarif');
                 }
                 runOptions = {
-                    report: __dirname + '/res/reports/*.xml',
+                    report: reportPath + '.xml',
                     parasoftToolOrJavaRootPath: path.join(__dirname, '/res/toolRootPaths/toolHome')
                 };
             })
 
             afterEach(() => {
-                if (fs.existsSync(__dirname + '/res/reports/XML_STATIC.sarif')) {
-                    fs.rmSync(__dirname + '/res/reports/XML_STATIC.sarif');
+                if (fs.existsSync(reportPath + '.sarif')) {
+                    fs.rmSync(reportPath + '.sarif');
                 }
             })
 
@@ -164,6 +166,58 @@ describe('runnner', () => {
                 sinon.assert.callCount(post, 10);
                 sinon.assert.calledWith(logInfo, messagesFormatter.format(messages.uploaded_parasoft_report_results, 'dotTEST', 1000));
             });
+
+            it('parse and upload static analysis result normal - no violation', async () => {
+                reportPath = path.join(__dirname, '/res/reports/report_no_violation');
+                runOptions.report = reportPath + '.xml';
+                const put = sandbox.fake.resolves({status: 200, data: {}});
+                sandbox.replace(axios, 'put', put);
+                const post = sandbox.fake.resolves({status: 200, data: {}});
+                sandbox.replace(axios, 'post', post);
+
+                const staticAnalysisParserRunner = new StaticAnalysisParserRunner();
+                await staticAnalysisParserRunner.run(runOptions, createBitbucketEnv());
+
+                sinon.assert.calledWith(logInfo, messagesFormatter.format(messages.parsed_parasoft_static_analysis_report, 0, path.join(__dirname, '/res/reports/report_no_violation.xml')));
+                sinon.assert.notCalled(put);
+                sinon.assert.notCalled(post);
+                sinon.assert.calledWith(logInfo, messagesFormatter.format(messagesFormatter.format(messages.skip_static_analysis_report, runOptions.report)));
+            });
+
+            it('parse and upload static analysis result normal - less than 1000 violation', async () => {
+                reportPath = path.join(__dirname, '/res/reports/dottest-report-202401');
+                runOptions.report = reportPath + '.xml';
+                const put = sandbox.fake.resolves({status: 200, data: {}});
+                sandbox.replace(axios, 'put', put);
+                const post = sandbox.fake.resolves({status: 200, data: {}});
+                sandbox.replace(axios, 'post', post);
+
+                const staticAnalysisParserRunner = new StaticAnalysisParserRunner();
+                await staticAnalysisParserRunner.run(runOptions, createBitbucketEnv());
+
+                sinon.assert.calledWith(logInfo, messagesFormatter.format(messages.parsed_parasoft_static_analysis_report, 42, path.join(__dirname, '/res/reports/dottest-report-202401.xml')));
+                sinon.assert.calledOnce(put);
+                sinon.assert.callCount(post, 1);
+                sinon.assert.calledWith(logInfo, messagesFormatter.format(messages.uploaded_parasoft_report_results, 'dotTEST', 42));
+            });
+
+            it('parse and upload static analysis result normal - violation without id', async () => {
+                reportPath = path.join(__dirname, '/res/reports/cpptest-pro-report-202301');
+                runOptions.report = reportPath + '.xml';
+                const put = sandbox.fake.resolves({status: 200, data: {}});
+                sandbox.replace(axios, 'put', put);
+                const post = sandbox.fake.resolves({status: 200, data: {}});
+                sandbox.replace(axios, 'post', post);
+
+                const staticAnalysisParserRunner = new StaticAnalysisParserRunner();
+                await staticAnalysisParserRunner.run(runOptions, createBitbucketEnv());
+
+                sinon.assert.calledWith(logInfo, messagesFormatter.format(messages.parsed_parasoft_static_analysis_report, 3145, path.join(__dirname, '/res/reports/cpptest-pro-report-202301.xml')));
+                sinon.assert.calledOnce(put);
+                sinon.assert.callCount(post, 10);
+                sinon.assert.calledWith(logInfo, messagesFormatter.format(messages.uploaded_parasoft_report_results, 'C++test', 1000));
+            });
+
 
             it('parse report failed', async () => {
                 const put = sandbox.fake.resolves({status: 200, data: {}});

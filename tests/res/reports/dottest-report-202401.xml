@@ -1,0 +1,968 @@
+<?xml version='1.0' encoding='UTF-8'?><ResultsSession buildId="CICD_BankExample.NET-2024-07-05" climode="true" endTime="2024-07-05T14:47:19+08:00" execEnv="win32_x86_64" hasViols="true" id="1720151929305" lang="en_US" machine="CD-LYAO-02" prjModule="Parasoft.Dottest.Examples.Bank" project="CICD_BankExample.NET" tag="cicd_BankExample.NET" time="2024-07-05T14:47:08+08:00" toolDispName="dotTEST" toolId="dottest" toolName="DTP Engine for .NET" toolVer="2024.1.0" user="lyao">
+   <TestConfig machine="CD-LYAO-02" name="dottest_settings" pseudoUrl="D:\reports\projects\bankexample.net\dottest_settings.properties" user="lyao"/>
+   <Authors>
+      <Author id="dev1" name="lyao"/>
+   </Authors>
+   <Analyzers>
+      <Analyzer id="com.parasoft.xtest.dupcode.parser" name="Code Duplication Parser" ver="10.7.0.20240508"/>
+      <Analyzer id="com.parasoft.dottest" name="Parasoft dotTEST" ver="10.7.0.1518"/>
+      <Analyzer id="com.parasoft.dottest.dupcode" name="Code Duplication Detector" ver="10.7.0.20240508"/>
+   </Analyzers>
+   <VersionInfos>
+      <StorageInfo ownerId="" resultId="ISetupResult" ver="1" ver10x="1"/>
+      <StorageInfo ownerId="com.parasoft.xtest.checkers.api.standards" resultId="IMetricsViolation" ver="2" ver10x="1"/>
+      <StorageInfo ownerId="" resultId="IExecutionViolation" ver="1" ver10x="1"/>
+      <StorageInfo ownerId="com.parasoft.xtest.checkers.api.standards" resultId="IDupCodeViolation" ver="2" ver10x="1"/>
+      <StorageInfo ownerId="com.parasoft.xtest.checkers.api.standards" resultId="IFlowAnalysisViolation" ver="2" ver10x="1"/>
+      <StorageInfo ownerId="" resultId="IFunctionalViolation" ver="1" ver10x="1"/>
+      <StorageInfo ownerId="" resultId="IChangeImpactViolation" ver="1" ver10x="1"/>
+      <StorageInfo ownerId="com.parasoft.xtest.checkers.api.standards" resultId="ICodingStandardsViolation" ver="2" ver10x="1"/>
+      <StorageInfo ownerId="" resultId="IUnitTestViolation" ver="1" ver10x="1"/>
+   </VersionInfos>
+   <Goals tsks="42">
+      
+   </Goals>
+   <Scope>
+      <Repositories/>
+      <Locations>
+         <Loc hash="-1037776574" locRef="1" projId="Parasoft.Dottest.Examples.Bank" projPath="BankExample.NET/Parasoft.Dottest.Examples.Bank" project="Parasoft.Dottest.Examples.Bank" resProjPath="AccountNumber.cs" totLns="90" uri="file:/D:/reports/projects/bankexample.net/Parasoft.Dottest.Examples.Bank/AccountNumber.cs"/>
+         <Loc hash="225911240" locRef="2" projId="Parasoft.Dottest.Examples.Bank" projPath="BankExample.NET/Parasoft.Dottest.Examples.Bank" project="Parasoft.Dottest.Examples.Bank" resProjPath="Bank.cs" totLns="156" uri="file:/D:/reports/projects/bankexample.net/Parasoft.Dottest.Examples.Bank/Bank.cs"/>
+         <Loc hash="33954980" locRef="3" projId="Parasoft.Dottest.Examples.Bank" projPath="BankExample.NET/Parasoft.Dottest.Examples.Bank" project="Parasoft.Dottest.Examples.Bank" resProjPath="BankAccount.cs" totLns="49" uri="file:/D:/reports/projects/bankexample.net/Parasoft.Dottest.Examples.Bank/BankAccount.cs"/>
+         <Loc hash="190994750" locRef="4" projId="Parasoft.Dottest.Examples.Bank" projPath="BankExample.NET/Parasoft.Dottest.Examples.Bank" project="Parasoft.Dottest.Examples.Bank" resProjPath="BankUser.cs" totLns="43" uri="file:/D:/reports/projects/bankexample.net/Parasoft.Dottest.Examples.Bank/BankUser.cs"/>
+         <Loc hash="2123378625" locRef="5" projId="Parasoft.Dottest.Examples.Bank" projPath="BankExample.NET/Parasoft.Dottest.Examples.Bank" project="Parasoft.Dottest.Examples.Bank" resProjPath="CurrencyExchangeConverter.cs" totLns="71" uri="file:/D:/reports/projects/bankexample.net/Parasoft.Dottest.Examples.Bank/CurrencyExchangeConverter.cs"/>
+         <Loc hash="-1333971617" locRef="6" projId="Parasoft.Dottest.Examples.Bank" projPath="BankExample.NET/Parasoft.Dottest.Examples.Bank" project="Parasoft.Dottest.Examples.Bank" resProjPath="ExampleBank.cs" totLns="82" uri="file:/D:/reports/projects/bankexample.net/Parasoft.Dottest.Examples.Bank/ExampleBank.cs"/>
+         <Loc hash="1562776998" locRef="7" projId="Parasoft.Dottest.Examples.Bank" projPath="BankExample.NET/Parasoft.Dottest.Examples.Bank" project="Parasoft.Dottest.Examples.Bank" resProjPath="IInterBankTransferSystem.cs" totLns="12" uri="file:/D:/reports/projects/bankexample.net/Parasoft.Dottest.Examples.Bank/IInterBankTransferSystem.cs"/>
+         <Loc hash="-1513177483" locRef="8" projId="Parasoft.Dottest.Examples.Bank" projPath="BankExample.NET/Parasoft.Dottest.Examples.Bank" project="Parasoft.Dottest.Examples.Bank" resProjPath="ReportGenerator.cs" totLns="53" uri="file:/D:/reports/projects/bankexample.net/Parasoft.Dottest.Examples.Bank/ReportGenerator.cs"/>
+         <Loc hash="-1644265069" locRef="9" projId="Parasoft.Dottest.Examples.Bank" projPath="BankExample.NET/Parasoft.Dottest.Examples.Bank" project="Parasoft.Dottest.Examples.Bank" resProjPath="Money/Currency.cs" totLns="65" uri="file:/D:/reports/projects/bankexample.net/Parasoft.Dottest.Examples.Bank/Money/Currency.cs"/>
+         <Loc hash="-854174013" locRef="10" projId="Parasoft.Dottest.Examples.Bank" projPath="BankExample.NET/Parasoft.Dottest.Examples.Bank" project="Parasoft.Dottest.Examples.Bank" resProjPath="Money/CurrencyInfo.cs" totLns="29" uri="file:/D:/reports/projects/bankexample.net/Parasoft.Dottest.Examples.Bank/Money/CurrencyInfo.cs"/>
+         <Loc hash="-1251910444" locRef="11" projId="Parasoft.Dottest.Examples.Bank" projPath="BankExample.NET/Parasoft.Dottest.Examples.Bank" project="Parasoft.Dottest.Examples.Bank" resProjPath="Money/CurrencyProvider.cs" totLns="71" uri="file:/D:/reports/projects/bankexample.net/Parasoft.Dottest.Examples.Bank/Money/CurrencyProvider.cs"/>
+         <Loc hash="-760614867" locRef="12" projId="Parasoft.Dottest.Examples.Bank" projPath="BankExample.NET/Parasoft.Dottest.Examples.Bank" project="Parasoft.Dottest.Examples.Bank" resProjPath="Money/CurrencyWithCents.cs" totLns="69" uri="file:/D:/reports/projects/bankexample.net/Parasoft.Dottest.Examples.Bank/Money/CurrencyWithCents.cs"/>
+         <Loc hash="1998113113" locRef="13" projId="Parasoft.Dottest.Examples.Bank" projPath="BankExample.NET/Parasoft.Dottest.Examples.Bank" project="Parasoft.Dottest.Examples.Bank" resProjPath="Money/CurrencyWithNoCents.cs" totLns="47" uri="file:/D:/reports/projects/bankexample.net/Parasoft.Dottest.Examples.Bank/Money/CurrencyWithNoCents.cs"/>
+         <Loc hash="2123519255" locRef="14" projId="Parasoft.Dottest.Examples.Bank" projPath="BankExample.NET/Parasoft.Dottest.Examples.Bank" project="Parasoft.Dottest.Examples.Bank" resProjPath="Transactions/ExternalTransfer.cs" totLns="40" uri="file:/D:/reports/projects/bankexample.net/Parasoft.Dottest.Examples.Bank/Transactions/ExternalTransfer.cs"/>
+         <Loc hash="-1435513077" locRef="15" projId="Parasoft.Dottest.Examples.Bank" projPath="BankExample.NET/Parasoft.Dottest.Examples.Bank" project="Parasoft.Dottest.Examples.Bank" resProjPath="Transactions/IncommingTransfer.cs" totLns="37" uri="file:/D:/reports/projects/bankexample.net/Parasoft.Dottest.Examples.Bank/Transactions/IncommingTransfer.cs"/>
+         <Loc hash="-2022280772" locRef="16" projId="Parasoft.Dottest.Examples.Bank" projPath="BankExample.NET/Parasoft.Dottest.Examples.Bank" project="Parasoft.Dottest.Examples.Bank" resProjPath="Transactions/OutgoingTransfer.cs" totLns="37" uri="file:/D:/reports/projects/bankexample.net/Parasoft.Dottest.Examples.Bank/Transactions/OutgoingTransfer.cs"/>
+         <Loc hash="-607436831" locRef="17" projId="Parasoft.Dottest.Examples.Bank" projPath="BankExample.NET/Parasoft.Dottest.Examples.Bank" project="Parasoft.Dottest.Examples.Bank" resProjPath="Transactions/TransactionBase.cs" totLns="56" uri="file:/D:/reports/projects/bankexample.net/Parasoft.Dottest.Examples.Bank/Transactions/TransactionBase.cs"/>
+         <Loc hash="-343300954" locRef="18" projId="Parasoft.Dottest.Examples.Bank" projPath="BankExample.NET/Parasoft.Dottest.Examples.Bank" project="Parasoft.Dottest.Examples.Bank" resProjPath="Transactions/TransferTransaction.cs" totLns="23" uri="file:/D:/reports/projects/bankexample.net/Parasoft.Dottest.Examples.Bank/Transactions/TransferTransaction.cs"/>
+      </Locations>
+   </Scope>
+   
+  <SetupProblems>
+    <Problem msg="Source Control problems:" sev="1" totErrs="1" type="SourceControl">
+      <ErrorList>
+        <Error val="None of supported source controls is enabled in settings. The report will not contain any source control references."/>
+      </ErrorList>
+    </Problem>
+    <Problem msg="The test configuration contains the following rules which were removed from dotTEST:" sev="1" totErrs="32" type="RMC">
+      <ErrorList>
+        <Error val="The rule CS.SC has been removed."/>
+        <Error val="The rule BD.PB.INTOVERF has been removed and should be replaced with BD.PB.INTWRAP, BD.PB.INTDL, BD.PB.INTVC in your test configuration."/>
+        <Error val="The rule CLS.ACNM has been removed."/>
+        <Error val="The rule OOM.MLCI has been removed and should be replaced with METRIC.IDOC in your test configuration."/>
+        <Error val="The rule CS.MLC has been removed and should be replaced with METRIC.NOPLIM in your test configuration."/>
+        <Error val="The rule CS.OOM.MI has been removed and should be replaced with METRIC.MI in your test configuration."/>
+        <Error val="The rule CLS.MTV has been removed."/>
+        <Error val="The rule BD.PB.POVR has been removed and should be replaced with BD.PB.VOVR in your test configuration."/>
+        <Error val="The rule SEC.MSCPV has been removed."/>
+        <Error val="The rule PB.BOXING has been removed."/>
+      </ErrorList>
+    </Problem>
+  </SetupProblems>
+
+   <CodingStandards ownerId="com.parasoft.xtest.checkers.api.standards" time="0:00:03">
+      <Projects>
+         <Project bdCheckedFiles="0" bdTotalFiles="0" checkedFiles="18" checkedLns="1030" id="Parasoft.Dottest.Examples.Bank" name="Parasoft.Dottest.Examples.Bank" qfixErrs="0" suppErrs="0" totErrs="42" totFiles="18" totLns="1030"/>
+      </Projects>
+      
+      
+      <Rules>
+         <CategoriesList>
+            <Category authTot="0;" authUrg="0;" desc="DISA ASD STIG" name="APSC_DV" rules="1451" total="0">
+               <Category authTot="0;" authUrg="0;" desc="APSC_DV.001995 The application must not be vulnerable to race conditions." name="APSC_DV.001995" rules="13" total="0"/>
+               <Category authTot="0;" authUrg="0;" desc="APSC_DV.000530 The application must enforce the limit of three consecutive invalid logon attempts by a user during a 15 minute time period." name="APSC_DV.000530" rules="1" total="0"/>
+               <Category authTot="0;" authUrg="0;" desc="APSC_DV.001300 The application must protect audit information from unauthorized deletion." name="APSC_DV.001300" rules="48" total="0"/>
+               <Category authTot="0;" authUrg="0;" desc="APSC_DV.000500 The application must prevent non-privileged users from executing privileged functions to include disabling, circumventing, or altering implemented security safeguards/countermeasures." name="APSC_DV.000500" rules="8" total="0"/>
+               <Category authTot="0;" authUrg="0;" desc="APSC_DV.000510 The application must execute without excessive account permissions." name="APSC_DV.000510" rules="11" total="0"/>
+               <Category authTot="0;" authUrg="0;" desc="APSC_DV.001660 Service-Oriented Applications handling non-releasable data must authenticate endpoint devices via mutual SSL/TLS." name="APSC_DV.001660" rules="25" total="0"/>
+               <Category authTot="0;" authUrg="0;" desc="APSC_DV.000460 The application must enforce approved authorizations for logical access to information and system resources in accordance with applicable access control policies." name="APSC_DV.000460" rules="14" total="0"/>
+               <Category authTot="0;" authUrg="0;" desc="APSC_DV.001860 The application must use mechanisms meeting the requirements of applicable federal laws, Executive Orders, directives, policies, regulations, standards, and guidance for authentication to a cryptographic module." name="APSC_DV.001860" rules="31" total="0"/>
+               <Category authTot="0;" authUrg="0;" desc="APSC_DV.000650 The application must not write sensitive data into the application logs." name="APSC_DV.000650" rules="9" total="0"/>
+               <Category authTot="0;" authUrg="0;" desc="APSC_DV.002000 The application must terminate all network connections associated with a communications session at the end of the session." name="APSC_DV.002000" rules="3" total="0"/>
+               <Category authTot="0;" authUrg="0;" desc="APSC_DV.000160 The application must implement DoD-approved encryption to protect the confidentiality of remote access sessions." name="APSC_DV.000160" rules="24" total="0"/>
+               <Category authTot="0;" authUrg="0;" desc="APSC_DV.002350 The application must use appropriate cryptography in order to protect stored DoD information when required by the information owner or DoD policy." name="APSC_DV.002350" rules="25" total="0"/>
+               <Category authTot="0;" authUrg="0;" desc="APSC_DV.000170 The application must implement cryptographic mechanisms to protect the integrity of remote access sessions." name="APSC_DV.000170" rules="22" total="0"/>
+               <Category authTot="0;" authUrg="0;" desc="APSC_DV.002010 The application must implement NSA-approved cryptography to protect classified information in accordance with applicable federal laws, Executive Orders, directives, policies, regulations, and standards." name="APSC_DV.002010" rules="23" total="0"/>
+               <Category authTot="0;" authUrg="0;" desc="APSC_DV.001460 An application vulnerability assessment must be conducted." name="APSC_DV.001460" rules="91" total="0"/>
+               <Category authTot="0;" authUrg="0;" desc="APSC_DV.001290 The application must protect audit information from unauthorized modification." name="APSC_DV.001290" rules="48" total="0"/>
+               <Category authTot="0;" authUrg="0;" desc="APSC_DV.002290 The application must use the Federal Information Processing Standard (FIPS) 140-2-validated cryptographic modules and random number generator if the application implements encryption, key exchange, digital signature, and hash functionality." name="APSC_DV.002290" rules="24" total="0"/>
+            </Category>
+            <Category authTot="42;" authUrg="42;" desc="Code Duplication Detection" name="CDD" rules="4" total="42"/>
+            <Category authTot="0;" authUrg="0;" desc="Common Weakness Enumeration 4.14" name="CWE" rules="266" total="0">
+               <Category authTot="0;" authUrg="0;" desc="CWE-269: Improper Privilege Management" name="CWE.269" rules="4" total="0"/>
+               <Category authTot="0;" authUrg="0;" desc="CWE-863: Incorrect Authorization" name="CWE.863" rules="3" total="0"/>
+               <Category authTot="0;" authUrg="0;" desc="CWE-862: Missing Authorization" name="CWE.862" rules="2" total="0"/>
+               <Category authTot="0;" authUrg="0;" desc="CWE-780: Use of RSA Algorithm without OAEP" name="CWE.780" rules="1" total="0"/>
+               <Category authTot="0;" authUrg="0;" desc="CWE-829: Inclusion of Functionality from Untrusted Control Sphere" name="CWE.829" rules="2" total="0"/>
+               <Category authTot="0;" authUrg="0;" desc="CWE-827: Improper Control of Document Type Definition" name="CWE.827" rules="1" total="0"/>
+               <Category authTot="0;" authUrg="0;" desc="CWE-427: Uncontrolled Search Path Element" name="CWE.427" rules="1" total="0"/>
+               <Category authTot="0;" authUrg="0;" desc="CWE-307: Improper Restriction of Excessive Authentication Attempts" name="CWE.307" rules="1" total="0"/>
+               <Category authTot="0;" authUrg="0;" desc="CWE-502: Deserialization of Untrusted Data" name="CWE.502" rules="14" total="0"/>
+               <Category authTot="0;" authUrg="0;" desc="CWE-546: Suspicious Comment" name="CWE.546" rules="1" total="0"/>
+               <Category authTot="0;" authUrg="0;" desc="CWE-426: Untrusted Search Path" name="CWE.426" rules="1" total="0"/>
+               <Category authTot="0;" authUrg="0;" desc="CWE-59: Improper Link Resolution Before File Access ('Link Following')" name="CWE.59" rules="1" total="0"/>
+               <Category authTot="0;" authUrg="0;" desc="CWE-624: Executable Regular Expression Error" name="CWE.624" rules="1" total="0"/>
+               <Category authTot="0;" authUrg="0;" desc="CWE-412: Unrestricted Externally Accessible Lock" name="CWE.412" rules="1" total="0"/>
+               <Category authTot="0;" authUrg="0;" desc="CWE-259: Use of Hard-coded Password" name="CWE.259" rules="2" total="0"/>
+               <Category authTot="0;" authUrg="0;" desc="CWE-611: Improper Restriction of XML External Entity Reference" name="CWE.611" rules="10" total="0"/>
+               <Category authTot="0;" authUrg="0;" desc="CWE-732: Incorrect Permission Assignment for Critical Resource" name="CWE.732" rules="2" total="0"/>
+               <Category authTot="0;" authUrg="0;" desc="CWE-212: Improper Removal of Sensitive Information Before Storage or Transfer" name="CWE.212" rules="1" total="0"/>
+               <Category authTot="0;" authUrg="0;" desc="CWE-499: Serializable Class Containing Sensitive Data" name="CWE.499" rules="1" total="0"/>
+               <Category authTot="0;" authUrg="0;" desc="CWE-532: Insertion of Sensitive Information into Log File" name="CWE.532" rules="2" total="0"/>
+               <Category authTot="0;" authUrg="0;" desc="CWE-299: Improper Check for Certificate Revocation" name="CWE.299" rules="2" total="0"/>
+               <Category authTot="0;" authUrg="0;" desc="CWE-131: Incorrect Calculation of Buffer Size" name="CWE.131" rules="1" total="0"/>
+               <Category authTot="0;" authUrg="0;" desc="CWE-252: Unchecked Return Value" name="CWE.252" rules="2" total="0"/>
+               <Category authTot="0;" authUrg="0;" desc="CWE-494: Download of Code Without Integrity Check" name="CWE.494" rules="1" total="0"/>
+               <Category authTot="0;" authUrg="0;" desc="CWE-770: Allocation of Resources Without Limits or Throttling" name="CWE.770" rules="3" total="0"/>
+               <Category authTot="0;" authUrg="0;" desc="CWE-250: Execution with Unnecessary Privileges" name="CWE.250" rules="3" total="0"/>
+               <Category authTot="0;" authUrg="0;" desc="CWE-294: Authentication Bypass by Capture-replay" name="CWE.294" rules="1" total="0"/>
+               <Category authTot="0;" authUrg="0;" desc="CWE-295: Improper Certificate Validation" name="CWE.295" rules="5" total="0"/>
+               <Category authTot="0;" authUrg="0;" desc="CWE-20: Improper Input Validation" name="CWE.20" rules="13" total="0"/>
+               <Category authTot="0;" authUrg="0;" desc="CWE-64: Windows Shortcut Following (.LNK)" name="CWE.64" rules="1" total="0"/>
+               <Category authTot="0;" authUrg="0;" desc="CWE-617: Reachable Assertion" name="CWE.617" rules="1" total="0"/>
+               <Category authTot="0;" authUrg="0;" desc="CWE-613: Insufficient Session Expiration" name="CWE.613" rules="1" total="0"/>
+               <Category authTot="0;" authUrg="0;" desc="CWE-402: Transmission of Private Resources into a New Sphere ('Resource Leak')" name="CWE.402" rules="1" total="0"/>
+               <Category authTot="0;" authUrg="0;" desc="CWE-201: Insertion of Sensitive Information Into Sent Data" name="CWE.201" rules="1" total="0"/>
+               <Category authTot="0;" authUrg="0;" desc="CWE-400: Uncontrolled Resource Consumption" name="CWE.400" rules="6" total="0"/>
+               <Category authTot="0;" authUrg="0;" desc="CWE-287: Improper Authentication" name="CWE.287" rules="12" total="0"/>
+               <Category authTot="0;" authUrg="0;" desc="CWE-200: Exposure of Sensitive Information to an Unauthorized Actor" name="CWE.200" rules="9" total="0"/>
+               <Category authTot="0;" authUrg="0;" desc="CWE-321: Use of Hard-coded Cryptographic Key" name="CWE.321" rules="1" total="0"/>
+               <Category authTot="0;" authUrg="0;" desc="CWE-120: Buffer Copy without Checking Size of Input ('Classic Buffer Overflow')" name="CWE.120" rules="1" total="0"/>
+               <Category authTot="0;" authUrg="0;" desc="CWE-362: Concurrent Execution using Shared Resource with Improper Synchronization ('Race Condition')" name="CWE.362" rules="2" total="0"/>
+               <Category authTot="0;" authUrg="0;" desc="CWE-681: Incorrect Conversion between Numeric Types" name="CWE.681" rules="3" total="0"/>
+               <Category authTot="0;" authUrg="0;" desc="CWE-561: Dead Code" name="CWE.561" rules="1" total="0"/>
+               <Category authTot="0;" authUrg="0;" desc="CWE-481: Assigning instead of Comparing" name="CWE.481" rules="1" total="0"/>
+               <Category authTot="0;" authUrg="0;" desc="CWE-480: Use of Incorrect Operator" name="CWE.480" rules="1" total="0"/>
+               <Category authTot="0;" authUrg="0;" desc="CWE-80: Improper Neutralization of Script-Related HTML Tags in a Web Page (Basic XSS)" name="CWE.80" rules="2" total="0"/>
+               <Category authTot="0;" authUrg="0;" desc="CWE-209: Generation of Error Message Containing Sensitive Information" name="CWE.209" rules="4" total="0"/>
+               <Category authTot="0;" authUrg="0;" desc="CWE-329: Generation of Predictable IV with CBC Mode" name="CWE.329" rules="1" total="0"/>
+               <Category authTot="0;" authUrg="0;" desc="CWE-79: Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting')" name="CWE.79" rules="6" total="0"/>
+               <Category authTot="0;" authUrg="0;" desc="CWE-326: Inadequate Encryption Strength" name="CWE.326" rules="1" total="0"/>
+               <Category authTot="0;" authUrg="0;" desc="CWE-327: Use of a Broken or Risky Cryptographic Algorithm" name="CWE.327" rules="4" total="0"/>
+               <Category authTot="0;" authUrg="0;" desc="CWE-676: Use of Potentially Dangerous Function" name="CWE.676" rules="1" total="0"/>
+               <Category authTot="0;" authUrg="0;" desc="CWE-798: Use of Hard-coded Credentials" name="CWE.798" rules="5" total="0"/>
+               <Category authTot="0;" authUrg="0;" desc="CWE-476: NULL Pointer Dereference" name="CWE.476" rules="2" total="0"/>
+               <Category authTot="0;" authUrg="0;" desc="CWE-397: Declaration of Throws for Generic Exception" name="CWE.397" rules="1" total="0"/>
+               <Category authTot="0;" authUrg="0;" desc="CWE-595: Comparison of Object References Instead of Object Contents" name="CWE.595" rules="1" total="0"/>
+               <Category authTot="0;" authUrg="0;" desc="CWE-197: Numeric Truncation Error" name="CWE.197" rules="2" total="0"/>
+               <Category authTot="0;" authUrg="0;" desc="CWE-395: Use of NullPointerException Catch to Detect NULL Pointer Dereference" name="CWE.395" rules="1" total="0"/>
+               <Category authTot="0;" authUrg="0;" desc="CWE-352: Cross-Site Request Forgery (CSRF)" name="CWE.352" rules="6" total="0"/>
+               <Category authTot="0;" authUrg="0;" desc="CWE-396: Declaration of Catch for Generic Exception" name="CWE.396" rules="1" total="0"/>
+               <Category authTot="0;" authUrg="0;" desc="CWE-350: Reliance on Reverse DNS Resolution for a Security-Critical Action" name="CWE.350" rules="1" total="0"/>
+               <Category authTot="0;" authUrg="0;" desc="CWE-391: Unchecked Error Condition" name="CWE.391" rules="1" total="0"/>
+               <Category authTot="0;" authUrg="0;" desc="CWE-1004: Sensitive Cookie Without 'HttpOnly' Flag" name="CWE.1004" rules="1" total="0"/>
+               <Category authTot="0;" authUrg="0;" desc="CWE-191: Integer Underflow (Wrap or Wraparound)" name="CWE.191" rules="3" total="0"/>
+               <Category authTot="0;" authUrg="0;" desc="CWE-190: Integer Overflow or Wraparound" name="CWE.190" rules="3" total="0"/>
+               <Category authTot="0;" authUrg="0;" desc="CWE-88: Improper Neutralization of Argument Delimiters in a Command ('Argument Injection')" name="CWE.88" rules="2" total="0"/>
+               <Category authTot="0;" authUrg="0;" desc="CWE-918: Server-Side Request Forgery (SSRF)" name="CWE.918" rules="5" total="0"/>
+               <Category authTot="0;" authUrg="0;" desc="CWE-838: Inappropriate Encoding for Output Context" name="CWE.838" rules="5" total="0"/>
+               <Category authTot="0;" authUrg="0;" desc="CWE-835: Loop with Unreachable Exit Condition ('Infinite Loop')" name="CWE.835" rules="3" total="0"/>
+               <Category authTot="0;" authUrg="0;" desc="CWE-316: Cleartext Storage of Sensitive Information in Memory" name="CWE.316" rules="2" total="0"/>
+            </Category>
+            <Category authTot="0;" authUrg="0;" desc="OWASP Top 10 Most Critical Web Application Security Risks (2017)" name="OWASP2017" rules="51" total="0">
+               <Category authTot="0;" authUrg="0;" desc="A2-Broken Authentication" name="OWASP2017.A2" rules="4" total="0"/>
+               <Category authTot="0;" authUrg="0;" desc="A1-Injection" name="OWASP2017.A1" rules="9" total="0"/>
+               <Category authTot="0;" authUrg="0;" desc="A10-Insufficient Logging&amp;Monitoring" name="OWASP2017.A10" rules="1" total="0"/>
+               <Category authTot="0;" authUrg="0;" desc="A8-Insecure Deserialization" name="OWASP2017.A8" rules="4" total="0"/>
+               <Category authTot="0;" authUrg="0;" desc="A7-Cross-Site Scripting (XSS)" name="OWASP2017.A7" rules="5" total="0"/>
+               <Category authTot="0;" authUrg="0;" desc="A6-Security Misconfiguration" name="OWASP2017.A6" rules="9" total="0"/>
+               <Category authTot="0;" authUrg="0;" desc="A5-Broken Access Control" name="OWASP2017.A5" rules="5" total="0"/>
+               <Category authTot="0;" authUrg="0;" desc="A4-XML External Entities (XXE)" name="OWASP2017.A4" rules="2" total="0"/>
+               <Category authTot="0;" authUrg="0;" desc="A3-Sensitive Data Exposure" name="OWASP2017.A3" rules="12" total="0"/>
+            </Category>
+            <Category authTot="0;" authUrg="0;" desc="OWASP API Security Top 10 (2019)" name="OWASP2019" rules="61" total="0">
+               <Category authTot="0;" authUrg="0;" desc="API1-Broken Object Level Authorization" name="OWASP2019.API1" rules="2" total="0"/>
+               <Category authTot="0;" authUrg="0;" desc="API3-Excessive Data Exposure" name="OWASP2019.API3" rules="14" total="0"/>
+               <Category authTot="0;" authUrg="0;" desc="API2-Broken User Authentication" name="OWASP2019.API2" rules="7" total="0"/>
+               <Category authTot="0;" authUrg="0;" desc="API10-Insufficient Logging &amp; Monitoring" name="OWASP2019.API10" rules="3" total="0"/>
+               <Category authTot="0;" authUrg="0;" desc="API5-Broken Function Level Authorization" name="OWASP2019.API5" rules="4" total="0"/>
+               <Category authTot="0;" authUrg="0;" desc="API4-Lack of Resources &amp; Rate Limiting" name="OWASP2019.API4" rules="3" total="0"/>
+               <Category authTot="0;" authUrg="0;" desc="API7-Security Misconfiguration" name="OWASP2019.API7" rules="9" total="0"/>
+               <Category authTot="0;" authUrg="0;" desc="API8-Injection" name="OWASP2019.API8" rules="19" total="0"/>
+            </Category>
+            <Category authTot="0;" authUrg="0;" desc="OWASP Top 10 Web Application Security Risks (2021)" name="OWASP2021" rules="116" total="0">
+               <Category authTot="0;" authUrg="0;" desc="A10-Server-Side Request Forgery" name="OWASP2021.A10" rules="3" total="0"/>
+               <Category authTot="0;" authUrg="0;" desc="A7-Identification and Authentication Failures" name="OWASP2021.A7" rules="13" total="0"/>
+               <Category authTot="0;" authUrg="0;" desc="A5-Security Misconfiguration" name="OWASP2021.A5" rules="17" total="0"/>
+               <Category authTot="0;" authUrg="0;" desc="A4-Insecure Design" name="OWASP2021.A4" rules="16" total="0"/>
+               <Category authTot="0;" authUrg="0;" desc="A9-Security Logging and Monitoring Failures" name="OWASP2021.A9" rules="3" total="0"/>
+               <Category authTot="0;" authUrg="0;" desc="A8-Software and Data Integrity Failures" name="OWASP2021.A8" rules="19" total="0"/>
+               <Category authTot="0;" authUrg="0;" desc="A3-Injection" name="OWASP2021.A3" rules="16" total="0"/>
+               <Category authTot="0;" authUrg="0;" desc="A2-Cryptographic Failures" name="OWASP2021.A2" rules="11" total="0"/>
+               <Category authTot="0;" authUrg="0;" desc="A1-Broken Access Control" name="OWASP2021.A1" rules="18" total="0"/>
+            </Category>
+            <Category authTot="0;" authUrg="0;" desc="Payment Card Industry Data Security Standard 3.2" name="PCIDSS32" rules="48" total="0">
+               <Category authTot="0;" authUrg="0;" desc="6.5.10 Broken authentication and session management" name="PCIDSS32.6510" rules="4" total="0"/>
+               <Category authTot="0;" authUrg="0;" desc="6.5.8 Improper access control" name="PCIDSS32.658" rules="5" total="0"/>
+               <Category authTot="0;" authUrg="0;" desc="6.5.9 Cross-site request forgery (CSRF)" name="PCIDSS32.659" rules="3" total="0"/>
+               <Category authTot="0;" authUrg="0;" desc="6.5.7 Cross-site scripting (XSS)" name="PCIDSS32.657" rules="5" total="0"/>
+               <Category authTot="0;" authUrg="0;" desc="6.5.4 Insecure communications" name="PCIDSS32.654" rules="3" total="0"/>
+               <Category authTot="0;" authUrg="0;" desc="6.5.5 Improper error handling" name="PCIDSS32.655" rules="11" total="0"/>
+               <Category authTot="0;" authUrg="0;" desc="6.5.2 Buffer overflows" name="PCIDSS32.652" rules="1" total="0"/>
+               <Category authTot="0;" authUrg="0;" desc="6.5.3 Insecure cryptographic storage" name="PCIDSS32.653" rules="7" total="0"/>
+               <Category authTot="0;" authUrg="0;" desc="6.5.1 Injection flaws" name="PCIDSS32.651" rules="9" total="0"/>
+            </Category>
+         </CategoriesList>
+         <RulesList>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="APSC_DV.000160" desc="Avoid using custom cryptographic algorithms" id="APSC_DV.000160.ACCA" origId="SEC.ACCA" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="APSC_DV.000160" desc="Do not use hardcoded string for password related parameters" id="APSC_DV.000160.HPW" origId="SEC.HPW" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="APSC_DV.000160" desc="Avoid using insecure algorithms for cryptography" id="APSC_DV.000160.ICA" origId="SEC.ICA" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="APSC_DV.000160" desc="Use RSA keys of 2048 bits or longer" id="APSC_DV.000160.RSAKS" origId="SEC.RSAKS" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="APSC_DV.000160" desc="Use OAEP with RSA algorithm encryption" id="APSC_DV.000160.UOWR" origId="SEC.UOWR" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="APSC_DV.000170" desc="Avoid using custom cryptographic algorithms" id="APSC_DV.000170.ACCA" origId="SEC.ACCA" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="APSC_DV.000170" desc="Do not use hardcoded string for password related parameters" id="APSC_DV.000170.HPW" origId="SEC.HPW" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="APSC_DV.000170" desc="Avoid using insecure algorithms for cryptography" id="APSC_DV.000170.ICA" origId="SEC.ICA" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="APSC_DV.000170" desc="Use RSA keys of 2048 bits or longer" id="APSC_DV.000170.RSAKS" origId="SEC.RSAKS" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="APSC_DV.000170" desc="Use OAEP with RSA algorithm encryption" id="APSC_DV.000170.UOWR" origId="SEC.UOWR" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="APSC_DV.000460" desc="Do not attempt to deny the SkipVerification security permission" id="APSC_DV.000460.ADSVSP" origId="SEC.ADSVSP" sev="1" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="APSC_DV.000460" desc="Use authorization attributes on pages and controllers" id="APSC_DV.000460.UAA" origId="SEC.WEB.UAA" sev="1" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="APSC_DV.000500" desc="Avoid using elevated privileges" id="APSC_DV.000500.AUEP" origId="SEC.AUEP" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="APSC_DV.000510" desc="Do not attempt to deny the SkipVerification security permission" id="APSC_DV.000510.ADSVSP" origId="SEC.ADSVSP" sev="1" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="APSC_DV.000510" desc="Set HttpOnly to true for HttpCookie" id="APSC_DV.000510.CA5396" origId="ROSLYN.MSNA.SECURITY.CA5396" sev="1" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="APSC_DV.000510" desc="Ensure sufficient session expiration" id="APSC_DV.000510.ISE" origId="SEC.WEB.ISE" sev="1" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="APSC_DV.000510" desc="Mark ISerializable.GetObjectData with SecurityPermissionAttribute" id="APSC_DV.000510.MGODWSPA" origId="SERIAL.MGODWSPA" sev="1" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="APSC_DV.000510" desc="Use authorization attributes on pages and controllers" id="APSC_DV.000510.UAA" origId="SEC.WEB.UAA" sev="1" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="APSC_DV.000530" desc="Lock out the user after failed login attempts" id="APSC_DV.000530.LUAFLA" origId="SEC.WEB.LUAFLA" sev="1" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="APSC_DV.000650" desc="Avoid logging sensitive information" id="APSC_DV.000650.ALSI" origId="SEC.ALSI" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="APSC_DV.001290" desc="Encapsulate all dangerous data sources with validation methods" id="APSC_DV.001290.VPPD" origId="SEC.VPPD" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="APSC_DV.001300" desc="Encapsulate all dangerous data sources with validation methods" id="APSC_DV.001300.VPPD" origId="SEC.VPPD" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="APSC_DV.001460" desc="Add authorization services to MVC Core" id="APSC_DV.001460.AAM" origId="SEC.WEB.AAM" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="APSC_DV.001460" desc="Avoid using custom cryptographic algorithms" id="APSC_DV.001460.ACCA" origId="SEC.ACCA" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="APSC_DV.001460" desc="Do not call the 'StackTrace' property of System.Exception" id="APSC_DV.001460.ACPST" origId="SEC.ACPST" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="APSC_DV.001460" desc="Inspect calls to dynamically load libraries" id="APSC_DV.001460.ADLL" origId="SEC.ADLL" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="APSC_DV.001460" desc="Do not attempt to deny the SkipVerification security permission" id="APSC_DV.001460.ADSVSP" origId="SEC.ADSVSP" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="APSC_DV.001460" desc="Avoid logging sensitive information" id="APSC_DV.001460.ALSI" origId="SEC.ALSI" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="APSC_DV.001460" desc="Avoid using elevated privileges" id="APSC_DV.001460.AUEP" origId="SEC.AUEP" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="APSC_DV.001460" desc="Enable anti-XSS protection in Web.config files" id="APSC_DV.001460.AXSSE" origId="SEC.WEB.AXSSE" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="APSC_DV.001460" desc="Do not use DataTable.ReadXml() with untrusted data" id="APSC_DV.001460.CA2350" origId="ROSLYN.MSNA.SECURITY.CA2350" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="APSC_DV.001460" desc="Do not use DataSet.ReadXml() with untrusted data" id="APSC_DV.001460.CA2351" origId="ROSLYN.MSNA.SECURITY.CA2351" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="APSC_DV.001460" desc="Unsafe DataSet or DataTable in serializable type can be vulnerable to remote code execution attacks" id="APSC_DV.001460.CA2352" origId="ROSLYN.MSNA.SECURITY.CA2352" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="APSC_DV.001460" desc="Unsafe DataSet or DataTable in serializable type" id="APSC_DV.001460.CA2353" origId="ROSLYN.MSNA.SECURITY.CA2353" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="APSC_DV.001460" desc="Unsafe DataSet or DataTable in deserialized object graph can be vulnerable to remote code execution attacks" id="APSC_DV.001460.CA2354" origId="ROSLYN.MSNA.SECURITY.CA2354" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="APSC_DV.001460" desc="Unsafe DataSet or DataTable type found in deserializable object graph" id="APSC_DV.001460.CA2355" origId="ROSLYN.MSNA.SECURITY.CA2355" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="APSC_DV.001460" desc="Unsafe DataSet or DataTable type in web deserializable object graph" id="APSC_DV.001460.CA2356" origId="ROSLYN.MSNA.SECURITY.CA2356" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="APSC_DV.001460" desc="Ensure auto-generated class containing DataSet.ReadXml() is not used with untrusted data" id="APSC_DV.001460.CA2361" origId="ROSLYN.MSNA.SECURITY.CA2361" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="APSC_DV.001460" desc="Unsafe DataSet or DataTable in auto-generated serializable type can be vulnerable to remote code execution attacks" id="APSC_DV.001460.CA2362" origId="ROSLYN.MSNA.SECURITY.CA2362" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="APSC_DV.001460" desc="Review code for information disclosure vulnerabilities" id="APSC_DV.001460.CA3004" origId="ROSLYN.MSNA.SECURITY.CA3004" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="APSC_DV.001460" desc="Do Not Add Schema By URL" id="APSC_DV.001460.CA3061" origId="ROSLYN.MSNA.SECURITY.CA3061" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="APSC_DV.001460" desc="Insecure DTD processing in XML" id="APSC_DV.001460.CA3075" origId="ROSLYN.MSNA.SECURITY.CA3075" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="APSC_DV.001460" desc="Insecure Processing in API Design, XmlDocument and XmlTextReader" id="APSC_DV.001460.CA3077" origId="ROSLYN.MSNA.SECURITY.CA3077" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="APSC_DV.001460" desc="Mark Verb Handlers With Validate Antiforgery Token" id="APSC_DV.001460.CA3147" origId="ROSLYN.MSNA.SECURITY.CA3147" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="APSC_DV.001460" desc="Do Not Disable Certificate Validation" id="APSC_DV.001460.CA5359" origId="ROSLYN.MSNA.SECURITY.CA5359" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="APSC_DV.001460" desc="Use XmlReader for 'DataSet.ReadXml()'" id="APSC_DV.001460.CA5366" origId="ROSLYN.MSNA.SECURITY.CA5366" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="APSC_DV.001460" desc="Set ViewStateUserKey For Classes Derived From Page" id="APSC_DV.001460.CA5368" origId="ROSLYN.MSNA.SECURITY.CA5368" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="APSC_DV.001460" desc="Use XmlReader for 'XmlSerializer.Deserialize()'" id="APSC_DV.001460.CA5369" origId="ROSLYN.MSNA.SECURITY.CA5369" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="APSC_DV.001460" desc="Use XmlReader for XmlValidatingReader constructor" id="APSC_DV.001460.CA5370" origId="ROSLYN.MSNA.SECURITY.CA5370" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="APSC_DV.001460" desc="Use XmlReader for 'XmlSchema.Read()'" id="APSC_DV.001460.CA5371" origId="ROSLYN.MSNA.SECURITY.CA5371" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="APSC_DV.001460" desc="Use XmlReader for XPathDocument constructor" id="APSC_DV.001460.CA5372" origId="ROSLYN.MSNA.SECURITY.CA5372" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="APSC_DV.001460" desc="Do Not Use Account Shared Access Signature" id="APSC_DV.001460.CA5375" origId="ROSLYN.MSNA.SECURITY.CA5375" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="APSC_DV.001460" desc="Use SharedAccessProtocol HttpsOnly" id="APSC_DV.001460.CA5376" origId="ROSLYN.MSNA.SECURITY.CA5376" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="APSC_DV.001460" desc="Use Container Level Access Policy" id="APSC_DV.001460.CA5377" origId="ROSLYN.MSNA.SECURITY.CA5377" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="APSC_DV.001460" desc="Do not hard-code encryption key" id="APSC_DV.001460.CA5390" origId="ROSLYN.MSNA.SECURITY.CA5390" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="APSC_DV.001460" desc="Use antiforgery tokens in ASP.NET Core MVC controllers" id="APSC_DV.001460.CA5391" origId="ROSLYN.MSNA.SECURITY.CA5391" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="APSC_DV.001460" desc="Miss HttpVerb attribute for action methods" id="APSC_DV.001460.CA5395" origId="ROSLYN.MSNA.SECURITY.CA5395" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="APSC_DV.001460" desc="Do not hard-code certificate" id="APSC_DV.001460.CA5403" origId="ROSLYN.MSNA.SECURITY.CA5403" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="APSC_DV.001460" desc="Ensure that readonly property which is a collection does not expose any sensitive information" id="APSC_DV.001460.CSG" origId="SERIAL.XML.CSG" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="APSC_DV.001460" desc="Enable Content Security Policy in Web.config files" id="APSC_DV.001460.CSP" origId="SEC.WEB.CSP" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="APSC_DV.001460" desc="Inspect modifications to security settings" id="APSC_DV.001460.DMSC" origId="SEC.DMSC" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="APSC_DV.001460" desc="Do not change the RSA/DSA KeySize property" id="APSC_DV.001460.DNCCKS" origId="SEC.DNCCKS" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="APSC_DV.001460" desc="Do not disable SSL certificate validation" id="APSC_DV.001460.DNICV" origId="SEC.WEB.DNICV" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="APSC_DV.001460" desc="Avoid hard coded connection strings" id="APSC_DV.001460.HARDCONN" origId="SPR.HARDCONN" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="APSC_DV.001460" desc="Do not use hardcoded string for password related parameters" id="APSC_DV.001460.HPW" origId="SEC.HPW" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="APSC_DV.001460" desc="Avoid using insecure algorithms for cryptography" id="APSC_DV.001460.ICA" origId="SEC.ICA" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="APSC_DV.001460" desc="Always provide deserialization constructor when ISerializable interface is implemented" id="APSC_DV.001460.IDC" origId="SERIAL.IDC" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="APSC_DV.001460" desc="Implement IDeserializationCallback for classes with NonSerialized fields" id="APSC_DV.001460.IIDC" origId="CS.SERIAL.IIDC" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="APSC_DV.001460" desc="Do not rely on reverse DNS resolution for security decisions" id="APSC_DV.001460.IIPHEU" origId="SEC.WEB.IIPHEU" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="APSC_DV.001460" desc="Do not execute external code without integrity check" id="APSC_DV.001460.IREC" origId="SEC.IREC" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="APSC_DV.001460" desc="Ensure sufficient session expiration" id="APSC_DV.001460.ISE" origId="SEC.WEB.ISE" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="APSC_DV.001460" desc="Ensure all exceptions are either logged with a standard logger or rethrown" id="APSC_DV.001460.LGE" origId="SEC.LGE" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="APSC_DV.001460" desc="Lock out the user after failed login attempts" id="APSC_DV.001460.LUAFLA" origId="SEC.WEB.LUAFLA" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="APSC_DV.001460" desc="Mark ISerializable.GetObjectData with SecurityPermissionAttribute" id="APSC_DV.001460.MGODWSPA" origId="SERIAL.MGODWSPA" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="APSC_DV.001460" desc="Do not catch  'NullReferenceException''" id="APSC_DV.001460.NCNRE" origId="EXCEPT.NCNRE" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="APSC_DV.001460" desc="Avoid the use of &quot;catch&quot; on 'Exception', 'SystemException' or 'ApplicationException'" id="APSC_DV.001460.NCSAE" origId="EXCEPT.NCSAE" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="APSC_DV.001460" desc="Avoid throwing 'Exception', 'SystemException' or 'ApplicationException'" id="APSC_DV.001460.NTSAE" origId="EXCEPT.NTSAE" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="APSC_DV.001460" desc="Always specify absolute path to execute commands" id="APSC_DV.001460.PBRTE" origId="SEC.PBRTE" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="APSC_DV.001460" desc="Prevent DTD processing" id="APSC_DV.001460.PDTDP" origId="SEC.XXE.PDTDP" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="APSC_DV.001460" desc="Do not pass exception messages into output in order to prevent the application from leaking sensitive information" id="APSC_DV.001460.PEO" origId="SPR.PEO" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="APSC_DV.001460" desc="Use RSA keys of 2048 bits or longer" id="APSC_DV.001460.RSAKS" origId="SEC.RSAKS" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="APSC_DV.001460" desc="Do not re-create string from SecureString" id="APSC_DV.001460.RSFSS" origId="CS.SEC.RSFSS" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="APSC_DV.001460" desc="Avoid inclusion of sensitive data in exception" id="APSC_DV.001460.SDE" origId="SEC.SDE" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="APSC_DV.001460" desc="Avoid select * statements" id="APSC_DV.001460.SELSPLAT" origId="SPR.SELSPLAT" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="APSC_DV.001460" desc="Seal methods which implement internal interfaces" id="APSC_DV.001460.SMIII" origId="SEC.SMIII" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="APSC_DV.001460" desc="Use SecureString instead of String for password" id="APSC_DV.001460.SSFP" origId="CS.SEC.SSFP" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="APSC_DV.001460" desc="Use authorization attributes on pages and controllers" id="APSC_DV.001460.UAA" origId="SEC.WEB.UAA" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="APSC_DV.001460" desc="Ensure that authorization attributes match the controller" id="APSC_DV.001460.UAAMC" origId="SEC.WEB.UAAMC" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="APSC_DV.001460" desc="Use the standard pattern while implementing ISerializable" id="APSC_DV.001460.UIS" origId="CS.SERIAL.UIS" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="APSC_DV.001460" desc="Use OAEP with RSA algorithm encryption" id="APSC_DV.001460.UOWR" origId="SEC.UOWR" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="APSC_DV.001460" desc="Use System.Security.Cryptography.RandomNumberGenerator instead of System.Random" id="APSC_DV.001460.USSCR" origId="SEC.USSCR" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="APSC_DV.001460" desc="Use anti-forgery attributes on POST methods" id="APSC_DV.001460.VAFT" origId="SEC.WEB.VAFT" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="APSC_DV.001460" desc="Validate shortcut target paths before use" id="APSC_DV.001460.VLT" origId="SEC.VLT" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="APSC_DV.001460" desc="Encapsulate all dangerous data sources with validation methods" id="APSC_DV.001460.VPPD" origId="SEC.VPPD" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="APSC_DV.001660" desc="Use OAEP with RSA algorithm encryption" id="APSC_DV.001660.UOWR" origId="SEC.UOWR" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="APSC_DV.001860" desc="Avoid using custom cryptographic algorithms" id="APSC_DV.001860.ACCA" origId="SEC.ACCA" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="APSC_DV.001860" desc="Avoid using insecure algorithms for cryptography" id="APSC_DV.001860.ICA" origId="SEC.ICA" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="APSC_DV.001860" desc="Use OAEP with RSA algorithm encryption" id="APSC_DV.001860.UOWR" origId="SEC.UOWR" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="APSC_DV.001995" desc="Lock both when either set or get is locked for a property" id="APSC_DV.001995.LOCKSETGET" origId="CS.TRS.LOCKSETGET" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="APSC_DV.002000" desc="Ensure sufficient session expiration" id="APSC_DV.002000.ISE" origId="SEC.WEB.ISE" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="APSC_DV.002010" desc="Avoid using custom cryptographic algorithms" id="APSC_DV.002010.ACCA" origId="SEC.ACCA" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="APSC_DV.002010" desc="Use OAEP with RSA algorithm encryption" id="APSC_DV.002010.UOWR" origId="SEC.UOWR" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="APSC_DV.002290" desc="Avoid using custom cryptographic algorithms" id="APSC_DV.002290.ACCA" origId="SEC.ACCA" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="APSC_DV.002290" desc="Use OAEP with RSA algorithm encryption" id="APSC_DV.002290.UOWR" origId="SEC.UOWR" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="APSC_DV.002350" desc="Avoid using custom cryptographic algorithms" id="APSC_DV.002350.ACCA" origId="SEC.ACCA" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="APSC_DV.002350" desc="Use OAEP with RSA algorithm encryption" id="APSC_DV.002350.UOWR" origId="SEC.UOWR" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.xtest.dupcode.parser" authTot="7;" authUrg="7;" cat="CDD" desc="Avoid method duplication" id="CDD.DUPM" sev="2" total="7"/>
+            <Rule analyzer="com.parasoft.xtest.dupcode.parser" authTot="0;" authUrg="0;" cat="CDD" desc="Avoid types duplication" id="CDD.DUPT" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.xtest.dupcode.parser" authTot="22;" authUrg="22;" cat="CDD" desc="Avoid code duplication" id="CDD.DUPC" sev="3" total="22"/>
+            <Rule analyzer="com.parasoft.xtest.dupcode.parser" authTot="13;" authUrg="13;" cat="CDD" desc="Avoid string literal duplication" id="CDD.DUPS" sev="3" total="13"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.1004" desc="Set HttpOnly to true for HttpCookie" id="CWE.1004.CA5396" origId="ROSLYN.MSNA.SECURITY.CA5396" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.120" desc="Avoid 'unsafe' keyword" id="CWE.120.AUK" origId="CS.SEC.AUK" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.131" desc="Avoid 'unsafe' keyword" id="CWE.131.AUK" origId="CS.SEC.AUK" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.190" desc="Avoid indexer wraparound in loops" id="CWE.190.AIWIL" origId="SEC.AIWIL" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.190" desc="Avoid possible integer overflow in assignment and comparison expressions" id="CWE.190.AIOAC" origId="PB.AIOAC" sev="3" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.191" desc="Avoid indexer wraparound in loops" id="CWE.191.AIWIL" origId="SEC.AIWIL" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.191" desc="Avoid possible integer overflow in assignment and comparison expressions" id="CWE.191.AIOAC" origId="PB.AIOAC" sev="3" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.197" desc="Avoid explicit conversions of integrals to integrals of smaller size if the conversion may cause data truncation" id="CWE.197.ECLSII" origId="CT.ECLSII" sev="4" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.20" desc="Encapsulate all dangerous data sources with validation methods" id="CWE.20.VPPD" origId="SEC.VPPD" sev="1" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.200" desc="Ensure that readonly property which is a collection does not expose any sensitive information" id="CWE.200.CSG" origId="SERIAL.XML.CSG" sev="1" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.200" desc="Review code for information disclosure vulnerabilities" id="CWE.200.CA3004" origId="ROSLYN.MSNA.SECURITY.CA3004" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.200" desc="Avoid inclusion of sensitive data in exception" id="CWE.200.SDE" origId="SEC.SDE" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.200" desc="Do not call the 'StackTrace' property of System.Exception" id="CWE.200.ACPST" origId="SEC.ACPST" sev="3" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.200" desc="Do not pass exception messages into output in order to prevent the application from leaking sensitive information" id="CWE.200.PEO" origId="SPR.PEO" sev="3" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.201" desc="Avoid select * statements" id="CWE.201.SELSPLAT" origId="SPR.SELSPLAT" sev="3" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.209" desc="Avoid inclusion of sensitive data in exception" id="CWE.209.SDE" origId="SEC.SDE" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.209" desc="Do not call the 'StackTrace' property of System.Exception" id="CWE.209.ACPST" origId="SEC.ACPST" sev="3" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.209" desc="Do not pass exception messages into output in order to prevent the application from leaking sensitive information" id="CWE.209.PEO" origId="SPR.PEO" sev="3" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.212" desc="Ensure that readonly property which is a collection does not expose any sensitive information" id="CWE.212.CSG" origId="SERIAL.XML.CSG" sev="1" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.250" desc="Do Not Use Account Shared Access Signature" id="CWE.250.CA5375" origId="ROSLYN.MSNA.SECURITY.CA5375" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.250" desc="Use Container Level Access Policy" id="CWE.250.CA5377" origId="ROSLYN.MSNA.SECURITY.CA5377" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.250" desc="Avoid using elevated privileges" id="CWE.250.AUEP" origId="SEC.AUEP" sev="3" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.252" desc="Ensure that method return values are used" id="CWE.252.RETVAL" origId="CMUG.MU.RETVAL" sev="1" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.259" desc="Do not use hardcoded string for password related parameters" id="CWE.259.HPW" origId="SEC.HPW" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.269" desc="Do Not Use Account Shared Access Signature" id="CWE.269.CA5375" origId="ROSLYN.MSNA.SECURITY.CA5375" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.269" desc="Use Container Level Access Policy" id="CWE.269.CA5377" origId="ROSLYN.MSNA.SECURITY.CA5377" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.287" desc="Ensure that authorization attributes match the controller" id="CWE.287.UAAMC" origId="SEC.WEB.UAAMC" sev="1" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.287" desc="Add authorization services to MVC Core" id="CWE.287.AAM" origId="SEC.WEB.AAM" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.287" desc="Use SharedAccessProtocol HttpsOnly" id="CWE.287.CA5376" origId="ROSLYN.MSNA.SECURITY.CA5376" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.287" desc="Do not hard-code encryption key" id="CWE.287.CA5390" origId="ROSLYN.MSNA.SECURITY.CA5390" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.287" desc="Do not hard-code certificate" id="CWE.287.CA5403" origId="ROSLYN.MSNA.SECURITY.CA5403" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.287" desc="Lock out the user after failed login attempts" id="CWE.287.LUAFLA" origId="SEC.WEB.LUAFLA" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.287" desc="Do Not Disable Certificate Validation" id="CWE.287.CA5359" origId="ROSLYN.MSNA.SECURITY.CA5359" sev="4" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.287" desc="Do not rely on reverse DNS resolution for security decisions" id="CWE.287.IIPHEU" origId="SEC.WEB.IIPHEU" sev="5" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.294" desc="Use SharedAccessProtocol HttpsOnly" id="CWE.294.CA5376" origId="ROSLYN.MSNA.SECURITY.CA5376" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.295" desc="Do not disable SSL certificate validation" id="CWE.295.DNICV" origId="SEC.WEB.DNICV" sev="1" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.295" desc="Do not hard-code certificate" id="CWE.295.CA5403" origId="ROSLYN.MSNA.SECURITY.CA5403" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.295" desc="Do Not Disable Certificate Validation" id="CWE.295.CA5359" origId="ROSLYN.MSNA.SECURITY.CA5359" sev="4" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.299" desc="HttpClients should enable certificate revocation list checks" id="CWE.299.CA5399" origId="ROSLYN.MSNA.SECURITY.CA5399" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.299" desc="Ensure HttpClient certificate revocation list check is not disabled" id="CWE.299.CA5400" origId="ROSLYN.MSNA.SECURITY.CA5400" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.307" desc="Lock out the user after failed login attempts" id="CWE.307.LUAFLA" origId="SEC.WEB.LUAFLA" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.316" desc="Do not re-create string from SecureString" id="CWE.316.RSFSS" origId="CS.SEC.RSFSS" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.316" desc="Use SecureString instead of String for password" id="CWE.316.SSFP" origId="CS.SEC.SSFP" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.321" desc="Do not hard-code encryption key" id="CWE.321.CA5390" origId="ROSLYN.MSNA.SECURITY.CA5390" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.326" desc="Use RSA keys of 2048 bits or longer" id="CWE.326.RSAKS" origId="SEC.RSAKS" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.327" desc="Do not change the RSA/DSA KeySize property" id="CWE.327.DNCCKS" origId="SEC.DNCCKS" sev="1" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.327" desc="Avoid using custom cryptographic algorithms" id="CWE.327.ACCA" origId="SEC.ACCA" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.329" desc="Avoid using custom cryptographic algorithms" id="CWE.329.ACCA" origId="SEC.ACCA" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.350" desc="Do not rely on reverse DNS resolution for security decisions" id="CWE.350.IIPHEU" origId="SEC.WEB.IIPHEU" sev="5" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.352" desc="Encapsulate all dangerous data sources with validation methods" id="CWE.352.VPPD" origId="SEC.VPPD" sev="1" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.352" desc="Use antiforgery tokens in ASP.NET Core MVC controllers" id="CWE.352.CA5391" origId="ROSLYN.MSNA.SECURITY.CA5391" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.352" desc="Use anti-forgery attributes on POST methods" id="CWE.352.VAFT" origId="SEC.WEB.VAFT" sev="3" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.352" desc="Mark Verb Handlers With Validate Antiforgery Token" id="CWE.352.CA3147" origId="ROSLYN.MSNA.SECURITY.CA3147" sev="4" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.362" desc="Lock both when either set or get is locked for a property" id="CWE.362.LOCKSETGET" origId="CS.TRS.LOCKSETGET" sev="3" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.391" desc="Ensure all exceptions are either logged with a standard logger or rethrown" id="CWE.391.LGE" origId="SEC.LGE" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.395" desc="Do not catch  'NullReferenceException''" id="CWE.395.NCNRE" origId="EXCEPT.NCNRE" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.396" desc="Avoid the use of &quot;catch&quot; on 'Exception', 'SystemException' or 'ApplicationException'" id="CWE.396.NCSAE" origId="EXCEPT.NCSAE" sev="3" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.397" desc="Avoid throwing 'Exception', 'SystemException' or 'ApplicationException'" id="CWE.397.NTSAE" origId="EXCEPT.NTSAE" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.400" desc="Potential reference cycle in deserialized object graph" id="CWE.400.CA5362" origId="ROSLYN.MSNA.SECURITY.CA5362" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.402" desc="Ensure that readonly property which is a collection does not expose any sensitive information" id="CWE.402.CSG" origId="SERIAL.XML.CSG" sev="1" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.412" desc="Do not lock using objects obtained with typeof(ClassName) / GetType(ClassName)" id="CWE.412.NLT" origId="SEC.NLT" sev="3" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.426" desc="Always specify absolute path to execute commands" id="CWE.426.PBRTE" origId="SEC.PBRTE" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.427" desc="Do not use unsafe DllImportSearchPath value" id="CWE.427.CA5393" origId="ROSLYN.MSNA.SECURITY.CA5393" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.476" desc="Check for 'null' when using 'as' operator" id="CWE.476.CNFA" origId="CS.PB.CNFA" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.480" desc="Avoid using the unary + operator" id="CWE.480.PUO" origId="CS.PB.PUO" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.481" desc="Avoid assignment within a condition" id="CWE.481.AWC" origId="CS.PB.AWC" sev="1" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.494" desc="Do not execute external code without integrity check" id="CWE.494.IREC" origId="SEC.IREC" sev="5" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.499" desc="Ensure that readonly property which is a collection does not expose any sensitive information" id="CWE.499.CSG" origId="SERIAL.XML.CSG" sev="1" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.502" desc="Mark ISerializable.GetObjectData with SecurityPermissionAttribute" id="CWE.502.MGODWSPA" origId="SERIAL.MGODWSPA" sev="1" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.502" desc="Do not use DataTable.ReadXml() with untrusted data" id="CWE.502.CA2350" origId="ROSLYN.MSNA.SECURITY.CA2350" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.502" desc="Do not use DataSet.ReadXml() with untrusted data" id="CWE.502.CA2351" origId="ROSLYN.MSNA.SECURITY.CA2351" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.502" desc="Unsafe DataSet or DataTable in serializable type can be vulnerable to remote code execution attacks" id="CWE.502.CA2352" origId="ROSLYN.MSNA.SECURITY.CA2352" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.502" desc="Unsafe DataSet or DataTable in serializable type" id="CWE.502.CA2353" origId="ROSLYN.MSNA.SECURITY.CA2353" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.502" desc="Unsafe DataSet or DataTable in deserialized object graph can be vulnerable to remote code execution attacks" id="CWE.502.CA2354" origId="ROSLYN.MSNA.SECURITY.CA2354" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.502" desc="Unsafe DataSet or DataTable type found in deserializable object graph" id="CWE.502.CA2355" origId="ROSLYN.MSNA.SECURITY.CA2355" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.502" desc="Unsafe DataSet or DataTable type in web deserializable object graph" id="CWE.502.CA2356" origId="ROSLYN.MSNA.SECURITY.CA2356" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.502" desc="Ensure auto-generated class containing DataSet.ReadXml() is not used with untrusted data" id="CWE.502.CA2361" origId="ROSLYN.MSNA.SECURITY.CA2361" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.502" desc="Unsafe DataSet or DataTable in auto-generated serializable type can be vulnerable to remote code execution attacks" id="CWE.502.CA2362" origId="ROSLYN.MSNA.SECURITY.CA2362" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.502" desc="Always provide deserialization constructor when ISerializable interface is implemented" id="CWE.502.IDC" origId="SERIAL.IDC" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.502" desc="Implement IDeserializationCallback for classes with NonSerialized fields" id="CWE.502.IIDC" origId="CS.SERIAL.IIDC" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.502" desc="Use the standard pattern while implementing ISerializable" id="CWE.502.UIS" origId="CS.SERIAL.UIS" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.532" desc="Avoid logging sensitive information" id="CWE.532.ALSI" origId="SEC.ALSI" sev="3" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.546" desc="Ensure that comments do not contain task tags" id="CWE.546.TODO" origId="PB.II.TODO" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.561" desc="Avoid unreachable code" id="CWE.561.UC" origId="CS.PB.USC.UC" sev="1" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.59" desc="Validate shortcut target paths before use" id="CWE.59.VLT" origId="SEC.VLT" sev="4" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.595" desc="Do not use ReferenceEquals() on value types" id="CWE.595.REVT" origId="OPU.REVT" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.611" desc="Prevent DTD processing" id="CWE.611.PDTDP" origId="SEC.XXE.PDTDP" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.611" desc="Do Not Add Schema By URL" id="CWE.611.CA3061" origId="ROSLYN.MSNA.SECURITY.CA3061" sev="4" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.611" desc="Insecure DTD processing in XML" id="CWE.611.CA3075" origId="ROSLYN.MSNA.SECURITY.CA3075" sev="4" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.611" desc="Insecure Processing in API Design, XmlDocument and XmlTextReader" id="CWE.611.CA3077" origId="ROSLYN.MSNA.SECURITY.CA3077" sev="4" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.611" desc="Use XmlReader for 'DataSet.ReadXml()'" id="CWE.611.CA5366" origId="ROSLYN.MSNA.SECURITY.CA5366" sev="4" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.611" desc="Use XmlReader for 'XmlSerializer.Deserialize()'" id="CWE.611.CA5369" origId="ROSLYN.MSNA.SECURITY.CA5369" sev="4" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.611" desc="Use XmlReader for XmlValidatingReader constructor" id="CWE.611.CA5370" origId="ROSLYN.MSNA.SECURITY.CA5370" sev="4" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.611" desc="Use XmlReader for 'XmlSchema.Read()'" id="CWE.611.CA5371" origId="ROSLYN.MSNA.SECURITY.CA5371" sev="4" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.611" desc="Use XmlReader for XPathDocument constructor" id="CWE.611.CA5372" origId="ROSLYN.MSNA.SECURITY.CA5372" sev="4" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.613" desc="Ensure sufficient session expiration" id="CWE.613.ISE" origId="SEC.WEB.ISE" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.617" desc="Do not use the Trace.Assert() method in production code" id="CWE.617.ATA" origId="SEC.ATA" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.624" desc="Review code for regex injection vulnerabilities" id="CWE.624.CA3012" origId="ROSLYN.MSNA.SECURITY.CA3012" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.64" desc="Validate shortcut target paths before use" id="CWE.64.VLT" origId="SEC.VLT" sev="4" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.676" desc="Avoid using potentially dangerous methods" id="CWE.676.APDM" origId="SEC.APDM" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.681" desc="Avoid explicit conversions between data types if the conversion may cause data loss or unexpected results" id="CWE.681.ECLTS" origId="CT.ECLTS" sev="4" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.732" desc="Do not attempt to deny the SkipVerification security permission" id="CWE.732.ADSVSP" origId="SEC.ADSVSP" sev="1" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.732" desc="Set HttpOnly to true for HttpCookie" id="CWE.732.CA5396" origId="ROSLYN.MSNA.SECURITY.CA5396" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.770" desc="Do not use stackalloc in loops" id="CWE.770.CA2014" origId="ROSLYN.MSNA.RELIABILITY.CA2014" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.770" desc="Avoid instantiating the HttpClient class by creating a HttpClient object" id="CWE.770.UHCF" origId="SEC.WEB.UHCF" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.780" desc="Use OAEP with RSA algorithm encryption" id="CWE.780.UOWR" origId="SEC.UOWR" sev="1" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.79" desc="Encapsulate all dangerous data sources with validation methods" id="CWE.79.VPPD" origId="SEC.VPPD" sev="1" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.79" desc="Enable anti-XSS protection in Web.config files" id="CWE.79.AXSSE" origId="SEC.WEB.AXSSE" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.79" desc="Enable Content Security Policy in Web.config files" id="CWE.79.CSP" origId="SEC.WEB.CSP" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.798" desc="Do not hard-code certificate" id="CWE.798.CA5403" origId="ROSLYN.MSNA.SECURITY.CA5403" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.798" desc="Do not use hardcoded string for password related parameters" id="CWE.798.HPW" origId="SEC.HPW" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.798" desc="Avoid hard coded connection strings" id="CWE.798.HARDCONN" origId="SPR.HARDCONN" sev="3" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.80" desc="Encapsulate all dangerous data sources with validation methods" id="CWE.80.VPPD" origId="SEC.VPPD" sev="1" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.827" desc="Prevent DTD processing" id="CWE.827.PDTDP" origId="SEC.XXE.PDTDP" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.829" desc="Inspect modifications to security settings" id="CWE.829.DMSC" origId="SEC.DMSC" sev="4" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.829" desc="Inspect calls to dynamically load libraries" id="CWE.829.ADLL" origId="SEC.ADLL" sev="5" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.835" desc="Do not increment or decrement on the same variable over multiple nested 'for' loop statements" id="CWE.835.NSIVFLN" origId="CS.PB.NSIVFLN" sev="1" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.835" desc="Use initializer variable in a condition of 'for' loop" id="CWE.835.IVFLC" origId="CS.PB.IVFLC" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.835" desc="Use initializer variable in 'for' loop iterator section" id="CWE.835.IVFLI" origId="CS.PB.IVFLI" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.838" desc="Avoid using improper HTML or URL encoding in HttpResponse methods" id="CWE.838.AIHUE" origId="PB.AIHUE" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.838" desc="URI-like parameters should not be strings" id="CWE.838.CA1054" origId="ROSLYN.MSNA.DESIGN.CA1054" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.838" desc="URI-like return values should not be strings" id="CWE.838.CA1055" origId="ROSLYN.MSNA.DESIGN.CA1055" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.838" desc="URI-like properties should not be strings" id="CWE.838.CA1056" origId="ROSLYN.MSNA.DESIGN.CA1056" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.838" desc="Do Not Disable HTTP Header Checking" id="CWE.838.CA5365" origId="ROSLYN.MSNA.SECURITY.CA5365" sev="4" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.862" desc="Use authorization attributes on pages and controllers" id="CWE.862.UAA" origId="SEC.WEB.UAA" sev="3" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.863" desc="Ensure that authorization attributes match the controller" id="CWE.863.UAAMC" origId="SEC.WEB.UAAMC" sev="1" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.863" desc="Add authorization services to MVC Core" id="CWE.863.AAM" origId="SEC.WEB.AAM" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.88" desc="Encapsulate all dangerous data sources with validation methods" id="CWE.88.VPPD" origId="SEC.VPPD" sev="1" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.918" desc="Use antiforgery tokens in ASP.NET Core MVC controllers" id="CWE.918.CA5391" origId="ROSLYN.MSNA.SECURITY.CA5391" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.918" desc="Miss HttpVerb attribute for action methods" id="CWE.918.CA5395" origId="ROSLYN.MSNA.SECURITY.CA5395" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.918" desc="Mark Verb Handlers With Validate Antiforgery Token" id="CWE.918.CA3147" origId="ROSLYN.MSNA.SECURITY.CA3147" sev="4" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="CWE.918" desc="Set ViewStateUserKey For Classes Derived From Page" id="CWE.918.CA5368" origId="ROSLYN.MSNA.SECURITY.CA5368" sev="4" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2017.A1" desc="Encapsulate all dangerous data sources with validation methods" id="OWASP2017.A1.VPPD" origId="SEC.VPPD" sev="1" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2017.A10" desc="Ensure all exceptions are either logged with a standard logger or rethrown" id="OWASP2017.A10.LGE" origId="SEC.LGE" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2017.A2" desc="Do not use hardcoded string for password related parameters" id="OWASP2017.A2.HPW" origId="SEC.HPW" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2017.A2" desc="Ensure sufficient session expiration" id="OWASP2017.A2.ISE" origId="SEC.WEB.ISE" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2017.A2" desc="Lock out the user after failed login attempts" id="OWASP2017.A2.LUAFLA" origId="SEC.WEB.LUAFLA" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2017.A3" desc="Do not change the RSA/DSA KeySize property" id="OWASP2017.A3.DNCCKS" origId="SEC.DNCCKS" sev="1" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2017.A3" desc="Do not disable SSL certificate validation" id="OWASP2017.A3.DNICV" origId="SEC.WEB.DNICV" sev="1" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2017.A3" desc="Use OAEP with RSA algorithm encryption" id="OWASP2017.A3.UOWR" origId="SEC.UOWR" sev="1" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2017.A3" desc="Avoid using custom cryptographic algorithms" id="OWASP2017.A3.ACCA" origId="SEC.ACCA" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2017.A3" desc="Avoid using insecure algorithms for cryptography" id="OWASP2017.A3.ICA" origId="SEC.ICA" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2017.A3" desc="Do not re-create string from SecureString" id="OWASP2017.A3.RSFSS" origId="CS.SEC.RSFSS" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2017.A3" desc="Avoid inclusion of sensitive data in exception" id="OWASP2017.A3.SDE" origId="SEC.SDE" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2017.A3" desc="Use SecureString instead of String for password" id="OWASP2017.A3.SSFP" origId="CS.SEC.SSFP" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2017.A3" desc="Avoid logging sensitive information" id="OWASP2017.A3.ALSI" origId="SEC.ALSI" sev="3" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2017.A3" desc="Avoid hard coded connection strings" id="OWASP2017.A3.HARDCONN" origId="SPR.HARDCONN" sev="3" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2017.A4" desc="Prevent DTD processing" id="OWASP2017.A4.PDTDP" origId="SEC.XXE.PDTDP" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2017.A5" desc="Ensure that authorization attributes match the controller" id="OWASP2017.A5.UAAMC" origId="SEC.WEB.UAAMC" sev="1" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2017.A5" desc="Add authorization services to MVC Core" id="OWASP2017.A5.AAM" origId="SEC.WEB.AAM" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2017.A5" desc="Avoid using elevated privileges" id="OWASP2017.A5.AUEP" origId="SEC.AUEP" sev="3" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2017.A5" desc="Use authorization attributes on pages and controllers" id="OWASP2017.A5.UAA" origId="SEC.WEB.UAA" sev="3" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2017.A5" desc="Use anti-forgery attributes on POST methods" id="OWASP2017.A5.VAFT" origId="SEC.WEB.VAFT" sev="3" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2017.A6" desc="Do not attempt to deny the SkipVerification security permission" id="OWASP2017.A6.ADSVSP" origId="SEC.ADSVSP" sev="1" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2017.A6" desc="Do not catch  'NullReferenceException''" id="OWASP2017.A6.NCNRE" origId="EXCEPT.NCNRE" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2017.A6" desc="Avoid throwing 'Exception', 'SystemException' or 'ApplicationException'" id="OWASP2017.A6.NTSAE" origId="EXCEPT.NTSAE" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2017.A6" desc="Do not call the 'StackTrace' property of System.Exception" id="OWASP2017.A6.ACPST" origId="SEC.ACPST" sev="3" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2017.A6" desc="Avoid the use of &quot;catch&quot; on 'Exception', 'SystemException' or 'ApplicationException'" id="OWASP2017.A6.NCSAE" origId="EXCEPT.NCSAE" sev="3" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2017.A6" desc="Do not pass exception messages into output in order to prevent the application from leaking sensitive information" id="OWASP2017.A6.PEO" origId="SPR.PEO" sev="3" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2017.A6" desc="Seal methods which implement internal interfaces" id="OWASP2017.A6.SMIII" origId="SEC.SMIII" sev="3" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2017.A6" desc="Inspect modifications to security settings" id="OWASP2017.A6.DMSC" origId="SEC.DMSC" sev="4" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2017.A7" desc="Encapsulate all dangerous data sources with validation methods" id="OWASP2017.A7.VPPD" origId="SEC.VPPD" sev="1" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2017.A7" desc="Enable anti-XSS protection in Web.config files" id="OWASP2017.A7.AXSSE" origId="SEC.WEB.AXSSE" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2017.A7" desc="Enable Content Security Policy in Web.config files" id="OWASP2017.A7.CSP" origId="SEC.WEB.CSP" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2017.A8" desc="Mark ISerializable.GetObjectData with SecurityPermissionAttribute" id="OWASP2017.A8.MGODWSPA" origId="SERIAL.MGODWSPA" sev="1" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2017.A8" desc="Always provide deserialization constructor when ISerializable interface is implemented" id="OWASP2017.A8.IDC" origId="SERIAL.IDC" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2017.A8" desc="Implement IDeserializationCallback for classes with NonSerialized fields" id="OWASP2017.A8.IIDC" origId="CS.SERIAL.IIDC" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2017.A8" desc="Use the standard pattern while implementing ISerializable" id="OWASP2017.A8.UIS" origId="CS.SERIAL.UIS" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2019.API1" desc="Use System.Security.Cryptography.RandomNumberGenerator instead of System.Random" id="OWASP2019.API1.USSCR" origId="SEC.USSCR" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2019.API10" desc="Ensure all exceptions are either logged with a standard logger or rethrown" id="OWASP2019.API10.LGE" origId="SEC.LGE" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2019.API10" desc="Ensure all sensitive function invocations are logged" id="OWASP2019.API10.ENFL" origId="SPR.ENFL" sev="3" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2019.API2" desc="Do not use hardcoded string for password related parameters" id="OWASP2019.API2.HPW" origId="SEC.HPW" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2019.API2" desc="Lock out the user after failed login attempts" id="OWASP2019.API2.LUAFLA" origId="SEC.WEB.LUAFLA" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2019.API2" desc="Do not re-create string from SecureString" id="OWASP2019.API2.RSFSS" origId="CS.SEC.RSFSS" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2019.API2" desc="Use SecureString instead of String for password" id="OWASP2019.API2.SSFP" origId="CS.SEC.SSFP" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2019.API2" desc="Avoid hard coded connection strings" id="OWASP2019.API2.HARDCONN" origId="SPR.HARDCONN" sev="3" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2019.API3" desc="Ensure that readonly property which is a collection does not expose any sensitive information" id="OWASP2019.API3.CSG" origId="SERIAL.XML.CSG" sev="1" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2019.API3" desc="Do not change the RSA/DSA KeySize property" id="OWASP2019.API3.DNCCKS" origId="SEC.DNCCKS" sev="1" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2019.API3" desc="Use OAEP with RSA algorithm encryption" id="OWASP2019.API3.UOWR" origId="SEC.UOWR" sev="1" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2019.API3" desc="Avoid using custom cryptographic algorithms" id="OWASP2019.API3.ACCA" origId="SEC.ACCA" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2019.API3" desc="Do not use the Trace.Assert() method in production code" id="OWASP2019.API3.ATA" origId="SEC.ATA" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2019.API3" desc="Avoid using insecure algorithms for cryptography" id="OWASP2019.API3.ICA" origId="SEC.ICA" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2019.API3" desc="Avoid inclusion of sensitive data in exception" id="OWASP2019.API3.SDE" origId="SEC.SDE" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2019.API3" desc="Avoid logging sensitive information" id="OWASP2019.API3.ALSI" origId="SEC.ALSI" sev="3" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2019.API3" desc="Do not pass exception messages into output in order to prevent the application from leaking sensitive information" id="OWASP2019.API3.PEO" origId="SPR.PEO" sev="3" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2019.API3" desc="Avoid select * statements" id="OWASP2019.API3.SELSPLAT" origId="SPR.SELSPLAT" sev="3" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2019.API3" desc="Do not provide additional methods or properties in exception classes" id="OWASP2019.API3.AAIE" origId="ERR.AAIE" sev="4" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2019.API4" desc="Avoid instantiating the HttpClient class by creating a HttpClient object" id="OWASP2019.API4.UHCF" origId="SEC.WEB.UHCF" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2019.API5" desc="Ensure that authorization attributes match the controller" id="OWASP2019.API5.UAAMC" origId="SEC.WEB.UAAMC" sev="1" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2019.API5" desc="Add authorization services to MVC Core" id="OWASP2019.API5.AAM" origId="SEC.WEB.AAM" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2019.API5" desc="Ensure sufficient session expiration" id="OWASP2019.API5.ISE" origId="SEC.WEB.ISE" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2019.API5" desc="Use authorization attributes on pages and controllers" id="OWASP2019.API5.UAA" origId="SEC.WEB.UAA" sev="3" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2019.API7" desc="Do not attempt to deny the SkipVerification security permission" id="OWASP2019.API7.ADSVSP" origId="SEC.ADSVSP" sev="1" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2019.API7" desc="Do not disable SSL certificate validation" id="OWASP2019.API7.DNICV" origId="SEC.WEB.DNICV" sev="1" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2019.API7" desc="Do not catch  'NullReferenceException''" id="OWASP2019.API7.NCNRE" origId="EXCEPT.NCNRE" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2019.API7" desc="Avoid throwing 'Exception', 'SystemException' or 'ApplicationException'" id="OWASP2019.API7.NTSAE" origId="EXCEPT.NTSAE" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2019.API7" desc="Do not call the 'StackTrace' property of System.Exception" id="OWASP2019.API7.ACPST" origId="SEC.ACPST" sev="3" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2019.API7" desc="Avoid the use of &quot;catch&quot; on 'Exception', 'SystemException' or 'ApplicationException'" id="OWASP2019.API7.NCSAE" origId="EXCEPT.NCSAE" sev="3" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2019.API7" desc="Seal methods which implement internal interfaces" id="OWASP2019.API7.SMIII" origId="SEC.SMIII" sev="3" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2019.API7" desc="Inspect modifications to security settings" id="OWASP2019.API7.DMSC" origId="SEC.DMSC" sev="4" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2019.API7" desc="Avoid explicit conversions between data types if the conversion may cause data loss or unexpected results" id="OWASP2019.API7.ECLTS" origId="CT.ECLTS" sev="4" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2019.API8" desc="Encapsulate all dangerous data sources with validation methods" id="OWASP2019.API8.VPPD" origId="SEC.VPPD" sev="1" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2019.API8" desc="Avoid using improper HTML or URL encoding in HttpResponse methods" id="OWASP2019.API8.AIHUE" origId="PB.AIHUE" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2019.API8" desc="Avoid 'unsafe' keyword" id="OWASP2019.API8.AUK" origId="CS.SEC.AUK" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2019.API8" desc="Always specify absolute path to execute commands" id="OWASP2019.API8.PBRTE" origId="SEC.PBRTE" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2019.API8" desc="Prevent DTD processing" id="OWASP2019.API8.PDTDP" origId="SEC.XXE.PDTDP" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2019.API8" desc="Inspect calls to Process.Start()" id="OWASP2019.API8.AUPS" origId="SEC.AUPS" sev="5" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2019.API8" desc="Do not execute external code without integrity check" id="OWASP2019.API8.IREC" origId="SEC.IREC" sev="5" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2021.A1" desc="Ensure that readonly property which is a collection does not expose any sensitive information" id="OWASP2021.A1.CSG" origId="SERIAL.XML.CSG" sev="1" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2021.A1" desc="Do not disable SSL certificate validation" id="OWASP2021.A1.DNICV" origId="SEC.WEB.DNICV" sev="1" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2021.A1" desc="Ensure that authorization attributes match the controller" id="OWASP2021.A1.UAAMC" origId="SEC.WEB.UAAMC" sev="1" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2021.A1" desc="Add authorization services to MVC Core" id="OWASP2021.A1.AAM" origId="SEC.WEB.AAM" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2021.A1" desc="Review code for information disclosure vulnerabilities" id="OWASP2021.A1.CA3004" origId="ROSLYN.MSNA.SECURITY.CA3004" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2021.A1" desc="Use antiforgery tokens in ASP.NET Core MVC controllers" id="OWASP2021.A1.CA5391" origId="ROSLYN.MSNA.SECURITY.CA5391" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2021.A1" desc="Avoid using elevated privileges" id="OWASP2021.A1.AUEP" origId="SEC.AUEP" sev="3" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2021.A1" desc="Avoid select * statements" id="OWASP2021.A1.SELSPLAT" origId="SPR.SELSPLAT" sev="3" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2021.A1" desc="Use authorization attributes on pages and controllers" id="OWASP2021.A1.UAA" origId="SEC.WEB.UAA" sev="3" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2021.A1" desc="Use anti-forgery attributes on POST methods" id="OWASP2021.A1.VAFT" origId="SEC.WEB.VAFT" sev="3" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2021.A1" desc="Mark Verb Handlers With Validate Antiforgery Token" id="OWASP2021.A1.CA3147" origId="ROSLYN.MSNA.SECURITY.CA3147" sev="4" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2021.A1" desc="Validate shortcut target paths before use" id="OWASP2021.A1.VLT" origId="SEC.VLT" sev="4" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2021.A10" desc="Miss HttpVerb attribute for action methods" id="OWASP2021.A10.CA5395" origId="ROSLYN.MSNA.SECURITY.CA5395" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2021.A10" desc="Set ViewStateUserKey For Classes Derived From Page" id="OWASP2021.A10.CA5368" origId="ROSLYN.MSNA.SECURITY.CA5368" sev="4" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2021.A2" desc="Do not change the RSA/DSA KeySize property" id="OWASP2021.A2.DNCCKS" origId="SEC.DNCCKS" sev="1" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2021.A2" desc="Use OAEP with RSA algorithm encryption" id="OWASP2021.A2.UOWR" origId="SEC.UOWR" sev="1" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2021.A2" desc="Avoid using custom cryptographic algorithms" id="OWASP2021.A2.ACCA" origId="SEC.ACCA" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2021.A2" desc="Do not hard-code encryption key" id="OWASP2021.A2.CA5390" origId="ROSLYN.MSNA.SECURITY.CA5390" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2021.A2" desc="Avoid using insecure algorithms for cryptography" id="OWASP2021.A2.ICA" origId="SEC.ICA" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2021.A2" desc="Use RSA keys of 2048 bits or longer" id="OWASP2021.A2.RSAKS" origId="SEC.RSAKS" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2021.A2" desc="Use System.Security.Cryptography.RandomNumberGenerator instead of System.Random" id="OWASP2021.A2.USSCR" origId="SEC.USSCR" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2021.A3" desc="Encapsulate all dangerous data sources with validation methods" id="OWASP2021.A3.VPPD" origId="SEC.VPPD" sev="1" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2021.A3" desc="Enable anti-XSS protection in Web.config files" id="OWASP2021.A3.AXSSE" origId="SEC.WEB.AXSSE" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2021.A3" desc="Enable Content Security Policy in Web.config files" id="OWASP2021.A3.CSP" origId="SEC.WEB.CSP" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2021.A4" desc="Do Not Use Account Shared Access Signature" id="OWASP2021.A4.CA5375" origId="ROSLYN.MSNA.SECURITY.CA5375" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2021.A4" desc="Use Container Level Access Policy" id="OWASP2021.A4.CA5377" origId="ROSLYN.MSNA.SECURITY.CA5377" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2021.A4" desc="Do not re-create string from SecureString" id="OWASP2021.A4.RSFSS" origId="CS.SEC.RSFSS" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2021.A4" desc="Avoid inclusion of sensitive data in exception" id="OWASP2021.A4.SDE" origId="SEC.SDE" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2021.A4" desc="Use SecureString instead of String for password" id="OWASP2021.A4.SSFP" origId="CS.SEC.SSFP" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2021.A4" desc="Do not call the 'StackTrace' property of System.Exception" id="OWASP2021.A4.ACPST" origId="SEC.ACPST" sev="3" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2021.A4" desc="Do not pass exception messages into output in order to prevent the application from leaking sensitive information" id="OWASP2021.A4.PEO" origId="SPR.PEO" sev="3" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2021.A5" desc="Do not attempt to deny the SkipVerification security permission" id="OWASP2021.A5.ADSVSP" origId="SEC.ADSVSP" sev="1" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2021.A5" desc="Do not catch  'NullReferenceException''" id="OWASP2021.A5.NCNRE" origId="EXCEPT.NCNRE" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2021.A5" desc="Avoid throwing 'Exception', 'SystemException' or 'ApplicationException'" id="OWASP2021.A5.NTSAE" origId="EXCEPT.NTSAE" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2021.A5" desc="Prevent DTD processing" id="OWASP2021.A5.PDTDP" origId="SEC.XXE.PDTDP" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2021.A5" desc="Avoid the use of &quot;catch&quot; on 'Exception', 'SystemException' or 'ApplicationException'" id="OWASP2021.A5.NCSAE" origId="EXCEPT.NCSAE" sev="3" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2021.A5" desc="Seal methods which implement internal interfaces" id="OWASP2021.A5.SMIII" origId="SEC.SMIII" sev="3" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2021.A5" desc="Do Not Add Schema By URL" id="OWASP2021.A5.CA3061" origId="ROSLYN.MSNA.SECURITY.CA3061" sev="4" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2021.A5" desc="Insecure DTD processing in XML" id="OWASP2021.A5.CA3075" origId="ROSLYN.MSNA.SECURITY.CA3075" sev="4" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2021.A5" desc="Insecure Processing in API Design, XmlDocument and XmlTextReader" id="OWASP2021.A5.CA3077" origId="ROSLYN.MSNA.SECURITY.CA3077" sev="4" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2021.A5" desc="Use XmlReader for 'DataSet.ReadXml()'" id="OWASP2021.A5.CA5366" origId="ROSLYN.MSNA.SECURITY.CA5366" sev="4" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2021.A5" desc="Use XmlReader for 'XmlSerializer.Deserialize()'" id="OWASP2021.A5.CA5369" origId="ROSLYN.MSNA.SECURITY.CA5369" sev="4" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2021.A5" desc="Use XmlReader for XmlValidatingReader constructor" id="OWASP2021.A5.CA5370" origId="ROSLYN.MSNA.SECURITY.CA5370" sev="4" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2021.A5" desc="Use XmlReader for 'XmlSchema.Read()'" id="OWASP2021.A5.CA5371" origId="ROSLYN.MSNA.SECURITY.CA5371" sev="4" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2021.A5" desc="Use XmlReader for XPathDocument constructor" id="OWASP2021.A5.CA5372" origId="ROSLYN.MSNA.SECURITY.CA5372" sev="4" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2021.A7" desc="Use SharedAccessProtocol HttpsOnly" id="OWASP2021.A7.CA5376" origId="ROSLYN.MSNA.SECURITY.CA5376" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2021.A7" desc="Do not hard-code certificate" id="OWASP2021.A7.CA5403" origId="ROSLYN.MSNA.SECURITY.CA5403" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2021.A7" desc="Do not use hardcoded string for password related parameters" id="OWASP2021.A7.HPW" origId="SEC.HPW" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2021.A7" desc="Ensure sufficient session expiration" id="OWASP2021.A7.ISE" origId="SEC.WEB.ISE" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2021.A7" desc="Lock out the user after failed login attempts" id="OWASP2021.A7.LUAFLA" origId="SEC.WEB.LUAFLA" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2021.A7" desc="Avoid hard coded connection strings" id="OWASP2021.A7.HARDCONN" origId="SPR.HARDCONN" sev="3" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2021.A7" desc="Do Not Disable Certificate Validation" id="OWASP2021.A7.CA5359" origId="ROSLYN.MSNA.SECURITY.CA5359" sev="4" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2021.A7" desc="Do not rely on reverse DNS resolution for security decisions" id="OWASP2021.A7.IIPHEU" origId="SEC.WEB.IIPHEU" sev="5" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2021.A8" desc="Mark ISerializable.GetObjectData with SecurityPermissionAttribute" id="OWASP2021.A8.MGODWSPA" origId="SERIAL.MGODWSPA" sev="1" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2021.A8" desc="Do not use DataTable.ReadXml() with untrusted data" id="OWASP2021.A8.CA2350" origId="ROSLYN.MSNA.SECURITY.CA2350" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2021.A8" desc="Do not use DataSet.ReadXml() with untrusted data" id="OWASP2021.A8.CA2351" origId="ROSLYN.MSNA.SECURITY.CA2351" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2021.A8" desc="Unsafe DataSet or DataTable in serializable type can be vulnerable to remote code execution attacks" id="OWASP2021.A8.CA2352" origId="ROSLYN.MSNA.SECURITY.CA2352" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2021.A8" desc="Unsafe DataSet or DataTable in serializable type" id="OWASP2021.A8.CA2353" origId="ROSLYN.MSNA.SECURITY.CA2353" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2021.A8" desc="Unsafe DataSet or DataTable in deserialized object graph can be vulnerable to remote code execution attacks" id="OWASP2021.A8.CA2354" origId="ROSLYN.MSNA.SECURITY.CA2354" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2021.A8" desc="Unsafe DataSet or DataTable type found in deserializable object graph" id="OWASP2021.A8.CA2355" origId="ROSLYN.MSNA.SECURITY.CA2355" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2021.A8" desc="Unsafe DataSet or DataTable type in web deserializable object graph" id="OWASP2021.A8.CA2356" origId="ROSLYN.MSNA.SECURITY.CA2356" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2021.A8" desc="Ensure auto-generated class containing DataSet.ReadXml() is not used with untrusted data" id="OWASP2021.A8.CA2361" origId="ROSLYN.MSNA.SECURITY.CA2361" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2021.A8" desc="Unsafe DataSet or DataTable in auto-generated serializable type can be vulnerable to remote code execution attacks" id="OWASP2021.A8.CA2362" origId="ROSLYN.MSNA.SECURITY.CA2362" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2021.A8" desc="Always provide deserialization constructor when ISerializable interface is implemented" id="OWASP2021.A8.IDC" origId="SERIAL.IDC" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2021.A8" desc="Implement IDeserializationCallback for classes with NonSerialized fields" id="OWASP2021.A8.IIDC" origId="CS.SERIAL.IIDC" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2021.A8" desc="Always specify absolute path to execute commands" id="OWASP2021.A8.PBRTE" origId="SEC.PBRTE" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2021.A8" desc="Use the standard pattern while implementing ISerializable" id="OWASP2021.A8.UIS" origId="CS.SERIAL.UIS" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2021.A8" desc="Inspect modifications to security settings" id="OWASP2021.A8.DMSC" origId="SEC.DMSC" sev="4" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2021.A8" desc="Inspect calls to dynamically load libraries" id="OWASP2021.A8.ADLL" origId="SEC.ADLL" sev="5" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2021.A8" desc="Do not execute external code without integrity check" id="OWASP2021.A8.IREC" origId="SEC.IREC" sev="5" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2021.A9" desc="Ensure all exceptions are either logged with a standard logger or rethrown" id="OWASP2021.A9.LGE" origId="SEC.LGE" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="OWASP2021.A9" desc="Avoid logging sensitive information" id="OWASP2021.A9.ALSI" origId="SEC.ALSI" sev="3" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="PCIDSS32.651" desc="Encapsulate all dangerous data sources with validation methods" id="PCIDSS32.651.VPPD" origId="SEC.VPPD" sev="1" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="PCIDSS32.6510" desc="Do not use hardcoded string for password related parameters" id="PCIDSS32.6510.HPW" origId="SEC.HPW" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="PCIDSS32.6510" desc="Ensure sufficient session expiration" id="PCIDSS32.6510.ISE" origId="SEC.WEB.ISE" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="PCIDSS32.6510" desc="Lock out the user after failed login attempts" id="PCIDSS32.6510.LUAFLA" origId="SEC.WEB.LUAFLA" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="PCIDSS32.652" desc="Avoid 'unsafe' keyword" id="PCIDSS32.652.AUK" origId="CS.SEC.AUK" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="PCIDSS32.653" desc="Do not change the RSA/DSA KeySize property" id="PCIDSS32.653.DNCCKS" origId="SEC.DNCCKS" sev="1" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="PCIDSS32.653" desc="Use OAEP with RSA algorithm encryption" id="PCIDSS32.653.UOWR" origId="SEC.UOWR" sev="1" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="PCIDSS32.653" desc="Avoid using custom cryptographic algorithms" id="PCIDSS32.653.ACCA" origId="SEC.ACCA" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="PCIDSS32.653" desc="Avoid using insecure algorithms for cryptography" id="PCIDSS32.653.ICA" origId="SEC.ICA" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="PCIDSS32.653" desc="Do not re-create string from SecureString" id="PCIDSS32.653.RSFSS" origId="CS.SEC.RSFSS" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="PCIDSS32.653" desc="Use SecureString instead of String for password" id="PCIDSS32.653.SSFP" origId="CS.SEC.SSFP" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="PCIDSS32.654" desc="Avoid using insecure algorithms for cryptography" id="PCIDSS32.654.ICA" origId="SEC.ICA" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="PCIDSS32.654" desc="Do not re-create string from SecureString" id="PCIDSS32.654.RSFSS" origId="CS.SEC.RSFSS" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="PCIDSS32.654" desc="Use SecureString instead of String for password" id="PCIDSS32.654.SSFP" origId="CS.SEC.SSFP" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="PCIDSS32.655" desc="Avoid throwing exceptions from finalizers" id="PCIDSS32.655.ATEF" origId="IFD.ATEF" sev="1" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="PCIDSS32.655" desc="Ensure that method return values are used" id="PCIDSS32.655.RETVAL" origId="CMUG.MU.RETVAL" sev="1" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="PCIDSS32.655" desc="Do not use the Trace.Assert() method in production code" id="PCIDSS32.655.ATA" origId="SEC.ATA" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="PCIDSS32.655" desc="Ensure all exceptions are either logged with a standard logger or rethrown" id="PCIDSS32.655.LGE" origId="SEC.LGE" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="PCIDSS32.655" desc="Do not catch  'NullReferenceException''" id="PCIDSS32.655.NCNRE" origId="EXCEPT.NCNRE" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="PCIDSS32.655" desc="Avoid throwing 'Exception', 'SystemException' or 'ApplicationException'" id="PCIDSS32.655.NTSAE" origId="EXCEPT.NTSAE" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="PCIDSS32.655" desc="Do not call the 'StackTrace' property of System.Exception" id="PCIDSS32.655.ACPST" origId="SEC.ACPST" sev="3" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="PCIDSS32.655" desc="Avoid the use of &quot;catch&quot; on 'Exception', 'SystemException' or 'ApplicationException'" id="PCIDSS32.655.NCSAE" origId="EXCEPT.NCSAE" sev="3" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="PCIDSS32.655" desc="Do not pass exception messages into output in order to prevent the application from leaking sensitive information" id="PCIDSS32.655.PEO" origId="SPR.PEO" sev="3" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="PCIDSS32.657" desc="Encapsulate all dangerous data sources with validation methods" id="PCIDSS32.657.VPPD" origId="SEC.VPPD" sev="1" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="PCIDSS32.657" desc="Enable anti-XSS protection in Web.config files" id="PCIDSS32.657.AXSSE" origId="SEC.WEB.AXSSE" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="PCIDSS32.657" desc="Enable Content Security Policy in Web.config files" id="PCIDSS32.657.CSP" origId="SEC.WEB.CSP" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="PCIDSS32.658" desc="Ensure that authorization attributes match the controller" id="PCIDSS32.658.UAAMC" origId="SEC.WEB.UAAMC" sev="1" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="PCIDSS32.658" desc="Add authorization services to MVC Core" id="PCIDSS32.658.AAM" origId="SEC.WEB.AAM" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="PCIDSS32.658" desc="Always specify absolute path to execute commands" id="PCIDSS32.658.PBRTE" origId="SEC.PBRTE" sev="2" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="PCIDSS32.658" desc="Avoid using elevated privileges" id="PCIDSS32.658.AUEP" origId="SEC.AUEP" sev="3" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="PCIDSS32.658" desc="Use authorization attributes on pages and controllers" id="PCIDSS32.658.UAA" origId="SEC.WEB.UAA" sev="3" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="PCIDSS32.659" desc="Encapsulate all dangerous data sources with validation methods" id="PCIDSS32.659.VPPD" origId="SEC.VPPD" sev="1" total="0"/>
+            <Rule analyzer="com.parasoft.dottest" authTot="0;" authUrg="0;" cat="PCIDSS32.659" desc="Use anti-forgery attributes on POST methods" id="PCIDSS32.659.VAFT" origId="SEC.WEB.VAFT" sev="3" total="0"/>
+         </RulesList>
+         <SeverityList>
+            <Severity authTot="7;" authUrg="7;" id="2" total="7"/>
+            <Severity authTot="35;" authUrg="35;" id="3" total="35"/>
+         </SeverityList>
+      </Rules>
+      
+  <Supps/>
+
+      
+  <StdViols>
+    <DupViol msg="Duplicated code: int digit;" ln="21" locFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/AccountNumber.cs" locStartln="21" sev="3" auth="lyao" locRef="1" rule="CDD.DUPC" lnHash="-1880120833" rule.header="Avoid code duplication" tool=".test" lineHash="-1880120833" unbViolId="9f43e38d-c66c-31ba-92c5-2d6d153e8aa9" locStartPos="16" analyzer="com.parasoft.dottest.dupcode" lang="dotnet" violId="a9736d7e-d396-3399-b43d-0aa529646246" locType="sr" locEndPos="26" urgent="true" hash="-1037776574" locEndLn="21" goals="1,">
+      <ElDescList>
+        <ElDesc lineHash="-1880120833" ln="21" srcRngStartPos="16" srcRngEndPos="26" locRef="1" locType="sr" srcRnghash="-1037776574" srcRngStartln="21" srcRngEndLn="21" srcRngFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/AccountNumber.cs" desc="[Line 21] Duplicated code in file: 'AccountNumber.cs'" rngLn="21"/>
+        <ElDesc lineHash="-1880120833" ln="77" srcRngStartPos="16" srcRngEndPos="26" locRef="1" locType="sr" srcRnghash="-1037776574" srcRngStartln="77" srcRngEndLn="77" srcRngFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/AccountNumber.cs" desc="[Line 77] Duplicated code in file: 'AccountNumber.cs'" rngLn="77"/>
+      </ElDescList>
+    </DupViol>
+    <DupViol msg="Duplicated string: &quot;Wrong account number: &quot;" ln="28" locFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/AccountNumber.cs" locStartln="28" sev="3" auth="lyao" locRef="1" rule="CDD.DUPS" lnHash="1641499107" rule.header="Avoid string literal duplication" tool=".test" lineHash="1641499107" unbViolId="33d009be-f8c3-33af-bde5-822c1d6ad932" locStartPos="46" analyzer="com.parasoft.dottest.dupcode" lang="dotnet" violId="5a3f17a1-2fde-306e-95bb-e63c42002dad" locType="sr" locEndPos="70" urgent="true" hash="-1037776574" locEndLn="28" goals="1,">
+      <ElDescList>
+        <ElDesc lineHash="1641499107" ln="28" srcRngStartPos="46" srcRngEndPos="70" locRef="1" locType="sr" srcRnghash="-1037776574" srcRngStartln="28" srcRngEndLn="28" srcRngFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/AccountNumber.cs" desc="[Line 28] Duplicated string in file: 'AccountNumber.cs'" rngLn="28"/>
+        <ElDesc lineHash="-1918049269" ln="84" srcRngStartPos="46" srcRngEndPos="70" locRef="1" locType="sr" srcRnghash="-1037776574" srcRngStartln="84" srcRngEndLn="84" srcRngFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/AccountNumber.cs" desc="[Line 84] Duplicated string in file: 'AccountNumber.cs'" rngLn="84"/>
+      </ElDescList>
+    </DupViol>
+    <DupViol msg="Duplicated code: { return false; }" ln="58" locFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/AccountNumber.cs" locStartln="58" sev="3" auth="lyao" locRef="1" rule="CDD.DUPC" lnHash="1178724475" rule.header="Avoid code duplication" tool=".test" lineHash="1178724475" unbViolId="dc38120c-eb56-3205-8300-5664b6db2cac" locStartPos="12" analyzer="com.parasoft.dottest.dupcode" lang="dotnet" violId="6025937c-ab2e-35b6-ac51-82711086c883" locType="sr" locEndPos="13" urgent="true" hash="-1037776574" locEndLn="60" goals="1,">
+      <ElDescList>
+        <ElDesc lineHash="1178724475" ln="58" srcRngStartPos="12" srcRngEndPos="13" locRef="1" locType="sr" srcRnghash="-1037776574" srcRngStartln="58" srcRngEndLn="60" srcRngFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/AccountNumber.cs" desc="[Line 58] Duplicated code in file: 'AccountNumber.cs'" rngLn="58"/>
+        <ElDesc lineHash="81780859" ln="64" srcRngStartPos="16" srcRngEndPos="17" locRef="1" locType="sr" srcRnghash="-1037776574" srcRngStartln="64" srcRngEndLn="66" srcRngFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/AccountNumber.cs" desc="[Line 64] Duplicated code in file: 'AccountNumber.cs'" rngLn="64"/>
+        <ElDesc lineHash="1178724475" ln="29" srcRngStartPos="12" srcRngEndPos="13" locRef="4" locType="sr" srcRnghash="190994750" srcRngStartln="29" srcRngEndLn="31" srcRngFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/BankUser.cs" desc="[Line 29] Duplicated code in file: 'BankUser.cs'" rngLn="29"/>
+      </ElDescList>
+    </DupViol>
+    <DupViol msg="Duplicated code: return true;" ln="68" locFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/AccountNumber.cs" locStartln="68" sev="3" auth="lyao" locRef="1" rule="CDD.DUPC" lnHash="-817364611" rule.header="Avoid code duplication" tool=".test" lineHash="-817364611" unbViolId="7cd9c6ca-285b-3576-abcd-f07e4d9d6971" locStartPos="12" analyzer="com.parasoft.dottest.dupcode" lang="dotnet" violId="58880fe1-43a0-35f4-a6b0-1b5cc133ddcd" locType="sr" locEndPos="24" urgent="true" hash="-1037776574" locEndLn="68" goals="1,">
+      <ElDescList>
+        <ElDesc lineHash="-817364611" ln="68" srcRngStartPos="12" srcRngEndPos="24" locRef="1" locType="sr" srcRnghash="-1037776574" srcRngStartln="68" srcRngEndLn="68" srcRngFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/AccountNumber.cs" desc="[Line 68] Duplicated code in file: 'AccountNumber.cs'" rngLn="68"/>
+        <ElDesc lineHash="14739560" ln="32" srcRngStartPos="12" srcRngEndPos="25" locRef="4" locType="sr" srcRnghash="190994750" srcRngStartln="32" srcRngEndLn="32" srcRngFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/BankUser.cs" desc="[Line 32] Duplicated code in file: 'BankUser.cs'" rngLn="32"/>
+        <ElDesc lineHash="-817364611" ln="20" srcRngStartPos="12" srcRngEndPos="24" locRef="14" locType="sr" srcRnghash="2123519255" srcRngStartln="20" srcRngEndLn="20" srcRngFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/Transactions/ExternalTransfer.cs" desc="[Line 20] Duplicated code in file: 'ExternalTransfer.cs'" rngLn="20"/>
+        <ElDesc lineHash="-817364611" ln="18" srcRngStartPos="12" srcRngEndPos="24" locRef="15" locType="sr" srcRnghash="-1435513077" srcRngStartln="18" srcRngEndLn="18" srcRngFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/Transactions/IncommingTransfer.cs" desc="[Line 18] Duplicated code in file: 'IncommingTransfer.cs'" rngLn="18"/>
+      </ElDescList>
+    </DupViol>
+    <DupViol msg="Duplicated implementation of method 'AddAccount' : '{ IList&lt;BankAccount> accounts; if (!_accounts.TryGetValue...'" ln="38" locFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/Bank.cs" locStartln="38" sev="2" auth="lyao" locRef="2" rule="CDD.DUPM" lnHash="1508372603" rule.header="Avoid method duplication" tool=".test" lineHash="1508372603" unbViolId="7b42a640-bdd7-3638-91e2-73e36c906e31" locStartPos="8" analyzer="com.parasoft.dottest.dupcode" lang="dotnet" violId="4ac65843-95c1-3d91-af78-fbec4f66fc46" locType="sr" locEndPos="9" urgent="true" hash="225911240" locEndLn="47" goals="1,">
+      <ElDescList>
+        <ElDesc lineHash="1508372603" ln="38" srcRngStartPos="8" srcRngEndPos="9" locRef="2" locType="sr" srcRnghash="225911240" srcRngStartln="38" srcRngEndLn="47" srcRngFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/Bank.cs" desc="[Line 38] Duplicated method in file: 'Bank.cs'" rngLn="38"/>
+        <ElDesc lineHash="1508372603" ln="50" srcRngStartPos="8" srcRngEndPos="9" locRef="2" locType="sr" srcRnghash="225911240" srcRngStartln="50" srcRngEndLn="59" srcRngFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/Bank.cs" desc="[Line 50] Duplicated method in file: 'Bank.cs'" rngLn="50"/>
+      </ElDescList>
+    </DupViol>
+    <DupViol msg="Duplicated code: IList&lt;BankAccount> accounts; if (!_accounts.TryGetValue(a..." ln="39" locFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/Bank.cs" locStartln="39" sev="3" auth="lyao" locRef="2" rule="CDD.DUPC" lnHash="1290719671" rule.header="Avoid code duplication" tool=".test" lineHash="1290719671" unbViolId="f2aad7f3-90a4-384b-b7c9-6a83e3b7c304" locStartPos="12" analyzer="com.parasoft.dottest.dupcode" lang="dotnet" violId="151b0978-9008-39dd-989d-eb9a553f9bd1" locType="sr" locEndPos="62" urgent="true" hash="225911240" locEndLn="46" goals="1,">
+      <ElDescList>
+        <ElDesc lineHash="1290719671" ln="39" srcRngStartPos="12" srcRngEndPos="62" locRef="2" locType="sr" srcRnghash="225911240" srcRngStartln="39" srcRngEndLn="46" srcRngFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/Bank.cs" desc="[Line 39] Duplicated code in file: 'Bank.cs'" rngLn="39"/>
+        <ElDesc lineHash="1290719671" ln="51" srcRngStartPos="12" srcRngEndPos="62" locRef="2" locType="sr" srcRnghash="225911240" srcRngStartln="51" srcRngEndLn="58" srcRngFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/Bank.cs" desc="[Line 51] Duplicated code in file: 'Bank.cs'" rngLn="51"/>
+      </ElDescList>
+    </DupViol>
+    <DupViol msg="Duplicated code: IList&lt;BankAccount> accounts = GetAccounts(user);" ln="75" locFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/Bank.cs" locStartln="75" sev="3" auth="lyao" locRef="2" rule="CDD.DUPC" lnHash="932210696" rule.header="Avoid code duplication" tool=".test" lineHash="932210696" unbViolId="7b9474e2-530a-3904-b8aa-353f70aec115" locStartPos="12" analyzer="com.parasoft.dottest.dupcode" lang="dotnet" violId="14bd29dc-6f52-3e63-bda4-8ed4bf38182b" locType="sr" locEndPos="60" urgent="true" hash="225911240" locEndLn="75" goals="1,">
+      <ElDescList>
+        <ElDesc lineHash="932210696" ln="75" srcRngStartPos="12" srcRngEndPos="60" locRef="2" locType="sr" srcRnghash="225911240" srcRngStartln="75" srcRngEndLn="75" srcRngFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/Bank.cs" desc="[Line 75] Duplicated code in file: 'Bank.cs'" rngLn="75"/>
+        <ElDesc lineHash="932210696" ln="142" srcRngStartPos="12" srcRngEndPos="60" locRef="2" locType="sr" srcRnghash="225911240" srcRngStartln="142" srcRngEndLn="142" srcRngFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/Bank.cs" desc="[Line 142] Duplicated code in file: 'Bank.cs'" rngLn="142"/>
+      </ElDescList>
+    </DupViol>
+    <DupViol msg="Duplicated code: int count = 0;" ln="76" locFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/Bank.cs" locStartln="76" sev="3" auth="lyao" locRef="2" rule="CDD.DUPC" lnHash="-1574173168" rule.header="Avoid code duplication" tool=".test" lineHash="-1574173168" unbViolId="8305c21c-d377-3638-b7f7-484206bcda11" locStartPos="12" analyzer="com.parasoft.dottest.dupcode" lang="dotnet" violId="dfa66936-4e14-3a2c-9608-7be8afdc5406" locType="sr" locEndPos="26" urgent="true" hash="225911240" locEndLn="76" goals="1,">
+      <ElDescList>
+        <ElDesc lineHash="-1574173168" ln="76" srcRngStartPos="12" srcRngEndPos="26" locRef="2" locType="sr" srcRnghash="225911240" srcRngStartln="76" srcRngEndLn="76" srcRngFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/Bank.cs" desc="[Line 76] Duplicated code in file: 'Bank.cs'" rngLn="76"/>
+        <ElDesc lineHash="-1574173168" ln="94" srcRngStartPos="12" srcRngEndPos="26" locRef="2" locType="sr" srcRnghash="225911240" srcRngStartln="94" srcRngEndLn="94" srcRngFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/Bank.cs" desc="[Line 94] Duplicated code in file: 'Bank.cs'" rngLn="94"/>
+      </ElDescList>
+    </DupViol>
+    <DupViol msg="Duplicated string: &quot;USD&quot;" ln="79" locFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/Bank.cs" locStartln="79" sev="3" auth="lyao" locRef="2" rule="CDD.DUPS" lnHash="-1210635292" rule.header="Avoid string literal duplication" tool=".test" lineHash="-1210635292" unbViolId="8272f9d7-9670-38e6-a731-356e29f2b0d5" locStartPos="53" analyzer="com.parasoft.dottest.dupcode" lang="dotnet" violId="64561e2c-cc8e-3e72-8b77-aa0df2b0ca14" locType="sr" locEndPos="58" urgent="true" hash="225911240" locEndLn="79" goals="1,">
+      <ElDescList>
+        <ElDesc lineHash="-1210635292" ln="79" srcRngStartPos="53" srcRngEndPos="58" locRef="2" locType="sr" srcRnghash="225911240" srcRngStartln="79" srcRngEndLn="79" srcRngFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/Bank.cs" desc="[Line 79] Duplicated string in file: 'Bank.cs'" rngLn="79"/>
+        <ElDesc lineHash="1593167590" ln="118" srcRngStartPos="84" srcRngEndPos="89" locRef="2" locType="sr" srcRnghash="225911240" srcRngStartln="118" srcRngEndLn="118" srcRngFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/Bank.cs" desc="[Line 118] Duplicated string in file: 'Bank.cs'" rngLn="118"/>
+        <ElDesc lineHash="1955442656" ln="130" srcRngStartPos="82" srcRngEndPos="87" locRef="2" locType="sr" srcRnghash="225911240" srcRngStartln="130" srcRngEndLn="130" srcRngFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/Bank.cs" desc="[Line 130] Duplicated string in file: 'Bank.cs'" rngLn="130"/>
+        <ElDesc lineHash="-1392464517" ln="140" srcRngStartPos="55" srcRngEndPos="60" locRef="2" locType="sr" srcRnghash="225911240" srcRngStartln="140" srcRngEndLn="140" srcRngFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/Bank.cs" desc="[Line 140] Duplicated string in file: 'Bank.cs'" rngLn="140"/>
+        <ElDesc lineHash="1465239513" ln="19" srcRngStartPos="46" srcRngEndPos="51" locRef="6" locType="sr" srcRnghash="-1333971617" srcRngStartln="19" srcRngEndLn="19" srcRngFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/ExampleBank.cs" desc="[Line 19] Duplicated string in file: 'ExampleBank.cs'" rngLn="19"/>
+        <ElDesc lineHash="785956807" ln="33" srcRngStartPos="107" srcRngEndPos="112" locRef="6" locType="sr" srcRnghash="-1333971617" srcRngStartln="33" srcRngEndLn="33" srcRngFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/ExampleBank.cs" desc="[Line 33] Duplicated string in file: 'ExampleBank.cs'" rngLn="33"/>
+        <ElDesc lineHash="1368317773" ln="41" srcRngStartPos="75" srcRngEndPos="80" locRef="6" locType="sr" srcRnghash="-1333971617" srcRngStartln="41" srcRngEndLn="41" srcRngFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/ExampleBank.cs" desc="[Line 41] Duplicated string in file: 'ExampleBank.cs'" rngLn="41"/>
+        <ElDesc lineHash="1828857932" ln="25" srcRngStartPos="21" srcRngEndPos="26" locRef="11" locType="sr" srcRnghash="-1251910444" srcRngStartln="25" srcRngEndLn="25" srcRngFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/Money/CurrencyProvider.cs" desc="[Line 25] Duplicated string in file: 'CurrencyProvider.cs'" rngLn="25"/>
+        <ElDesc lineHash="1828857932" ln="42" srcRngStartPos="21" srcRngEndPos="26" locRef="11" locType="sr" srcRnghash="-1251910444" srcRngStartln="42" srcRngEndLn="42" srcRngFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/Money/CurrencyProvider.cs" desc="[Line 42] Duplicated string in file: 'CurrencyProvider.cs'" rngLn="42"/>
+      </ElDescList>
+    </DupViol>
+    <DupViol msg="Duplicated code: { count++; }" ln="80" locFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/Bank.cs" locStartln="80" sev="3" auth="lyao" locRef="2" rule="CDD.DUPC" lnHash="81780859" rule.header="Avoid code duplication" tool=".test" lineHash="81780859" unbViolId="f5de9cc4-293c-303f-b0ba-d4e2c8590ad1" locStartPos="16" analyzer="com.parasoft.dottest.dupcode" lang="dotnet" violId="ce94d717-20ee-320a-8ed7-750cf5712ba8" locType="sr" locEndPos="17" urgent="true" hash="225911240" locEndLn="82" goals="1,">
+      <ElDescList>
+        <ElDesc lineHash="81780859" ln="80" srcRngStartPos="16" srcRngEndPos="17" locRef="2" locType="sr" srcRnghash="225911240" srcRngStartln="80" srcRngEndLn="82" srcRngFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/Bank.cs" desc="[Line 80] Duplicated code in file: 'Bank.cs'" rngLn="80"/>
+        <ElDesc lineHash="-742270853" ln="102" srcRngStartPos="20" srcRngEndPos="21" locRef="2" locType="sr" srcRnghash="225911240" srcRngStartln="102" srcRngEndLn="104" srcRngFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/Bank.cs" desc="[Line 102] Duplicated code in file: 'Bank.cs'" rngLn="102"/>
+      </ElDescList>
+    </DupViol>
+    <DupViol msg="Duplicated code: { }" ln="84" locFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/Bank.cs" locStartln="84" sev="3" auth="lyao" locRef="2" rule="CDD.DUPC" lnHash="81780859" rule.header="Avoid code duplication" tool=".test" lineHash="81780859" unbViolId="e335dda3-e558-3aa8-b319-260321d350fa" locStartPos="16" analyzer="com.parasoft.dottest.dupcode" lang="dotnet" violId="eb2b9b0c-0e25-381b-a9f4-71b30d78e2db" locType="sr" locEndPos="17" urgent="true" hash="225911240" locEndLn="86" goals="1,">
+      <ElDescList>
+        <ElDesc lineHash="81780859" ln="84" srcRngStartPos="16" srcRngEndPos="17" locRef="2" locType="sr" srcRnghash="225911240" srcRngStartln="84" srcRngEndLn="86" srcRngFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/Bank.cs" desc="[Line 84] Duplicated code in file: 'Bank.cs'" rngLn="84"/>
+        <ElDesc lineHash="1178724475" ln="12" srcRngStartPos="12" srcRngEndPos="13" locRef="14" locType="sr" srcRnghash="2123519255" srcRngStartln="12" srcRngEndLn="14" srcRngFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/Transactions/ExternalTransfer.cs" desc="[Line 12] Duplicated code in file: 'ExternalTransfer.cs'" rngLn="12"/>
+        <ElDesc lineHash="1584030926" ln="34" srcRngStartPos="26" srcRngEndPos="29" locRef="17" locType="sr" srcRnghash="-607436831" srcRngStartln="34" srcRngEndLn="34" srcRngFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/Transactions/TransactionBase.cs" desc="[Line 34] Duplicated code in file: 'TransactionBase.cs'" rngLn="34"/>
+      </ElDescList>
+    </DupViol>
+    <DupViol msg="Duplicated code: return count;" ln="87" locFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/Bank.cs" locStartln="87" sev="3" auth="lyao" locRef="2" rule="CDD.DUPC" lnHash="-1510627844" rule.header="Avoid code duplication" tool=".test" lineHash="-1510627844" unbViolId="ca8112d4-9dd5-3d2e-83a8-dfeb801b91ba" locStartPos="16" analyzer="com.parasoft.dottest.dupcode" lang="dotnet" violId="a2b60181-c903-30da-870f-5650c4583ae6" locType="sr" locEndPos="29" urgent="true" hash="225911240" locEndLn="87" goals="1,">
+      <ElDescList>
+        <ElDesc lineHash="-1510627844" ln="87" srcRngStartPos="16" srcRngEndPos="29" locRef="2" locType="sr" srcRnghash="225911240" srcRngStartln="87" srcRngEndLn="87" srcRngFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/Bank.cs" desc="[Line 87] Duplicated code in file: 'Bank.cs'" rngLn="87"/>
+        <ElDesc lineHash="-57954820" ln="89" srcRngStartPos="12" srcRngEndPos="25" locRef="2" locType="sr" srcRnghash="225911240" srcRngStartln="89" srcRngEndLn="89" srcRngFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/Bank.cs" desc="[Line 89] Duplicated code in file: 'Bank.cs'" rngLn="89"/>
+      </ElDescList>
+    </DupViol>
+    <DupViol msg="Duplicated code: DateTime now = DateTime.Now; OutgoingTransfer outgoing = ..." ln="116" locFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/Bank.cs" locStartln="116" sev="3" auth="lyao" locRef="2" rule="CDD.DUPC" lnHash="1385740998" rule.header="Avoid code duplication" tool=".test" lineHash="1385740998" unbViolId="f5149535-d060-374d-9e51-9ca0d982ba42" locStartPos="16" analyzer="com.parasoft.dottest.dupcode" lang="dotnet" violId="c18c4b35-ac9b-3623-bc43-eeb58bcdff9c" locType="sr" locEndPos="37" urgent="true" hash="225911240" locEndLn="119" goals="1,">
+      <ElDescList>
+        <ElDesc lineHash="1385740998" ln="116" srcRngStartPos="16" srcRngEndPos="37" locRef="2" locType="sr" srcRnghash="225911240" srcRngStartln="116" srcRngEndLn="119" srcRngFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/Bank.cs" desc="[Line 116] Duplicated code in file: 'Bank.cs'" rngLn="116"/>
+        <ElDesc lineHash="1385740998" ln="128" srcRngStartPos="16" srcRngEndPos="37" locRef="2" locType="sr" srcRnghash="225911240" srcRngStartln="128" srcRngEndLn="131" srcRngFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/Bank.cs" desc="[Line 128] Duplicated code in file: 'Bank.cs'" rngLn="128"/>
+      </ElDescList>
+    </DupViol>
+    <DupViol msg="Duplicated code: outgoing.Apply();" ln="123" locFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/Bank.cs" locStartln="123" sev="3" auth="lyao" locRef="2" rule="CDD.DUPC" lnHash="1997690254" rule.header="Avoid code duplication" tool=".test" lineHash="1997690254" unbViolId="956ede35-bcfc-3594-b23f-aa8a0f34399f" locStartPos="16" analyzer="com.parasoft.dottest.dupcode" lang="dotnet" violId="5b665375-5fb8-3abf-b9e3-8856daf557b3" locType="sr" locEndPos="33" urgent="true" hash="225911240" locEndLn="123" goals="1,">
+      <ElDescList>
+        <ElDesc lineHash="1997690254" ln="123" srcRngStartPos="16" srcRngEndPos="33" locRef="2" locType="sr" srcRnghash="225911240" srcRngStartln="123" srcRngEndLn="123" srcRngFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/Bank.cs" desc="[Line 123] Duplicated code in file: 'Bank.cs'" rngLn="123"/>
+        <ElDesc lineHash="1997690254" ln="133" srcRngStartPos="16" srcRngEndPos="33" locRef="2" locType="sr" srcRnghash="225911240" srcRngStartln="133" srcRngEndLn="133" srcRngFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/Bank.cs" desc="[Line 133] Duplicated code in file: 'Bank.cs'" rngLn="133"/>
+      </ElDescList>
+    </DupViol>
+    <DupViol msg="Duplicated implementation of method: '{ return _currencyInfo; }'" ln="27" locFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/BankAccount.cs" locStartln="27" sev="2" auth="lyao" locRef="3" rule="CDD.DUPM" lnHash="1629195772" rule.header="Avoid method duplication" tool=".test" lineHash="1629195772" unbViolId="ea49294f-4bdc-3278-9b11-b9f2f8d8f1eb" locStartPos="47" analyzer="com.parasoft.dottest.dupcode" lang="dotnet" violId="671ddb8b-0ff7-3cbc-98a2-538b15ec53ea" locType="sr" locEndPos="72" urgent="true" hash="33954980" locEndLn="27" goals="1,">
+      <ElDescList>
+        <ElDesc lineHash="1629195772" ln="27" srcRngStartPos="47" srcRngEndPos="72" locRef="3" locType="sr" srcRnghash="33954980" srcRngStartln="27" srcRngEndLn="27" srcRngFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/BankAccount.cs" desc="[Line 27] Duplicated method in file: 'BankAccount.cs'" rngLn="27"/>
+        <ElDesc lineHash="1629195772" ln="15" srcRngStartPos="47" srcRngEndPos="72" locRef="9" locType="sr" srcRnghash="-1644265069" srcRngStartln="15" srcRngEndLn="15" srcRngFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/Money/Currency.cs" desc="[Line 15] Duplicated method in file: 'Currency.cs'" rngLn="15"/>
+      </ElDescList>
+    </DupViol>
+    <DupViol msg="Duplicated implementation of method: '{ return _number; }'" ln="31" locFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/BankAccount.cs" locStartln="31" sev="2" auth="lyao" locRef="3" rule="CDD.DUPM" lnHash="863065907" rule.header="Avoid method duplication" tool=".test" lineHash="863065907" unbViolId="2c3f6218-025e-3186-bf00-fe57dde831f1" locStartPos="42" analyzer="com.parasoft.dottest.dupcode" lang="dotnet" violId="95448b53-c782-396f-8aad-d12efd6058b1" locType="sr" locEndPos="61" urgent="true" hash="33954980" locEndLn="31" goals="1,">
+      <ElDescList>
+        <ElDesc lineHash="863065907" ln="31" srcRngStartPos="42" srcRngEndPos="61" locRef="3" locType="sr" srcRnghash="33954980" srcRngStartln="31" srcRngEndLn="31" srcRngFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/BankAccount.cs" desc="[Line 31] Duplicated method in file: 'BankAccount.cs'" rngLn="31"/>
+        <ElDesc lineHash="-628080882" ln="50" srcRngStartPos="42" srcRngEndPos="61" locRef="8" locType="sr" srcRnghash="-1513177483" srcRngStartln="50" srcRngEndLn="50" srcRngFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/ReportGenerator.cs" desc="[Line 50] Duplicated method in file: 'ReportGenerator.cs'" rngLn="50"/>
+      </ElDescList>
+    </DupViol>
+    <DupViol msg="Duplicated implementation of method 'Transfer' : '{'" ln="39" locFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/BankAccount.cs" locStartln="39" sev="2" auth="lyao" locRef="3" rule="CDD.DUPM" lnHash="1508372603" rule.header="Avoid method duplication" tool=".test" lineHash="1508372603" unbViolId="a85b57b8-8327-3651-93c0-3c270c5fdc09" locStartPos="8" analyzer="com.parasoft.dottest.dupcode" lang="dotnet" violId="0304156b-3b3a-33ea-9407-37e1324724e2" locType="sr" locEndPos="9" urgent="true" hash="33954980" locEndLn="39" goals="1,">
+      <ElDescList>
+        <ElDesc lineHash="1508372603" ln="39" srcRngStartPos="8" srcRngEndPos="9" locRef="3" locType="sr" srcRnghash="33954980" srcRngStartln="39" srcRngEndLn="39" srcRngFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/BankAccount.cs" desc="[Line 39] Duplicated method in file: 'BankAccount.cs'" rngLn="39"/>
+        <ElDesc lineHash="1508372603" ln="12" srcRngStartPos="8" srcRngEndPos="9" locRef="6" locType="sr" srcRnghash="-1333971617" srcRngStartln="12" srcRngEndLn="12" srcRngFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/ExampleBank.cs" desc="[Line 12] Duplicated method in file: 'ExampleBank.cs'" rngLn="12"/>
+        <ElDesc lineHash="1508372603" ln="46" srcRngStartPos="8" srcRngEndPos="9" locRef="8" locType="sr" srcRnghash="-1513177483" srcRngStartln="46" srcRngEndLn="46" srcRngFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/ReportGenerator.cs" desc="[Line 46] Duplicated method in file: 'ReportGenerator.cs'" rngLn="46"/>
+        <ElDesc lineHash="1508372603" ln="12" srcRngStartPos="8" srcRngEndPos="9" locRef="15" locType="sr" srcRnghash="-1435513077" srcRngStartln="12" srcRngEndLn="12" srcRngFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/Transactions/IncommingTransfer.cs" desc="[Line 12] Duplicated method in file: 'IncommingTransfer.cs'" rngLn="12"/>
+        <ElDesc lineHash="1508372603" ln="13" srcRngStartPos="8" srcRngEndPos="9" locRef="16" locType="sr" srcRnghash="-2022280772" srcRngStartln="13" srcRngEndLn="13" srcRngFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/Transactions/OutgoingTransfer.cs" desc="[Line 13] Duplicated method in file: 'OutgoingTransfer.cs'" rngLn="13"/>
+      </ElDescList>
+    </DupViol>
+    <DupViol msg="Duplicated code: { return input; }" ln="25" locFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/CurrencyExchangeConverter.cs" locStartln="25" sev="3" auth="lyao" locRef="5" rule="CDD.DUPC" lnHash="1178724475" rule.header="Avoid code duplication" tool=".test" lineHash="1178724475" unbViolId="735858de-a9a5-35cc-8a39-da52ad25d2e0" locStartPos="12" analyzer="com.parasoft.dottest.dupcode" lang="dotnet" violId="b3280599-d380-3772-9438-d6ba3642710e" locType="sr" locEndPos="13" urgent="true" hash="2123378625" locEndLn="27" goals="1,">
+      <ElDescList>
+        <ElDesc lineHash="1178724475" ln="25" srcRngStartPos="12" srcRngEndPos="13" locRef="5" locType="sr" srcRnghash="2123378625" srcRngStartln="25" srcRngEndLn="27" srcRngFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/CurrencyExchangeConverter.cs" desc="[Line 25] Duplicated code in file: 'CurrencyExchangeConverter.cs'" rngLn="25"/>
+        <ElDesc lineHash="1178724475" ln="38" srcRngStartPos="12" srcRngEndPos="13" locRef="5" locType="sr" srcRnghash="2123378625" srcRngStartln="38" srcRngEndLn="40" srcRngFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/CurrencyExchangeConverter.cs" desc="[Line 38] Duplicated code in file: 'CurrencyExchangeConverter.cs'" rngLn="38"/>
+        <ElDesc lineHash="1178724475" ln="56" srcRngStartPos="12" srcRngEndPos="13" locRef="5" locType="sr" srcRnghash="2123378625" srcRngStartln="56" srcRngEndLn="58" srcRngFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/CurrencyExchangeConverter.cs" desc="[Line 56] Duplicated code in file: 'CurrencyExchangeConverter.cs'" rngLn="56"/>
+      </ElDescList>
+    </DupViol>
+    <DupViol msg="Duplicated code: bank.AddCurrency(new CurrencyInfo(&quot;USD&quot;, &quot;$&quot;, &quot;{1}{0}&quot;));..." ln="19" locFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/ExampleBank.cs" locStartln="19" sev="3" auth="lyao" locRef="6" rule="CDD.DUPC" lnHash="1465239513" rule.header="Avoid code duplication" tool=".test" lineHash="1465239513" unbViolId="3ad99f10-1ee8-3acd-b67c-8eb4bb837395" locStartPos="12" analyzer="com.parasoft.dottest.dupcode" lang="dotnet" violId="e4b22db1-61bf-3ac4-a0cf-d735f0e1c1ea" locType="sr" locEndPos="69" urgent="true" hash="-1333971617" locEndLn="20" goals="1,">
+      <ElDescList>
+        <ElDesc lineHash="1465239513" ln="19" srcRngStartPos="12" srcRngEndPos="69" locRef="6" locType="sr" srcRnghash="-1333971617" srcRngStartln="19" srcRngEndLn="20" srcRngFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/ExampleBank.cs" desc="[Line 19] Duplicated code in file: 'ExampleBank.cs'" rngLn="19"/>
+        <ElDesc lineHash="2096213879" ln="22" srcRngStartPos="12" srcRngEndPos="71" locRef="6" locType="sr" srcRnghash="-1333971617" srcRngStartln="22" srcRngEndLn="23" srcRngFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/ExampleBank.cs" desc="[Line 22] Duplicated code in file: 'ExampleBank.cs'" rngLn="22"/>
+      </ElDescList>
+    </DupViol>
+    <DupViol msg="Duplicated string: &quot;{1}{0}&quot;" ln="19" locFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/ExampleBank.cs" locStartln="19" sev="3" auth="lyao" locRef="6" rule="CDD.DUPS" lnHash="1465239513" rule.header="Avoid string literal duplication" tool=".test" lineHash="1465239513" unbViolId="5762db0b-29e4-3695-9e26-776af4c95755" locStartPos="58" analyzer="com.parasoft.dottest.dupcode" lang="dotnet" violId="99b2471b-acc5-3af3-a292-06131ce363f7" locType="sr" locEndPos="66" urgent="true" hash="-1333971617" locEndLn="19" goals="1,">
+      <ElDescList>
+        <ElDesc lineHash="1465239513" ln="19" srcRngStartPos="58" srcRngEndPos="66" locRef="6" locType="sr" srcRnghash="-1333971617" srcRngStartln="19" srcRngEndLn="19" srcRngFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/ExampleBank.cs" desc="[Line 19] Duplicated string in file: 'ExampleBank.cs'" rngLn="19"/>
+        <ElDesc lineHash="-589409115" ln="20" srcRngStartPos="58" srcRngEndPos="66" locRef="6" locType="sr" srcRnghash="-1333971617" srcRngStartln="20" srcRngEndLn="20" srcRngFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/ExampleBank.cs" desc="[Line 20] Duplicated string in file: 'ExampleBank.cs'" rngLn="20"/>
+        <ElDesc lineHash="-1314716915" ln="21" srcRngStartPos="58" srcRngEndPos="66" locRef="6" locType="sr" srcRnghash="-1333971617" srcRngStartln="21" srcRngEndLn="21" srcRngFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/ExampleBank.cs" desc="[Line 21] Duplicated string in file: 'ExampleBank.cs'" rngLn="21"/>
+      </ElDescList>
+    </DupViol>
+    <DupViol msg="Duplicated string: &quot;EUR&quot;" ln="20" locFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/ExampleBank.cs" locStartln="20" sev="3" auth="lyao" locRef="6" rule="CDD.DUPS" lnHash="-589409115" rule.header="Avoid string literal duplication" tool=".test" lineHash="-589409115" unbViolId="ea60c4c9-9295-3410-ab63-87ee693b7628" locStartPos="46" analyzer="com.parasoft.dottest.dupcode" lang="dotnet" violId="9eacd4eb-a491-39e9-9906-252a5833cc79" locType="sr" locEndPos="51" urgent="true" hash="-1333971617" locEndLn="20" goals="1,">
+      <ElDescList>
+        <ElDesc lineHash="-589409115" ln="20" srcRngStartPos="46" srcRngEndPos="51" locRef="6" locType="sr" srcRnghash="-1333971617" srcRngStartln="20" srcRngEndLn="20" srcRngFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/ExampleBank.cs" desc="[Line 20] Duplicated string in file: 'ExampleBank.cs'" rngLn="20"/>
+        <ElDesc lineHash="-1929664593" ln="34" srcRngStartPos="106" srcRngEndPos="111" locRef="6" locType="sr" srcRnghash="-1333971617" srcRngStartln="34" srcRngEndLn="34" srcRngFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/ExampleBank.cs" desc="[Line 34] Duplicated string in file: 'ExampleBank.cs'" rngLn="34"/>
+        <ElDesc lineHash="1846657761" ln="38" srcRngStartPos="108" srcRngEndPos="113" locRef="6" locType="sr" srcRnghash="-1333971617" srcRngStartln="38" srcRngEndLn="38" srcRngFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/ExampleBank.cs" desc="[Line 38] Duplicated string in file: 'ExampleBank.cs'" rngLn="38"/>
+        <ElDesc lineHash="1640780899" ln="43" srcRngStartPos="52" srcRngEndPos="57" locRef="6" locType="sr" srcRnghash="-1333971617" srcRngStartln="43" srcRngEndLn="43" srcRngFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/ExampleBank.cs" desc="[Line 43] Duplicated string in file: 'ExampleBank.cs'" rngLn="43"/>
+        <ElDesc lineHash="1814154632" ln="27" srcRngStartPos="21" srcRngEndPos="26" locRef="11" locType="sr" srcRnghash="-1251910444" srcRngStartln="27" srcRngEndLn="27" srcRngFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/Money/CurrencyProvider.cs" desc="[Line 27] Duplicated string in file: 'CurrencyProvider.cs'" rngLn="27"/>
+        <ElDesc lineHash="1814154632" ln="44" srcRngStartPos="21" srcRngEndPos="26" locRef="11" locType="sr" srcRnghash="-1251910444" srcRngStartln="44" srcRngEndLn="44" srcRngFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/Money/CurrencyProvider.cs" desc="[Line 44] Duplicated string in file: 'CurrencyProvider.cs'" rngLn="44"/>
+      </ElDescList>
+    </DupViol>
+    <DupViol msg="Duplicated string: &quot;JPY&quot;" ln="21" locFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/ExampleBank.cs" locStartln="21" sev="3" auth="lyao" locRef="6" rule="CDD.DUPS" lnHash="-1314716915" rule.header="Avoid string literal duplication" tool=".test" lineHash="-1314716915" unbViolId="b7ec0c00-8738-3da1-8d7a-7c0f0d911990" locStartPos="46" analyzer="com.parasoft.dottest.dupcode" lang="dotnet" violId="64cf2746-f786-30d7-94bf-92409255f4b4" locType="sr" locEndPos="51" urgent="true" hash="-1333971617" locEndLn="21" goals="1,">
+      <ElDescList>
+        <ElDesc lineHash="-1314716915" ln="21" srcRngStartPos="46" srcRngEndPos="51" locRef="6" locType="sr" srcRnghash="-1333971617" srcRngStartln="21" srcRngEndLn="21" srcRngFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/ExampleBank.cs" desc="[Line 21] Duplicated string in file: 'ExampleBank.cs'" rngLn="21"/>
+        <ElDesc lineHash="-166314817" ln="35" srcRngStartPos="107" srcRngEndPos="112" locRef="6" locType="sr" srcRnghash="-1333971617" srcRngStartln="35" srcRngEndLn="35" srcRngFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/ExampleBank.cs" desc="[Line 35] Duplicated string in file: 'ExampleBank.cs'" rngLn="35"/>
+        <ElDesc lineHash="-1046801370" ln="39" srcRngStartPos="107" srcRngEndPos="112" locRef="6" locType="sr" srcRnghash="-1333971617" srcRngStartln="39" srcRngEndLn="39" srcRngFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/ExampleBank.cs" desc="[Line 39] Duplicated string in file: 'ExampleBank.cs'" rngLn="39"/>
+        <ElDesc lineHash="1227778207" ln="44" srcRngStartPos="52" srcRngEndPos="57" locRef="6" locType="sr" srcRnghash="-1333971617" srcRngStartln="44" srcRngEndLn="44" srcRngFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/ExampleBank.cs" desc="[Line 44] Duplicated string in file: 'ExampleBank.cs'" rngLn="44"/>
+        <ElDesc lineHash="1818630009" ln="26" srcRngStartPos="21" srcRngEndPos="26" locRef="11" locType="sr" srcRnghash="-1251910444" srcRngStartln="26" srcRngEndLn="26" srcRngFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/Money/CurrencyProvider.cs" desc="[Line 26] Duplicated string in file: 'CurrencyProvider.cs'" rngLn="26"/>
+        <ElDesc lineHash="1818630009" ln="43" srcRngStartPos="21" srcRngEndPos="26" locRef="11" locType="sr" srcRnghash="-1251910444" srcRngStartln="43" srcRngEndLn="43" srcRngFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/Money/CurrencyProvider.cs" desc="[Line 43] Duplicated string in file: 'CurrencyProvider.cs'" rngLn="43"/>
+      </ElDescList>
+    </DupViol>
+    <DupViol msg="Duplicated string: &quot;PLN&quot;" ln="22" locFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/ExampleBank.cs" locStartln="22" sev="3" auth="lyao" locRef="6" rule="CDD.DUPS" lnHash="2096213879" rule.header="Avoid string literal duplication" tool=".test" lineHash="2096213879" unbViolId="0b3af535-46cd-39f0-b7ba-9af373fc1b7f" locStartPos="46" analyzer="com.parasoft.dottest.dupcode" lang="dotnet" violId="4b08cb6c-a2bd-309c-a185-1371b9ca6fbf" locType="sr" locEndPos="51" urgent="true" hash="-1333971617" locEndLn="22" goals="1,">
+      <ElDescList>
+        <ElDesc lineHash="2096213879" ln="22" srcRngStartPos="46" srcRngEndPos="51" locRef="6" locType="sr" srcRnghash="-1333971617" srcRngStartln="22" srcRngEndLn="22" srcRngFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/ExampleBank.cs" desc="[Line 22] Duplicated string in file: 'ExampleBank.cs'" rngLn="22"/>
+        <ElDesc lineHash="-1034825516" ln="46" srcRngStartPos="52" srcRngEndPos="57" locRef="6" locType="sr" srcRnghash="-1333971617" srcRngStartln="46" srcRngEndLn="46" srcRngFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/ExampleBank.cs" desc="[Line 46] Duplicated string in file: 'ExampleBank.cs'" rngLn="46"/>
+        <ElDesc lineHash="1824041400" ln="28" srcRngStartPos="21" srcRngEndPos="26" locRef="11" locType="sr" srcRnghash="-1251910444" srcRngStartln="28" srcRngEndLn="28" srcRngFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/Money/CurrencyProvider.cs" desc="[Line 28] Duplicated string in file: 'CurrencyProvider.cs'" rngLn="28"/>
+        <ElDesc lineHash="1824041400" ln="45" srcRngStartPos="21" srcRngEndPos="26" locRef="11" locType="sr" srcRnghash="-1251910444" srcRngStartln="45" srcRngEndLn="45" srcRngFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/Money/CurrencyProvider.cs" desc="[Line 45] Duplicated string in file: 'CurrencyProvider.cs'" rngLn="45"/>
+      </ElDescList>
+    </DupViol>
+    <DupViol msg="Duplicated string: &quot;{0} {1}&quot;" ln="22" locFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/ExampleBank.cs" locStartln="22" sev="3" auth="lyao" locRef="6" rule="CDD.DUPS" lnHash="2096213879" rule.header="Avoid string literal duplication" tool=".test" lineHash="2096213879" unbViolId="1cd4a3fe-6cbf-37f8-a5dc-f0525118af1c" locStartPos="59" analyzer="com.parasoft.dottest.dupcode" lang="dotnet" violId="d3661d22-3ec0-3f1c-8e37-55d9d2743299" locType="sr" locEndPos="68" urgent="true" hash="-1333971617" locEndLn="22" goals="1,">
+      <ElDescList>
+        <ElDesc lineHash="2096213879" ln="22" srcRngStartPos="59" srcRngEndPos="68" locRef="6" locType="sr" srcRnghash="-1333971617" srcRngStartln="22" srcRngEndLn="22" srcRngFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/ExampleBank.cs" desc="[Line 22] Duplicated string in file: 'ExampleBank.cs'" rngLn="22"/>
+        <ElDesc lineHash="205029641" ln="23" srcRngStartPos="59" srcRngEndPos="68" locRef="6" locType="sr" srcRnghash="-1333971617" srcRngStartln="23" srcRngEndLn="23" srcRngFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/ExampleBank.cs" desc="[Line 23] Duplicated string in file: 'ExampleBank.cs'" rngLn="23"/>
+      </ElDescList>
+    </DupViol>
+    <DupViol msg="Duplicated string: &quot;ISK&quot;" ln="23" locFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/ExampleBank.cs" locStartln="23" sev="3" auth="lyao" locRef="6" rule="CDD.DUPS" lnHash="205029641" rule.header="Avoid string literal duplication" tool=".test" lineHash="205029641" unbViolId="6006c5b8-8797-32dd-b8af-45c70990cabd" locStartPos="46" analyzer="com.parasoft.dottest.dupcode" lang="dotnet" violId="ee0b4eeb-9dc6-30f7-b792-099d053ad928" locType="sr" locEndPos="51" urgent="true" hash="-1333971617" locEndLn="23" goals="1,">
+      <ElDescList>
+        <ElDesc lineHash="205029641" ln="23" srcRngStartPos="46" srcRngEndPos="51" locRef="6" locType="sr" srcRnghash="-1333971617" srcRngStartln="23" srcRngEndLn="23" srcRngFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/ExampleBank.cs" desc="[Line 23] Duplicated string in file: 'ExampleBank.cs'" rngLn="23"/>
+        <ElDesc lineHash="-780776304" ln="36" srcRngStartPos="105" srcRngEndPos="110" locRef="6" locType="sr" srcRnghash="-1333971617" srcRngStartln="36" srcRngEndLn="36" srcRngFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/ExampleBank.cs" desc="[Line 36] Duplicated string in file: 'ExampleBank.cs'" rngLn="36"/>
+        <ElDesc lineHash="939709760" ln="45" srcRngStartPos="52" srcRngEndPos="57" locRef="6" locType="sr" srcRnghash="-1333971617" srcRngStartln="45" srcRngEndLn="45" srcRngFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/ExampleBank.cs" desc="[Line 45] Duplicated string in file: 'ExampleBank.cs'" rngLn="45"/>
+        <ElDesc lineHash="1817782407" ln="30" srcRngStartPos="21" srcRngEndPos="26" locRef="11" locType="sr" srcRnghash="-1251910444" srcRngStartln="30" srcRngEndLn="30" srcRngFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/Money/CurrencyProvider.cs" desc="[Line 30] Duplicated string in file: 'CurrencyProvider.cs'" rngLn="30"/>
+        <ElDesc lineHash="1817782407" ln="47" srcRngStartPos="21" srcRngEndPos="26" locRef="11" locType="sr" srcRnghash="-1251910444" srcRngStartln="47" srcRngEndLn="47" srcRngFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/Money/CurrencyProvider.cs" desc="[Line 47] Duplicated string in file: 'CurrencyProvider.cs'" rngLn="47"/>
+      </ElDescList>
+    </DupViol>
+    <DupViol msg="Duplicated string: &quot;jwhite&quot;" ln="25" locFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/ExampleBank.cs" locStartln="25" sev="3" auth="lyao" locRef="6" rule="CDD.DUPS" lnHash="-1592347677" rule.header="Avoid string literal duplication" tool=".test" lineHash="-1592347677" unbViolId="df728a79-7658-3c28-af9a-a0086f81f390" locStartPos="59" analyzer="com.parasoft.dottest.dupcode" lang="dotnet" violId="9364855e-db6d-3fa5-ba75-a58f4c999771" locType="sr" locEndPos="67" urgent="true" hash="-1333971617" locEndLn="25" goals="1,">
+      <ElDescList>
+        <ElDesc lineHash="-1592347677" ln="25" srcRngStartPos="59" srcRngEndPos="67" locRef="6" locType="sr" srcRnghash="-1333971617" srcRngStartln="25" srcRngEndLn="25" srcRngFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/ExampleBank.cs" desc="[Line 25] Duplicated string in file: 'ExampleBank.cs'" rngLn="25"/>
+        <ElDesc lineHash="-1592347677" ln="25" srcRngStartPos="69" srcRngEndPos="77" locRef="6" locType="sr" srcRnghash="-1333971617" srcRngStartln="25" srcRngEndLn="25" srcRngFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/ExampleBank.cs" desc="[Line 25] Duplicated string in file: 'ExampleBank.cs'" rngLn="25"/>
+      </ElDescList>
+    </DupViol>
+    <DupViol msg="Duplicated string: &quot;asmith&quot;" ln="26" locFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/ExampleBank.cs" locStartln="26" sev="3" auth="lyao" locRef="6" rule="CDD.DUPS" lnHash="2039809239" rule.header="Avoid string literal duplication" tool=".test" lineHash="2039809239" unbViolId="3d1ad2fe-36ea-37b5-a00c-679743222ddb" locStartPos="61" analyzer="com.parasoft.dottest.dupcode" lang="dotnet" violId="405adc47-7e97-3215-a471-4e6ce7900766" locType="sr" locEndPos="69" urgent="true" hash="-1333971617" locEndLn="26" goals="1,">
+      <ElDescList>
+        <ElDesc lineHash="2039809239" ln="26" srcRngStartPos="61" srcRngEndPos="69" locRef="6" locType="sr" srcRnghash="-1333971617" srcRngStartln="26" srcRngEndLn="26" srcRngFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/ExampleBank.cs" desc="[Line 26] Duplicated string in file: 'ExampleBank.cs'" rngLn="26"/>
+        <ElDesc lineHash="2039809239" ln="26" srcRngStartPos="71" srcRngEndPos="79" locRef="6" locType="sr" srcRnghash="-1333971617" srcRngStartln="26" srcRngEndLn="26" srcRngFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/ExampleBank.cs" desc="[Line 26] Duplicated string in file: 'ExampleBank.cs'" rngLn="26"/>
+      </ElDescList>
+    </DupViol>
+    <DupViol msg="Duplicated string: &quot;ksuzuki&quot;" ln="27" locFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/ExampleBank.cs" locStartln="27" sev="3" auth="lyao" locRef="6" rule="CDD.DUPS" lnHash="1660023329" rule.header="Avoid string literal duplication" tool=".test" lineHash="1660023329" unbViolId="d554e8fe-49fa-351d-a6f3-f95ecb15cfce" locStartPos="61" analyzer="com.parasoft.dottest.dupcode" lang="dotnet" violId="c878c4e5-e713-355a-ab00-77f4c0f39d50" locType="sr" locEndPos="70" urgent="true" hash="-1333971617" locEndLn="27" goals="1,">
+      <ElDescList>
+        <ElDesc lineHash="1660023329" ln="27" srcRngStartPos="61" srcRngEndPos="70" locRef="6" locType="sr" srcRnghash="-1333971617" srcRngStartln="27" srcRngEndLn="27" srcRngFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/ExampleBank.cs" desc="[Line 27] Duplicated string in file: 'ExampleBank.cs'" rngLn="27"/>
+        <ElDesc lineHash="1660023329" ln="27" srcRngStartPos="72" srcRngEndPos="81" locRef="6" locType="sr" srcRnghash="-1333971617" srcRngStartln="27" srcRngEndLn="27" srcRngFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/ExampleBank.cs" desc="[Line 27] Duplicated string in file: 'ExampleBank.cs'" rngLn="27"/>
+      </ElDescList>
+    </DupViol>
+    <DupViol msg="Duplicated code: bank.AddAccount(new BankAccount(user1, CurrencyProvider.G..." ln="33" locFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/ExampleBank.cs" locStartln="33" sev="3" auth="lyao" locRef="6" rule="CDD.DUPC" lnHash="785956807" rule.header="Avoid code duplication" tool=".test" lineHash="785956807" unbViolId="c5c963af-249e-3fcc-9f4b-bff0ace0a052" locStartPos="12" analyzer="com.parasoft.dottest.dupcode" lang="dotnet" violId="e583d0de-fd09-359f-a466-68aee3d08577" locType="sr" locEndPos="159" urgent="true" hash="-1333971617" locEndLn="34" goals="1,">
+      <ElDescList>
+        <ElDesc lineHash="785956807" ln="33" srcRngStartPos="12" srcRngEndPos="159" locRef="6" locType="sr" srcRnghash="-1333971617" srcRngStartln="33" srcRngEndLn="34" srcRngFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/ExampleBank.cs" desc="[Line 33] Duplicated code in file: 'ExampleBank.cs'" rngLn="33"/>
+        <ElDesc lineHash="-166314817" ln="35" srcRngStartPos="12" srcRngEndPos="158" locRef="6" locType="sr" srcRnghash="-1333971617" srcRngStartln="35" srcRngEndLn="36" srcRngFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/ExampleBank.cs" desc="[Line 35] Duplicated code in file: 'ExampleBank.cs'" rngLn="35"/>
+      </ElDescList>
+    </DupViol>
+    <DupViol msg="Duplicated code: bank.Coverter.AddRatio(bank.GetCurrency(&quot;EUR&quot;), 0.775f); ..." ln="43" locFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/ExampleBank.cs" locStartln="43" sev="3" auth="lyao" locRef="6" rule="CDD.DUPC" lnHash="1640780899" rule.header="Avoid code duplication" tool=".test" lineHash="1640780899" unbViolId="8680cf6d-c52d-3221-b3f1-22886b1d3857" locStartPos="12" analyzer="com.parasoft.dottest.dupcode" lang="dotnet" violId="9e3b6ecf-32d3-35b8-9ba5-225b95d197f1" locType="sr" locEndPos="68" urgent="true" hash="-1333971617" locEndLn="44" goals="1,">
+      <ElDescList>
+        <ElDesc lineHash="1640780899" ln="43" srcRngStartPos="12" srcRngEndPos="68" locRef="6" locType="sr" srcRnghash="-1333971617" srcRngStartln="43" srcRngEndLn="44" srcRngFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/ExampleBank.cs" desc="[Line 43] Duplicated code in file: 'ExampleBank.cs'" rngLn="43"/>
+        <ElDesc lineHash="939709760" ln="45" srcRngStartPos="12" srcRngEndPos="68" locRef="6" locType="sr" srcRnghash="-1333971617" srcRngStartln="45" srcRngEndLn="46" srcRngFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/ExampleBank.cs" desc="[Line 45] Duplicated code in file: 'ExampleBank.cs'" rngLn="45"/>
+      </ElDescList>
+    </DupViol>
+    <DupViol msg="Duplicated string: &quot;1000&quot;" ln="54" locFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/ExampleBank.cs" locStartln="54" sev="3" auth="lyao" locRef="6" rule="CDD.DUPS" lnHash="887140154" rule.header="Avoid string literal duplication" tool=".test" lineHash="887140154" unbViolId="3ebba7b0-c4b9-3252-aea2-bf62178273ae" locStartPos="59" analyzer="com.parasoft.dottest.dupcode" lang="dotnet" violId="f4875cde-dbe2-3186-be04-d20217c7fe53" locType="sr" locEndPos="65" urgent="true" hash="-1333971617" locEndLn="54" goals="1,">
+      <ElDescList>
+        <ElDesc lineHash="887140154" ln="54" srcRngStartPos="59" srcRngEndPos="65" locRef="6" locType="sr" srcRnghash="-1333971617" srcRngStartln="54" srcRngEndLn="54" srcRngFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/ExampleBank.cs" desc="[Line 54] Duplicated string in file: 'ExampleBank.cs'" rngLn="54"/>
+        <ElDesc lineHash="-280943383" ln="58" srcRngStartPos="50" srcRngEndPos="56" locRef="6" locType="sr" srcRnghash="-1333971617" srcRngStartln="58" srcRngEndLn="58" srcRngFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/ExampleBank.cs" desc="[Line 58] Duplicated string in file: 'ExampleBank.cs'" rngLn="58"/>
+      </ElDescList>
+    </DupViol>
+    <DupViol msg="Duplicated code: amount = CurrencyProvider.GetCurrency(&quot;5000&quot;, user1Accoun..." ln="62" locFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/ExampleBank.cs" locStartln="62" sev="3" auth="lyao" locRef="6" rule="CDD.DUPC" lnHash="-166426779" rule.header="Avoid code duplication" tool=".test" lineHash="-166426779" unbViolId="c8e0072b-8946-359c-90c6-034a8c4e31ce" locStartPos="12" analyzer="com.parasoft.dottest.dupcode" lang="dotnet" violId="76bb020d-a72e-36ab-9e86-1407cb4d633a" locType="sr" locEndPos="77" urgent="true" hash="-1333971617" locEndLn="64" goals="1,">
+      <ElDescList>
+        <ElDesc lineHash="-166426779" ln="62" srcRngStartPos="12" srcRngEndPos="77" locRef="6" locType="sr" srcRnghash="-1333971617" srcRngStartln="62" srcRngEndLn="64" srcRngFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/ExampleBank.cs" desc="[Line 62] Duplicated code in file: 'ExampleBank.cs'" rngLn="62"/>
+        <ElDesc lineHash="-201290715" ln="66" srcRngStartPos="12" srcRngEndPos="77" locRef="6" locType="sr" srcRnghash="-1333971617" srcRngStartln="66" srcRngEndLn="68" srcRngFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/ExampleBank.cs" desc="[Line 66] Duplicated code in file: 'ExampleBank.cs'" rngLn="66"/>
+      </ElDescList>
+    </DupViol>
+    <DupViol msg="Duplicated code: amount = CurrencyProvider.GetCurrency(&quot;250&quot;, user3Account..." ln="70" locFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/ExampleBank.cs" locStartln="70" sev="3" auth="lyao" locRef="6" rule="CDD.DUPC" lnHash="-1947653289" rule.header="Avoid code duplication" tool=".test" lineHash="-1947653289" unbViolId="5cd26914-fa15-305b-b479-600a16f84289" locStartPos="12" analyzer="com.parasoft.dottest.dupcode" lang="dotnet" violId="d894502c-5b22-3b8e-8520-bb8bb1e140a8" locType="sr" locEndPos="77" urgent="true" hash="-1333971617" locEndLn="72" goals="1,">
+      <ElDescList>
+        <ElDesc lineHash="-1947653289" ln="70" srcRngStartPos="12" srcRngEndPos="77" locRef="6" locType="sr" srcRnghash="-1333971617" srcRngStartln="70" srcRngEndLn="72" srcRngFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/ExampleBank.cs" desc="[Line 70] Duplicated code in file: 'ExampleBank.cs'" rngLn="70"/>
+        <ElDesc lineHash="-1946729768" ln="74" srcRngStartPos="12" srcRngEndPos="77" locRef="6" locType="sr" srcRnghash="-1333971617" srcRngStartln="74" srcRngEndLn="76" srcRngFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/ExampleBank.cs" desc="[Line 74] Duplicated code in file: 'ExampleBank.cs'" rngLn="74"/>
+      </ElDescList>
+    </DupViol>
+    <DupViol msg="Duplicated code: { throw new NotSupportedException(&quot;Cannot add different c..." ln="29" locFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/Money/Currency.cs" locStartln="29" sev="3" auth="lyao" locRef="9" rule="CDD.DUPC" lnHash="1178724475" rule.header="Avoid code duplication" tool=".test" lineHash="1178724475" unbViolId="9f94dd4f-0874-3501-addd-0563b3f9960a" locStartPos="12" analyzer="com.parasoft.dottest.dupcode" lang="dotnet" violId="b9841360-f0d6-3d17-8fd1-c05eb7793e63" locType="sr" locEndPos="13" urgent="true" hash="-1644265069" locEndLn="31" goals="1,">
+      <ElDescList>
+        <ElDesc lineHash="1178724475" ln="29" srcRngStartPos="12" srcRngEndPos="13" locRef="9" locType="sr" srcRnghash="-1644265069" srcRngStartln="29" srcRngEndLn="31" srcRngFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/Money/Currency.cs" desc="[Line 29] Duplicated code in file: 'Currency.cs'" rngLn="29"/>
+        <ElDesc lineHash="1178724475" ln="41" srcRngStartPos="12" srcRngEndPos="13" locRef="9" locType="sr" srcRnghash="-1644265069" srcRngStartln="41" srcRngEndLn="43" srcRngFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/Money/Currency.cs" desc="[Line 41] Duplicated code in file: 'Currency.cs'" rngLn="41"/>
+      </ElDescList>
+    </DupViol>
+    <DupViol msg="Duplicated string: &quot;Cannot add different currencies&quot;" ln="30" locFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/Money/Currency.cs" locStartln="30" sev="3" auth="lyao" locRef="9" rule="CDD.DUPS" lnHash="666262518" rule.header="Avoid string literal duplication" tool=".test" lineHash="666262518" unbViolId="bd5ec9c6-59ca-30da-ba73-77dbf13fcf76" locStartPos="48" analyzer="com.parasoft.dottest.dupcode" lang="dotnet" violId="b93591d4-5ccb-3272-b847-150a458b9f23" locType="sr" locEndPos="81" urgent="true" hash="-1644265069" locEndLn="30" goals="1,">
+      <ElDescList>
+        <ElDesc lineHash="666262518" ln="30" srcRngStartPos="48" srcRngEndPos="81" locRef="9" locType="sr" srcRnghash="-1644265069" srcRngStartln="30" srcRngEndLn="30" srcRngFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/Money/Currency.cs" desc="[Line 30] Duplicated string in file: 'Currency.cs'" rngLn="30"/>
+        <ElDesc lineHash="666262518" ln="42" srcRngStartPos="48" srcRngEndPos="81" locRef="9" locType="sr" srcRnghash="-1644265069" srcRngStartln="42" srcRngEndLn="42" srcRngFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/Money/Currency.cs" desc="[Line 42] Duplicated string in file: 'Currency.cs'" rngLn="42"/>
+      </ElDescList>
+    </DupViol>
+    <DupViol msg="Duplicated code: return null;" ln="35" locFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/Money/CurrencyProvider.cs" locStartln="35" sev="3" auth="lyao" locRef="11" rule="CDD.DUPC" lnHash="-822824796" rule.header="Avoid code duplication" tool=".test" lineHash="-822824796" unbViolId="20cf889a-5be0-3d9d-bef9-6528dc5b1ed9" locStartPos="12" analyzer="com.parasoft.dottest.dupcode" lang="dotnet" violId="2fe80602-4d54-3ee8-bbe3-954ecf206b45" locType="sr" locEndPos="24" urgent="true" hash="-1251910444" locEndLn="35" goals="1,">
+      <ElDescList>
+        <ElDesc lineHash="-822824796" ln="35" srcRngStartPos="12" srcRngEndPos="24" locRef="11" locType="sr" srcRnghash="-1251910444" srcRngStartln="35" srcRngEndLn="35" srcRngFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/Money/CurrencyProvider.cs" desc="[Line 35] Duplicated code in file: 'CurrencyProvider.cs'" rngLn="35"/>
+        <ElDesc lineHash="-822824796" ln="50" srcRngStartPos="12" srcRngEndPos="24" locRef="11" locType="sr" srcRnghash="-1251910444" srcRngStartln="50" srcRngEndLn="50" srcRngFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/Money/CurrencyProvider.cs" desc="[Line 50] Duplicated code in file: 'CurrencyProvider.cs'" rngLn="50"/>
+        <ElDesc lineHash="-822824796" ln="37" srcRngStartPos="12" srcRngEndPos="24" locRef="14" locType="sr" srcRnghash="2123519255" srcRngStartln="37" srcRngEndLn="37" srcRngFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/Transactions/ExternalTransfer.cs" desc="[Line 37] Duplicated code in file: 'ExternalTransfer.cs'" rngLn="37"/>
+        <ElDesc lineHash="-822824796" ln="34" srcRngStartPos="12" srcRngEndPos="24" locRef="16" locType="sr" srcRnghash="-2022280772" srcRngStartln="34" srcRngEndLn="34" srcRngFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/Transactions/OutgoingTransfer.cs" desc="[Line 34] Duplicated code in file: 'OutgoingTransfer.cs'" rngLn="34"/>
+      </ElDescList>
+    </DupViol>
+    <DupViol msg="Duplicated code: CurrencyWithCents c = (CurrencyWithCents) currency;" ln="51" locFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/Money/CurrencyWithCents.cs" locStartln="51" sev="3" auth="lyao" locRef="12" rule="CDD.DUPC" lnHash="-125582021" rule.header="Avoid code duplication" tool=".test" lineHash="-125582021" unbViolId="78bd942f-19b0-3934-ad48-1f4c84202e48" locStartPos="12" analyzer="com.parasoft.dottest.dupcode" lang="dotnet" violId="b30036f7-97ad-393c-9b57-ff4971ba3bdb" locType="sr" locEndPos="63" urgent="true" hash="-760614867" locEndLn="51" goals="1,">
+      <ElDescList>
+        <ElDesc lineHash="-125582021" ln="51" srcRngStartPos="12" srcRngEndPos="63" locRef="12" locType="sr" srcRnghash="-760614867" srcRngStartln="51" srcRngEndLn="51" srcRngFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/Money/CurrencyWithCents.cs" desc="[Line 51] Duplicated code in file: 'CurrencyWithCents.cs'" rngLn="51"/>
+        <ElDesc lineHash="835181849" ln="57" srcRngStartPos="12" srcRngEndPos="62" locRef="12" locType="sr" srcRnghash="-760614867" srcRngStartln="57" srcRngEndLn="57" srcRngFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/Money/CurrencyWithCents.cs" desc="[Line 57] Duplicated code in file: 'CurrencyWithCents.cs'" rngLn="57"/>
+      </ElDescList>
+    </DupViol>
+    <DupViol msg="Duplicated code: CurrencyWithNoCents c = (CurrencyWithNoCents) currency;" ln="32" locFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/Money/CurrencyWithNoCents.cs" locStartln="32" sev="3" auth="lyao" locRef="13" rule="CDD.DUPC" lnHash="1140434267" rule.header="Avoid code duplication" tool=".test" lineHash="1140434267" unbViolId="c21947a9-d905-35af-99ca-40aca3afd996" locStartPos="12" analyzer="com.parasoft.dottest.dupcode" lang="dotnet" violId="2d3a1ec7-89f7-3a57-90c6-b5c7edea9e83" locType="sr" locEndPos="67" urgent="true" hash="1998113113" locEndLn="32" goals="1,">
+      <ElDescList>
+        <ElDesc lineHash="1140434267" ln="32" srcRngStartPos="12" srcRngEndPos="67" locRef="13" locType="sr" srcRnghash="1998113113" srcRngStartln="32" srcRngEndLn="32" srcRngFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/Money/CurrencyWithNoCents.cs" desc="[Line 32] Duplicated code in file: 'CurrencyWithNoCents.cs'" rngLn="32"/>
+        <ElDesc lineHash="1845852409" ln="38" srcRngStartPos="12" srcRngEndPos="66" locRef="13" locType="sr" srcRnghash="1998113113" srcRngStartln="38" srcRngEndLn="38" srcRngFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/Money/CurrencyWithNoCents.cs" desc="[Line 38] Duplicated code in file: 'CurrencyWithNoCents.cs'" rngLn="38"/>
+      </ElDescList>
+    </DupViol>
+    <DupViol msg="Duplicated implementation of method 'CheckBalance' : '{ // TODO: check the balance before transfering money out...'" ln="18" locFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/Transactions/ExternalTransfer.cs" locStartln="18" sev="2" auth="lyao" locRef="14" rule="CDD.DUPM" lnHash="1508372603" rule.header="Avoid method duplication" tool=".test" lineHash="1508372603" unbViolId="13f12ee0-0494-3467-a61b-91478b48a5e4" locStartPos="8" analyzer="com.parasoft.dottest.dupcode" lang="dotnet" violId="55dff4c3-96dd-3882-afea-71d98896b5da" locType="sr" locEndPos="9" urgent="true" hash="2123519255" locEndLn="21" goals="1,">
+      <ElDescList>
+        <ElDesc lineHash="1508372603" ln="18" srcRngStartPos="8" srcRngEndPos="9" locRef="14" locType="sr" srcRnghash="2123519255" srcRngStartln="18" srcRngEndLn="21" srcRngFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/Transactions/ExternalTransfer.cs" desc="[Line 18] Duplicated method in file: 'ExternalTransfer.cs'" rngLn="18"/>
+        <ElDesc lineHash="1508372603" ln="17" srcRngStartPos="8" srcRngEndPos="9" locRef="15" locType="sr" srcRnghash="-1435513077" srcRngStartln="17" srcRngEndLn="19" srcRngFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/Transactions/IncommingTransfer.cs" desc="[Line 17] Duplicated method in file: 'IncommingTransfer.cs'" rngLn="17"/>
+      </ElDescList>
+    </DupViol>
+    <DupViol msg="Duplicated implementation of method 'GetKind' : '{ return &quot;External Transfer&quot;; }'" ln="24" locFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/Transactions/ExternalTransfer.cs" locStartln="24" sev="2" auth="lyao" locRef="14" rule="CDD.DUPM" lnHash="1508372603" rule.header="Avoid method duplication" tool=".test" lineHash="1508372603" unbViolId="f4e87f83-9844-3055-85ab-c328b7ebdc76" locStartPos="8" analyzer="com.parasoft.dottest.dupcode" lang="dotnet" violId="ce2e0ea1-6eda-3428-bd2a-507ad4029b59" locType="sr" locEndPos="9" urgent="true" hash="2123519255" locEndLn="26" goals="1,">
+      <ElDescList>
+        <ElDesc lineHash="1508372603" ln="24" srcRngStartPos="8" srcRngEndPos="9" locRef="14" locType="sr" srcRnghash="2123519255" srcRngStartln="24" srcRngEndLn="26" srcRngFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/Transactions/ExternalTransfer.cs" desc="[Line 24] Duplicated method in file: 'ExternalTransfer.cs'" rngLn="24"/>
+        <ElDesc lineHash="1508372603" ln="22" srcRngStartPos="8" srcRngEndPos="9" locRef="15" locType="sr" srcRnghash="-1435513077" srcRngStartln="22" srcRngEndLn="24" srcRngFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/Transactions/IncommingTransfer.cs" desc="[Line 22] Duplicated method in file: 'IncommingTransfer.cs'" rngLn="22"/>
+        <ElDesc lineHash="1508372603" ln="23" srcRngStartPos="8" srcRngEndPos="9" locRef="16" locType="sr" srcRnghash="-2022280772" srcRngStartln="23" srcRngEndLn="25" srcRngFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/Transactions/OutgoingTransfer.cs" desc="[Line 23] Duplicated method in file: 'OutgoingTransfer.cs'" rngLn="23"/>
+      </ElDescList>
+    </DupViol>
+    <DupViol msg="Duplicated code: return &quot;External Transfer&quot;;" ln="25" locFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/Transactions/ExternalTransfer.cs" locStartln="25" sev="3" auth="lyao" locRef="14" rule="CDD.DUPC" lnHash="2057910919" rule.header="Avoid code duplication" tool=".test" lineHash="2057910919" unbViolId="c333c15b-9cdc-38c2-bf36-1075a0cd8e53" locStartPos="12" analyzer="com.parasoft.dottest.dupcode" lang="dotnet" violId="335857cc-e84d-3fcc-9ac0-f91fe3a5929a" locType="sr" locEndPos="39" urgent="true" hash="2123519255" locEndLn="25" goals="1,">
+      <ElDescList>
+        <ElDesc lineHash="2057910919" ln="25" srcRngStartPos="12" srcRngEndPos="39" locRef="14" locType="sr" srcRnghash="2123519255" srcRngStartln="25" srcRngEndLn="25" srcRngFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/Transactions/ExternalTransfer.cs" desc="[Line 25] Duplicated code in file: 'ExternalTransfer.cs'" rngLn="25"/>
+        <ElDesc lineHash="-1768262427" ln="23" srcRngStartPos="12" srcRngEndPos="40" locRef="15" locType="sr" srcRnghash="-1435513077" srcRngStartln="23" srcRngEndLn="23" srcRngFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/Transactions/IncommingTransfer.cs" desc="[Line 23] Duplicated code in file: 'IncommingTransfer.cs'" rngLn="23"/>
+        <ElDesc lineHash="2013727814" ln="24" srcRngStartPos="12" srcRngEndPos="39" locRef="16" locType="sr" srcRnghash="-2022280772" srcRngStartln="24" srcRngEndLn="24" srcRngFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/Transactions/OutgoingTransfer.cs" desc="[Line 24] Duplicated code in file: 'OutgoingTransfer.cs'" rngLn="24"/>
+      </ElDescList>
+    </DupViol>
+    <DupViol msg="Duplicated implementation of method 'GetConvertedAmount' : '{ return null; }'" ln="36" locFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/Transactions/ExternalTransfer.cs" locStartln="36" sev="2" auth="lyao" locRef="14" rule="CDD.DUPM" lnHash="1508372603" rule.header="Avoid method duplication" tool=".test" lineHash="1508372603" unbViolId="3f5a3492-6594-379b-8f1a-c745553b0351" locStartPos="8" analyzer="com.parasoft.dottest.dupcode" lang="dotnet" violId="bc3b91ef-493d-33b1-bba6-b10beae482e8" locType="sr" locEndPos="9" urgent="true" hash="2123519255" locEndLn="38" goals="1,">
+      <ElDescList>
+        <ElDesc lineHash="1508372603" ln="36" srcRngStartPos="8" srcRngEndPos="9" locRef="14" locType="sr" srcRnghash="2123519255" srcRngStartln="36" srcRngEndLn="38" srcRngFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/Transactions/ExternalTransfer.cs" desc="[Line 36] Duplicated method in file: 'ExternalTransfer.cs'" rngLn="36"/>
+        <ElDesc lineHash="1508372603" ln="33" srcRngStartPos="8" srcRngEndPos="9" locRef="16" locType="sr" srcRnghash="-2022280772" srcRngStartln="33" srcRngEndLn="35" srcRngFile="BankExample.NET/Parasoft.Dottest.Examples.Bank/Transactions/OutgoingTransfer.cs" desc="[Line 33] Duplicated method in file: 'OutgoingTransfer.cs'" rngLn="33"/>
+      </ElDescList>
+    </DupViol>
+  </StdViols>
+
+      <TestedFilesDetails>
+         <Total name="Total (Suppressed)" supp="0" total="42">
+            <Project id="Parasoft.Dottest.Examples.Bank" name="Parasoft.Dottest.Examples.Bank" supp="0" total="42">
+               <Res loc="BankExample.NET/Parasoft.Dottest.Examples.Bank/AccountNumber.cs" locRef="1" locType="sr" name="AccountNumber.cs" supp="0" total="4"/>
+               <Res loc="BankExample.NET/Parasoft.Dottest.Examples.Bank/Bank.cs" locRef="2" locType="sr" name="Bank.cs" supp="0" total="10"/>
+               <Res loc="BankExample.NET/Parasoft.Dottest.Examples.Bank/BankAccount.cs" locRef="3" locType="sr" name="BankAccount.cs" supp="0" total="3"/>
+               <Res loc="BankExample.NET/Parasoft.Dottest.Examples.Bank/BankUser.cs" locRef="4" locType="sr" name="BankUser.cs" supp="0" total="0"/>
+               <Res loc="BankExample.NET/Parasoft.Dottest.Examples.Bank/CurrencyExchangeConverter.cs" locRef="5" locType="sr" name="CurrencyExchangeConverter.cs" supp="0" total="1"/>
+               <Res loc="BankExample.NET/Parasoft.Dottest.Examples.Bank/ExampleBank.cs" locRef="6" locType="sr" name="ExampleBank.cs" supp="0" total="15"/>
+               <Res loc="BankExample.NET/Parasoft.Dottest.Examples.Bank/IInterBankTransferSystem.cs" locRef="7" locType="sr" name="IInterBankTransferSystem.cs" supp="0" total="0"/>
+               <Res loc="BankExample.NET/Parasoft.Dottest.Examples.Bank/ReportGenerator.cs" locRef="8" locType="sr" name="ReportGenerator.cs" supp="0" total="0"/>
+               <Res name="Money" supp="0" total="5">
+                  <Res loc="BankExample.NET/Parasoft.Dottest.Examples.Bank/Money/Currency.cs" locRef="9" locType="sr" name="Currency.cs" supp="0" total="2"/>
+                  <Res loc="BankExample.NET/Parasoft.Dottest.Examples.Bank/Money/CurrencyInfo.cs" locRef="10" locType="sr" name="CurrencyInfo.cs" supp="0" total="0"/>
+                  <Res loc="BankExample.NET/Parasoft.Dottest.Examples.Bank/Money/CurrencyProvider.cs" locRef="11" locType="sr" name="CurrencyProvider.cs" supp="0" total="1"/>
+                  <Res loc="BankExample.NET/Parasoft.Dottest.Examples.Bank/Money/CurrencyWithCents.cs" locRef="12" locType="sr" name="CurrencyWithCents.cs" supp="0" total="1"/>
+                  <Res loc="BankExample.NET/Parasoft.Dottest.Examples.Bank/Money/CurrencyWithNoCents.cs" locRef="13" locType="sr" name="CurrencyWithNoCents.cs" supp="0" total="1"/>
+               </Res>
+               <Res name="Transactions" supp="0" total="4">
+                  <Res loc="BankExample.NET/Parasoft.Dottest.Examples.Bank/Transactions/ExternalTransfer.cs" locRef="14" locType="sr" name="ExternalTransfer.cs" supp="0" total="4"/>
+                  <Res loc="BankExample.NET/Parasoft.Dottest.Examples.Bank/Transactions/IncommingTransfer.cs" locRef="15" locType="sr" name="IncommingTransfer.cs" supp="0" total="0"/>
+                  <Res loc="BankExample.NET/Parasoft.Dottest.Examples.Bank/Transactions/OutgoingTransfer.cs" locRef="16" locType="sr" name="OutgoingTransfer.cs" supp="0" total="0"/>
+                  <Res loc="BankExample.NET/Parasoft.Dottest.Examples.Bank/Transactions/TransactionBase.cs" locRef="17" locType="sr" name="TransactionBase.cs" supp="0" total="0"/>
+                  <Res loc="BankExample.NET/Parasoft.Dottest.Examples.Bank/Transactions/TransferTransaction.cs" locRef="18" locType="sr" name="TransferTransaction.cs" supp="0" total="0"/>
+               </Res>
+            </Project>
+         </Total>
+      </TestedFilesDetails>
+   </CodingStandards>
+   <Statistics>
+      
+   </Statistics>
+</ResultsSession>
