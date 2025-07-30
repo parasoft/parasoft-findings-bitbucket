@@ -1,5 +1,6 @@
 import * as sinon from "sinon";
 import {RunOptions, StaticAnalysisParserRunner} from "../src/runner";
+import {messages, messagesFormatter} from '../src/messages';
 import axios, {AxiosError, AxiosHeaders, AxiosResponse} from "axios";
 import {logger} from "../src/logger";
 import * as pt from 'path';
@@ -7,7 +8,7 @@ import * as cp from 'child_process';
 import * as path from "node:path";
 import * as fs from "node:fs";
 
-describe('parasoft-bitbucket/runnner', () => {
+describe('runnner', () => {
     describe('run', () => {
         let sandbox: sinon.SinonSandbox;
         // logger
@@ -33,7 +34,7 @@ describe('parasoft-bitbucket/runnner', () => {
             const put = sandbox.fake.resolves({status: 200, data: {}});
             sandbox.replace(axios, 'put', put);
             const runOptions: RunOptions = {
-                report: './res/reports/SARIF.*',
+                report: './res/reports/SARIF.*', // no matching reports
                 parasoftToolOrJavaRootPath: '',
             };
 
@@ -42,9 +43,10 @@ describe('parasoft-bitbucket/runnner', () => {
                 await staticAnalysisParserRunner.run(runOptions, createBitbucketEnv());
             } catch (error) {
                 if (error instanceof Error) {
-                    sinon.assert.match(error.message, 'Parasoft XML Static Analysis report not found. No files matched the specified minimatch pattern or path: D:/github/parasoft-findings-bitbucket/tests/res/reports/SARIF.*');
-                    sinon.assert.calledWith(logInfo, 'Finding Parasoft XML Static Analysis report in working directory D:\\github\\parasoft-findings-bitbucket\\tests...');
-                    sinon.assert.calledWith(logWarn, 'Skipping unrecognized report file: D:\\github\\parasoft-findings-bitbucket\\tests\\res\\reports\\SARIF.sarif');
+                    sinon.assert.match(error.message, messagesFormatter.format(messages.static_analysis_report_not_found, __dirname.replace(/\\/g, '/') + '/res/reports/SARIF.*'));
+                    sinon.assert.calledWith(logInfo, (messagesFormatter.format(messages.finding_static_analysis_report_in_working_directory, __dirname)));
+                    sinon.assert.calledWith(logWarn, messagesFormatter.format(messages.skipping_unrecognized_report_file, path.join(__dirname, '/res/reports/SARIF.sarif')));
+ 
                     sinon.assert.notCalled(put);
                     return;
                 }
@@ -66,11 +68,11 @@ describe('parasoft-bitbucket/runnner', () => {
                 await staticAnalysisParserRunner.run(runOptions, createBitbucketEnv());
             } catch (error) {
                 if (error instanceof Error) {
-                    sinon.assert.calledWith(logInfo, 'Finding Parasoft XML Static Analysis report...');
-                    sinon.assert.calledWith(logWarn, 'Skipping unrecognized report file: D:\\github\\parasoft-findings-bitbucket\\tests\\res\\reports\\XML_COVERAGE.xml');
-                    sinon.assert.calledWith(logInfo, 'Found Parasoft XML Static Analysis report: D:\\github\\parasoft-findings-bitbucket\\tests\\res\\reports\\XML_STATIC.xml');
+                    sinon.assert.calledWith(logInfo, messagesFormatter.format(messages.finding_static_analysis_report));
+                    sinon.assert.calledWith(logWarn, messagesFormatter.format(messages.skipping_unrecognized_report_file, pt.join(__dirname, '/res/reports/XML_COVERAGE.xml')));
+                    sinon.assert.calledWith(logInfo, messagesFormatter.format(messages.found_matching_file, pt.join(__dirname, '/res/reports/XML_STATIC.xml')));
                     sinon.assert.notCalled(put);
-                    sinon.assert.match(error.message, 'Unable to process the XML report because Java is not found');
+                    sinon.assert.match(error.message, messagesFormatter.format(messages.java_not_found_in_java_or_parasoft_tool_install_dir));
                     return;
                 }
                 sinon.assert.fail("Expected error to be thrown but it was not.");
@@ -94,11 +96,11 @@ describe('parasoft-bitbucket/runnner', () => {
                     await staticAnalysisParserRunner.run(runOptions, createBitbucketEnv());
                 } catch (error) {
                     if (error instanceof Error) {
-                        sinon.assert.calledWith(logInfo, 'Finding Parasoft XML Static Analysis report...');
-                        sinon.assert.calledWith(logWarn, 'Skipping unrecognized report file: D:\\github\\parasoft-findings-bitbucket\\tests\\res\\reports\\XML_COVERAGE.xml');
-                        sinon.assert.calledWith(logInfo, 'Found Parasoft XML Static Analysis report: D:\\github\\parasoft-findings-bitbucket\\tests\\res\\reports\\XML_STATIC.xml');
+                        sinon.assert.calledWith(logInfo, messagesFormatter.format(messages.finding_static_analysis_report));
+                        sinon.assert.calledWith(logWarn, messagesFormatter.format(messages.skipping_unrecognized_report_file, pt.join(__dirname, '/res/reports/XML_COVERAGE.xml')));
+                        sinon.assert.calledWith(logInfo, messagesFormatter.format(messages.found_matching_file, pt.join(__dirname, '/res/reports/XML_STATIC.xml')));
                         sinon.assert.notCalled(put);
-                        sinon.assert.match(error.message, 'Unable to process the XML report because Java or Parasoft tool installation directory is not found');
+                        sinon.assert.match(error.message, messagesFormatter.format(messages.java_or_parasoft_tool_install_dir_not_found));
                         return;
                     }
                     sinon.assert.fail("Expected error to be thrown but it was not.");
@@ -157,10 +159,10 @@ describe('parasoft-bitbucket/runnner', () => {
                 const staticAnalysisParserRunner = new StaticAnalysisParserRunner();
                 await staticAnalysisParserRunner.run(runOptions, createBitbucketEnv());
 
-                sinon.assert.calledWith(logInfo, 'Found 1552 vulnerabilities for report: D:\\github\\parasoft-findings-bitbucket\\tests\\res\\reports\\XML_STATIC.xml');
+                sinon.assert.calledWith(logInfo, messagesFormatter.format(messages.parsed_parasoft_static_analysis_report, 1552, path.join(__dirname, '/res/reports/XML_STATIC.xml')));
                 sinon.assert.calledOnce(put);
                 sinon.assert.callCount(post, 10);
-                sinon.assert.calledWith(logInfo, 'Uploaded Parasoft dotTEST Static Analysis results: 1000 vulnerabilities');
+                sinon.assert.calledWith(logInfo, messagesFormatter.format(messages.uploaded_parasoft_report_results, 'dotTEST', 1000));
             });
 
             it('parse report failed', async () => {
@@ -177,7 +179,7 @@ describe('parasoft-bitbucket/runnner', () => {
                 await staticAnalysisParserRunner.run(runOptions, createBitbucketEnv());
 
                 sinon.assert.calledWith(logError, parseError);
-                sinon.assert.calledWith(logWarn, 'Skipped Parasoft XML Static Analysis report: D:\\github\\parasoft-findings-bitbucket\\tests\\res\\reports\\XML_STATIC.xml');
+                sinon.assert.calledWith(logWarn, messagesFormatter.format(messages.skip_static_analysis_report, path.join(__dirname, '/res/reports/XML_STATIC.xml')));
                 sinon.assert.notCalled(post);
                 sinon.assert.notCalled(put);
             });
@@ -192,8 +194,8 @@ describe('parasoft-bitbucket/runnner', () => {
                     },
                     data: {message: 'Something went wrong'}
                 };
-                const error = new AxiosError("Failed to create report module", undefined, undefined, undefined, fakeResponse);
-                const put = sandbox.fake.rejects(error)
+                const fakeError = new AxiosError("Failed to create report module", undefined, undefined, undefined, fakeResponse);
+                const put = sandbox.fake.rejects(fakeError)
                 sandbox.replace(axios, 'put', put);
                 const post = sandbox.fake.resolves({status: 200, data: {}});
                 sandbox.replace(axios, 'post', post);
@@ -205,7 +207,7 @@ describe('parasoft-bitbucket/runnner', () => {
                         sinon.assert.calledWith(logError, "{\n  \"message\": \"Something went wrong\"\n}");
                         sinon.assert.calledOnce(put);
                         sinon.assert.notCalled(post);
-                        sinon.assert.match(error.message, 'Failed to create report module');
+                        sinon.assert.match(error.message, messagesFormatter.format(messages.failed_to_create_report_module, 'dotTEST', fakeError));
                         return;
                     }
 
@@ -223,10 +225,10 @@ describe('parasoft-bitbucket/runnner', () => {
                     },
                     data: {message: 'Something went wrong'}
                 };
-                const error = new AxiosError("Failed to upload static Analysis results", undefined, undefined, undefined, fakeResponse);
+                const fakeError = new AxiosError("Failed to upload static Analysis results", undefined, undefined, undefined, fakeResponse);
                 const put = sandbox.fake.resolves({status: 200, data: {}});
                 sandbox.replace(axios, 'put', put);
-                const post = sandbox.fake.rejects(error);
+                const post = sandbox.fake.rejects(fakeError);
                 sandbox.replace(axios, 'post', post);
                 try {
                     const staticAnalysisParserRunner = new StaticAnalysisParserRunner();
@@ -236,7 +238,7 @@ describe('parasoft-bitbucket/runnner', () => {
                         sinon.assert.calledWith(logError, "{\n  \"message\": \"Something went wrong\"\n}");
                         sinon.assert.calledOnce(put);
                         sinon.assert.calledOnce(post);
-                        sinon.assert.match(error.message, 'Failed to upload Parasoft dotTEST Static Analysis results. Error: AxiosError: Failed to upload static Analysis results');
+                        sinon.assert.match(error.message, messagesFormatter.format(messages.failed_to_upload_parasoft_report_results, 'dotTEST', fakeError));
                         return;
                     }
 
