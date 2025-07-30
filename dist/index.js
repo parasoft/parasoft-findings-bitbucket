@@ -102,7 +102,8 @@ class StaticAnalysisParserRunner {
                 logger_1.logger.warn(messages_1.messagesFormatter.format(messages_1.messages.skip_static_analysis_report, parasoftReportPath));
             }
         }
-        await this.uploadReportResultsToBitbucket();
+        const result = await this.uploadReportResultsToBitbucket();
+        return result !== null && result !== void 0 ? result : { exitCode: 1 };
     }
     async findParasoftStaticAnalysisReports(reportPath) {
         if (pt.isAbsolute(reportPath)) {
@@ -294,6 +295,7 @@ class StaticAnalysisParserRunner {
     }
     async uploadReportResultsToBitbucket() {
         var _a, _b;
+        const uploadResult = { exitCode: 0 };
         for (const [parasoftReportPath, vulnerability] of this.vulnerabilityMap) {
             const toolName = vulnerability.toolName;
             let vulnerabilities = this.sortVulnerabilitiesBySevLevel(vulnerability.vulnerabilityDetails);
@@ -314,8 +316,10 @@ class StaticAnalysisParserRunner {
             else {
                 reportDetails = messages_1.messagesFormatter.format(messages_1.messages.report_details_description_1, parasoftReportPath, totalVulnerabilities);
             }
-            const hasHighOrCritical = vulnerabilities.some(v => ["CRITICAL", "HIGH"].includes(v.severity));
             const reportId = uuid.v5(parasoftReportPath + this.BITBUCKET_ENVS.BITBUCKET_COMMIT, this.UUID_NAMESPACE);
+            if (uploadResult.exitCode == 0) {
+                uploadResult.exitCode = 1;
+            }
             // Create report module
             try {
                 await axios_1.default.put(this.getReportUrl(reportId), {
@@ -323,7 +327,7 @@ class StaticAnalysisParserRunner {
                     details: reportDetails,
                     report_type: "SECURITY",
                     reporter: "Parasoft",
-                    result: hasHighOrCritical ? "FAILED" : "PASSED"
+                    result: "FAILED"
                 }, { auth: this.getAuth() });
             }
             catch (error) {
@@ -359,6 +363,7 @@ class StaticAnalysisParserRunner {
             }
             logger_1.logger.info(messages_1.messagesFormatter.format(messages_1.messages.uploaded_parasoft_report_results, toolName, vulnerabilities.length));
         }
+        return uploadResult;
     }
     getReportUrl(reportId) {
         const { BITBUCKET_API_URL, BITBUCKET_WORKSPACE, BITBUCKET_REPO_SLUG, BITBUCKET_COMMIT } = this.BITBUCKET_ENVS;
@@ -38407,8 +38412,9 @@ async function run() {
         }
         const bitbucketEnvs = getBitbucketEnvs();
         const theRunner = new runner.StaticAnalysisParserRunner();
-        await theRunner.run(runOptions, bitbucketEnvs);
+        const result = await theRunner.run(runOptions, bitbucketEnvs);
         logger_1.logger.info(messages_1.messagesFormatter.format(messages_1.messages.complete));
+        process.exit(result.exitCode);
     }
     catch (error) {
         if (error instanceof Error) {
