@@ -298,12 +298,12 @@ class StaticAnalysisParserRunner {
         for (const [parasoftReportPath, vulnerability] of this.vulnerabilityMap) {
             const toolName = vulnerability.toolName;
             let vulnerabilities = this.sortVulnerabilitiesBySevLevel(vulnerability.vulnerabilityDetails);
-            const totalVulnerabilities = vulnerabilities.length;
-            if (totalVulnerabilities == 0) {
+            const originalVulnerabilityNum = vulnerabilities.length;
+            if (originalVulnerabilityNum == 0) {
                 logger_1.logger.info(messages_1.messagesFormatter.format(messages_1.messages.skip_static_analysis_report, parasoftReportPath));
                 continue;
             }
-            vulnerabilityNum += totalVulnerabilities;
+            vulnerabilityNum += originalVulnerabilityNum;
             logger_1.logger.info(messages_1.messagesFormatter.format(messages_1.messages.uploading_parasoft_report_results, toolName, parasoftReportPath));
             let reportDetails;
             //  A report module can contain up to 1000 annotations(vulnerabilities).
@@ -311,10 +311,10 @@ class StaticAnalysisParserRunner {
             if (vulnerabilities.length > 1000) {
                 vulnerabilities = vulnerabilities.slice(0, 1000);
                 logger_1.logger.info(messages_1.messagesFormatter.format(messages_1.messages.only_specified_vulnerabilities_will_be_uploaded, vulnerabilities.length));
-                reportDetails = messages_1.messagesFormatter.format(messages_1.messages.report_details_description_2, parasoftReportPath, totalVulnerabilities, vulnerabilities.length);
+                reportDetails = messages_1.messagesFormatter.format(messages_1.messages.report_details_description_2, parasoftReportPath, originalVulnerabilityNum, vulnerabilities.length);
             }
             else {
-                reportDetails = messages_1.messagesFormatter.format(messages_1.messages.report_details_description_1, parasoftReportPath, totalVulnerabilities);
+                reportDetails = messages_1.messagesFormatter.format(messages_1.messages.report_details_description_1, parasoftReportPath, originalVulnerabilityNum);
             }
             const reportId = uuid.v5(parasoftReportPath + this.BITBUCKET_ENVS.BITBUCKET_COMMIT, this.UUID_NAMESPACE);
             // Create report module
