@@ -66,8 +66,7 @@ export class StaticAnalysisParserRunner {
             }
         }
 
-        const result = await this.uploadReportResultsToBitbucket();
-        return result ?? { exitCode: 1 };
+        return await this.uploadReportResultsToBitbucket();
     }
 
     private async findParasoftStaticAnalysisReports(reportPath: string): Promise<string[]> {
@@ -287,8 +286,8 @@ export class StaticAnalysisParserRunner {
         return uuid.v5(violType + ruleId + msg + severity + lineHash + uri + order, this.UUID_NAMESPACE);
     }
 
-    private async uploadReportResultsToBitbucket(): Promise<Result | undefined> {
-        const uploadResult: Result = { exitCode: 0 };
+    private async uploadReportResultsToBitbucket(): Promise<Result> {
+        let vulnerabilityNum = 0;
         for (const [parasoftReportPath, vulnerability] of this.vulnerabilityMap) {
             const toolName = vulnerability.toolName;
             let vulnerabilities = this.sortVulnerabilitiesBySevLevel(vulnerability.vulnerabilityDetails);
@@ -297,6 +296,8 @@ export class StaticAnalysisParserRunner {
                 logger.info(messagesFormatter.format(messages.skip_static_analysis_report, parasoftReportPath));
                 continue;
             }
+
+            vulnerabilityNum += totalVulnerabilities;
             logger.info(messagesFormatter.format(messages.uploading_parasoft_report_results, toolName, parasoftReportPath));
 
             let reportDetails;
@@ -311,10 +312,6 @@ export class StaticAnalysisParserRunner {
             }
 
             const reportId = uuid.v5(parasoftReportPath + this.BITBUCKET_ENVS.BITBUCKET_COMMIT, this.UUID_NAMESPACE);
-
-            if (uploadResult.exitCode == 0) {
-                uploadResult.exitCode = 1;
-            }
 
             // Create report module
             try {
@@ -363,6 +360,14 @@ export class StaticAnalysisParserRunner {
             }
 
             logger.info(messagesFormatter.format(messages.uploaded_parasoft_report_results, toolName, vulnerabilities.length));
+        }
+
+        const uploadResult: Result = {
+            exitCode: 0,
+        }
+        if (vulnerabilityNum > 0) {
+            uploadResult.exitCode = 1;
+            logger.info(messagesFormatter.format(messages.mark_build_to_failed_due_to_vulnerability));
         }
         return uploadResult;
     }

@@ -102,8 +102,7 @@ class StaticAnalysisParserRunner {
                 logger_1.logger.warn(messages_1.messagesFormatter.format(messages_1.messages.skip_static_analysis_report, parasoftReportPath));
             }
         }
-        const result = await this.uploadReportResultsToBitbucket();
-        return result !== null && result !== void 0 ? result : { exitCode: 1 };
+        return await this.uploadReportResultsToBitbucket();
     }
     async findParasoftStaticAnalysisReports(reportPath) {
         if (pt.isAbsolute(reportPath)) {
@@ -295,7 +294,7 @@ class StaticAnalysisParserRunner {
     }
     async uploadReportResultsToBitbucket() {
         var _a, _b;
-        const uploadResult = { exitCode: 0 };
+        let vulnerabilityNum = 0;
         for (const [parasoftReportPath, vulnerability] of this.vulnerabilityMap) {
             const toolName = vulnerability.toolName;
             let vulnerabilities = this.sortVulnerabilitiesBySevLevel(vulnerability.vulnerabilityDetails);
@@ -304,6 +303,7 @@ class StaticAnalysisParserRunner {
                 logger_1.logger.info(messages_1.messagesFormatter.format(messages_1.messages.skip_static_analysis_report, parasoftReportPath));
                 continue;
             }
+            vulnerabilityNum += totalVulnerabilities;
             logger_1.logger.info(messages_1.messagesFormatter.format(messages_1.messages.uploading_parasoft_report_results, toolName, parasoftReportPath));
             let reportDetails;
             //  A report module can contain up to 1000 annotations(vulnerabilities).
@@ -317,9 +317,6 @@ class StaticAnalysisParserRunner {
                 reportDetails = messages_1.messagesFormatter.format(messages_1.messages.report_details_description_1, parasoftReportPath, totalVulnerabilities);
             }
             const reportId = uuid.v5(parasoftReportPath + this.BITBUCKET_ENVS.BITBUCKET_COMMIT, this.UUID_NAMESPACE);
-            if (uploadResult.exitCode == 0) {
-                uploadResult.exitCode = 1;
-            }
             // Create report module
             try {
                 await axios_1.default.put(this.getReportUrl(reportId), {
@@ -362,6 +359,13 @@ class StaticAnalysisParserRunner {
                 throw new Error(messages_1.messagesFormatter.format(messages_1.messages.failed_to_upload_parasoft_report_results, toolName, error));
             }
             logger_1.logger.info(messages_1.messagesFormatter.format(messages_1.messages.uploaded_parasoft_report_results, toolName, vulnerabilities.length));
+        }
+        const uploadResult = {
+            exitCode: 0,
+        };
+        if (vulnerabilityNum > 0) {
+            uploadResult.exitCode = 1;
+            logger_1.logger.info(messages_1.messagesFormatter.format(messages_1.messages.mark_build_to_failed_due_to_vulnerability));
         }
         return uploadResult;
     }

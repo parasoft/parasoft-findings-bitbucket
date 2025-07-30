@@ -25,5 +25,6 @@
   "only_specified_vulnerabilities_will_be_uploaded": "Only {0} vulnerabilities will be uploaded, due to the limitation of Bitbucket's API",
   "uploaded_parasoft_report_results": "Uploaded Parasoft {0} Static Analysis results: {1} vulnerabilities",
   "failed_to_create_report_module": "Failed to create Parasoft {0} report module. Error: {1}",
-  "failed_to_upload_parasoft_report_results": "Failed to upload Parasoft {0} Static Analysis results. Error: {1}"
+  "failed_to_upload_parasoft_report_results": "Failed to upload Parasoft {0} Static Analysis results. Error: {1}",
+  "mark_build_to_failed_due_to_vulnerability": "Mark the build as failed due to vulnerabilities found in Parasoft Static Analysis reports"
 }
