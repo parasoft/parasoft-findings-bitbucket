@@ -159,8 +159,9 @@ describe('runnner', () => {
                 sandbox.replace(axios, 'post', post);
 
                 const staticAnalysisParserRunner = new StaticAnalysisParserRunner();
-                await staticAnalysisParserRunner.run(runOptions, createBitbucketEnv());
+                const result = await staticAnalysisParserRunner.run(runOptions, createBitbucketEnv());
 
+                sinon.assert.match(result.exitCode, 1);
                 sinon.assert.calledWith(logInfo, messagesFormatter.format(messages.parsed_parasoft_static_analysis_report, 1552, path.join(__dirname, '/res/reports/XML_STATIC.xml')));
                 sinon.assert.calledOnce(put);
                 sinon.assert.callCount(post, 10);
@@ -176,8 +177,9 @@ describe('runnner', () => {
                 sandbox.replace(axios, 'post', post);
 
                 const staticAnalysisParserRunner = new StaticAnalysisParserRunner();
-                await staticAnalysisParserRunner.run(runOptions, createBitbucketEnv());
+                const result = await staticAnalysisParserRunner.run(runOptions, createBitbucketEnv());
 
+                sinon.assert.match(result.exitCode, 0);
                 sinon.assert.calledWith(logInfo, messagesFormatter.format(messages.parsed_parasoft_static_analysis_report, 0, path.join(__dirname, '/res/reports/report_no_violation.xml')));
                 sinon.assert.notCalled(put);
                 sinon.assert.notCalled(post);
@@ -193,8 +195,9 @@ describe('runnner', () => {
                 sandbox.replace(axios, 'post', post);
 
                 const staticAnalysisParserRunner = new StaticAnalysisParserRunner();
-                await staticAnalysisParserRunner.run(runOptions, createBitbucketEnv());
+                const result = await staticAnalysisParserRunner.run(runOptions, createBitbucketEnv());
 
+                sinon.assert.match(result.exitCode, 1);
                 sinon.assert.calledWith(logInfo, messagesFormatter.format(messages.parsed_parasoft_static_analysis_report, 42, path.join(__dirname, '/res/reports/dottest-report-202401.xml')));
                 sinon.assert.calledOnce(put);
                 sinon.assert.callCount(post, 1);
@@ -210,12 +213,37 @@ describe('runnner', () => {
                 sandbox.replace(axios, 'post', post);
 
                 const staticAnalysisParserRunner = new StaticAnalysisParserRunner();
-                await staticAnalysisParserRunner.run(runOptions, createBitbucketEnv());
+                const result = await staticAnalysisParserRunner.run(runOptions, createBitbucketEnv());
 
+                sinon.assert.match(result.exitCode, 1);
                 sinon.assert.calledWith(logInfo, messagesFormatter.format(messages.parsed_parasoft_static_analysis_report, 3145, path.join(__dirname, '/res/reports/cpptest-pro-report-202301.xml')));
                 sinon.assert.calledOnce(put);
                 sinon.assert.callCount(post, 10);
                 sinon.assert.calledWith(logInfo, messagesFormatter.format(messages.uploaded_parasoft_report_results, 'C++test', 1000));
+            });
+
+            it('not valid Static Analysis report', async () => {
+                reportPath = path.join(__dirname, '/res/reports/invalid_report');
+                runOptions.report = reportPath + '.xml';
+                const put = sandbox.fake.resolves({status: 200, data: {}});
+                sandbox.replace(axios, 'put', put);
+                const post = sandbox.fake.resolves({status: 200, data: {}});
+                sandbox.replace(axios, 'post', post);
+
+                try {
+                    const staticAnalysisParserRunner = new StaticAnalysisParserRunner();
+                    await staticAnalysisParserRunner.run(runOptions, createBitbucketEnv());
+                } catch (error) {
+                    if (error instanceof Error) {
+                        sinon.assert.calledWith(logWarn, messagesFormatter.format(messages.skipping_unrecognized_report_file, runOptions.report));
+                        sinon.assert.notCalled(put);
+                        sinon.assert.notCalled(post);
+                        sinon.assert.match(error.message, messagesFormatter.format(messages.static_analysis_report_not_found, runOptions.report.replace(/\\/g, '/')));
+                        return;
+                    }
+                    sinon.assert.fail("Expected error to be thrown but it was not.");
+                }
+                sinon.assert.fail("Expected error to be thrown but it was not.");
             });
 
 
