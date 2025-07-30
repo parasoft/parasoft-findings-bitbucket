@@ -7,7 +7,8 @@ interface ISerializable<T> {
 }
 
 class Messages implements ISerializable<Messages> {
-    missing_parameter!: string;
+    missing_java_parameter!: string;
+    missing_required_parameter!: string;
     run_failed!: string;
     complete!: string;
     finding_static_analysis_report!: string;
@@ -25,6 +26,8 @@ class Messages implements ISerializable<Messages> {
     converted_sarif_report!: string;
     failed_parse_report!: string;
     parsed_parasoft_static_analysis_report!: string;
+    vulnerability_details_description_limitation!: string;
+    vulnerability_full_details_description!: string;
     skip_static_analysis_report!: string;
     report_details_description_1!: string;
     report_details_description_2!: string;
