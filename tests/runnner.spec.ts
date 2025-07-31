@@ -142,7 +142,7 @@ describe('runnner', () => {
                 }
                 runOptions = {
                     report: reportPath + '.xml',
-                    parasoftToolOrJavaRootPath: process.env.JAVA_HOME || path.join(__dirname, '/res/toolRootPaths/toolHome')
+                    parasoftToolOrJavaRootPath: path.join(__dirname, '/res/toolRootPaths/toolHome')
                 };
             })
 
