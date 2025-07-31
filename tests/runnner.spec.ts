@@ -141,7 +141,8 @@ describe('runnner', () => {
                     fs.rmSync(reportPath + '.sarif');
                 }
                 runOptions = {
-                    report: reportPath + '.xml'
+                    report: reportPath + '.xml',
+                    parasoftToolOrJavaRootPath: process.env.JAVA_HOME || path.join(__dirname, '/res/toolRootPaths/toolHome')
                 };
             })
 
