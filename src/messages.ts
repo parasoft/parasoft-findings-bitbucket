@@ -27,7 +27,6 @@ class Messages implements ISerializable<Messages> {
     failed_parse_report!: string;
     parsed_parasoft_static_analysis_report!: string;
     vulnerability_details_description_limitation!: string;
-    vulnerability_full_details_description!: string;
     skip_static_analysis_report!: string;
     report_details_description_1!: string;
     report_details_description_2!: string;

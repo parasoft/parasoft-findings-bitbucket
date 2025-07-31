@@ -239,8 +239,7 @@ class StaticAnalysisParserRunner {
             unbViolIdMap.set(unbViolId, order + 1);
             let vulnerabilityDetailDescription = result.message.text;
             if ([...vulnerabilityDetailDescription].length > 2000) {
-                logger_1.logger.debug(messages_1.messagesFormatter.format(messages_1.messages.vulnerability_details_description_limitation, ruleSummary, [...vulnerabilityDetailDescription].length));
-                logger_1.logger.debug(messages_1.messagesFormatter.format(messages_1.messages.vulnerability_full_details_description, ruleSummary, vulnerabilityDetailDescription));
+                logger_1.logger.debug(messages_1.messagesFormatter.format(messages_1.messages.vulnerability_details_description_limitation, ruleSummary, [...vulnerabilityDetailDescription].length, 2000, vulnerabilityDetailDescription));
                 vulnerabilityDetailDescription = vulnerabilityDetailDescription.slice(0, 1997) + "...";
             }
             return {

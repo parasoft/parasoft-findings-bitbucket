@@ -225,8 +225,7 @@ export class StaticAnalysisParserRunner {
 
                 let vulnerabilityDetailDescription = result.message.text;
                 if ([...vulnerabilityDetailDescription].length > 2000) {
-                    logger.debug(messagesFormatter.format(messages.vulnerability_details_description_limitation, ruleSummary, [...vulnerabilityDetailDescription].length));
-                    logger.debug(messagesFormatter.format(messages.vulnerability_full_details_description, ruleSummary, vulnerabilityDetailDescription));
+                    logger.debug(messagesFormatter.format(messages.vulnerability_details_description_limitation, ruleSummary, [...vulnerabilityDetailDescription].length, 2000, vulnerabilityDetailDescription));
                     vulnerabilityDetailDescription = vulnerabilityDetailDescription.slice(0, 1997) + "...";
                 }
 
