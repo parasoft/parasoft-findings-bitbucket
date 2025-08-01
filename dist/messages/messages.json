@@ -18,7 +18,7 @@
   "converted_sarif_report": "SARIF report generated successfully: {0}",
   "failed_parse_report": "Failed to parse the Parasoft XML Static Analysis report: {0}",
   "parsed_parasoft_static_analysis_report": "Found {0} vulnerabilities for report: {1}",
-  "vulnerability_details_description_limitation": "The detail description for vulnerability '{0}' contains {1} characters. Truncate it to {2} characters. Original detail was:\n {3}",
+  "vulnerability_details_description_limitation": "The detail description for vulnerability '{0}' contains {1} characters and has been truncated to {2} characters due to Bitbucket's API limitation. Original detail:\n {3}",
   "skip_static_analysis_report": "Skipped Parasoft XML Static Analysis report: {0}",
   "report_details_description_1": "Report location: {0} (found {1} vulnerabilities)",
   "report_details_description_2": "Report location: {0} (found {1} vulnerabilities, showing top 1000 due to Bitbucket's limitation)",
