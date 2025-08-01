@@ -307,15 +307,16 @@ export class StaticAnalysisParserRunner {
             vulnerabilityNum += originalVulnerabilityNum;
             logger.info(messagesFormatter.format(messages.uploading_parasoft_report_results, toolName, parasoftReportPath));
 
+            const normalizedReportPath = this.extractRelativePath(this.BITBUCKET_ENVS.BITBUCKET_CLONE_DIR, parasoftReportPath);
             let reportDetails;
             //  A report module can contain up to 1000 annotations(vulnerabilities).
             // Reference: https://support.atlassian.com/bitbucket-cloud/docs/code-insights/#Annotations
             if (vulnerabilities.length > 1000) {
                 vulnerabilities = vulnerabilities.slice(0, 1000);
                 logger.info(messagesFormatter.format(messages.only_specified_vulnerabilities_will_be_uploaded, vulnerabilities.length));
-                reportDetails = messagesFormatter.format(messages.report_details_description_2, parasoftReportPath, originalVulnerabilityNum, vulnerabilities.length);
+                reportDetails = messagesFormatter.format(messages.report_details_description_2, normalizedReportPath, originalVulnerabilityNum, vulnerabilities.length);
             } else {
-                reportDetails = messagesFormatter.format(messages.report_details_description_1, parasoftReportPath, originalVulnerabilityNum);
+                reportDetails = messagesFormatter.format(messages.report_details_description_1, normalizedReportPath, originalVulnerabilityNum);
             }
 
             const reportId = uuid.v5(parasoftReportPath + this.BITBUCKET_ENVS.BITBUCKET_COMMIT, this.UUID_NAMESPACE);
@@ -400,5 +401,15 @@ export class StaticAnalysisParserRunner {
         return [...vulnerabilities].sort((currentVuln, nextVuln) => {
             return severityOrder[nextVuln.severity] - severityOrder[currentVuln.severity];
         });
+    }
+
+    private extractRelativePath(basePath: string, targetPath: string): string {
+        const normalizedBase = pt.normalize(basePath).replace(/\\/g, '/');
+        const normalizedTarget = pt.normalize(targetPath).replace(/\\/g, '/');
+        const prefix = `${normalizedBase}/`;
+
+        return normalizedTarget.startsWith(prefix)
+            ? normalizedTarget.slice(prefix.length)
+            : normalizedTarget;
     }
 }
