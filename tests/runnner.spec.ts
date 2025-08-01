@@ -187,7 +187,7 @@ describe('runnner', () => {
                 sinon.assert.calledWith(logInfo, messagesFormatter.format(messages.parsed_parasoft_static_analysis_report, 0, path.join(__dirname, '/res/reports/report_no_violation.xml')));
                 sinon.assert.notCalled(put);
                 sinon.assert.notCalled(post);
-                sinon.assert.calledWith(logInfo, messagesFormatter.format(messagesFormatter.format(messages.skip_static_analysis_report, runOptions.report)));
+                sinon.assert.calledWith(logInfo, messagesFormatter.format(messagesFormatter.format(messages.skip_static_analysis_report, "res/reports/report_no_violation.xml")));
             });
 
             it('parse and upload static analysis result normal - less than 1000 violation', async () => {

@@ -252,7 +252,8 @@ class StaticAnalysisParserRunner {
                 details: vulnerabilityDetailDescription
             };
         });
-        this.vulnerabilityMap.set(parasoftReportPath, {
+        const path = this.truncateContainedPath(this.BITBUCKET_ENVS.BITBUCKET_CLONE_DIR, parasoftReportPath);
+        this.vulnerabilityMap.set(path, {
             toolName: tool.driver.name,
             vulnerabilityDetails: vulnerabilities
         });
@@ -393,6 +394,14 @@ class StaticAnalysisParserRunner {
         return [...vulnerabilities].sort((currentVuln, nextVuln) => {
             return severityOrder[nextVuln.severity] - severityOrder[currentVuln.severity];
         });
+    }
+    truncateContainedPath(basePath, targetPath) {
+        const normalizedBase = pt.normalize(basePath).replace(/\\/g, '/');
+        const normalizedTarget = pt.normalize(targetPath).replace(/\\/g, '/');
+        if (normalizedTarget.startsWith(normalizedBase + '/')) {
+            return normalizedTarget.substring(normalizedBase.length + 1);
+        }
+        return normalizedTarget;
     }
 }
 exports.StaticAnalysisParserRunner = StaticAnalysisParserRunner;
