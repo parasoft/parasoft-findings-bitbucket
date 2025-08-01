@@ -230,20 +230,26 @@ class StaticAnalysisParserRunner {
             .filter(result => !result.suppressions)
             .map(result => {
             const rule = rules[result.ruleId];
+            const ruleSummary = this.getSummary(rule);
             let unbViolId = this.getUnbViolId(result, order);
             if (unbViolIdMap.has(unbViolId)) {
                 order = unbViolIdMap.get(unbViolId);
                 unbViolId = this.getUnbViolId(result, order);
             }
             unbViolIdMap.set(unbViolId, order + 1);
+            let vulnerabilityDetailDescription = result.message.text;
+            if ([...vulnerabilityDetailDescription].length > 2000) {
+                logger_1.logger.debug(messages_1.messagesFormatter.format(messages_1.messages.vulnerability_details_description_limitation, ruleSummary, [...vulnerabilityDetailDescription].length, 2000, vulnerabilityDetailDescription));
+                vulnerabilityDetailDescription = vulnerabilityDetailDescription.slice(0, 1997) + "...";
+            }
             return {
                 external_id: unbViolId,
                 annotation_type: 'VULNERABILITY',
                 severity: this.getSeverityLevel(rule),
                 path: this.getPath(result),
                 line: this.getLine(result),
-                summary: this.getSummary(rule),
-                details: result.message.text
+                summary: ruleSummary,
+                details: vulnerabilityDetailDescription
             };
         });
         this.vulnerabilityMap.set(parasoftReportPath, {
@@ -38407,11 +38413,11 @@ async function run() {
             parasoftToolOrJavaRootPath: args['parasoftToolOrJavaRootPath']
         };
         if (!runOptions.report || runOptions.report.trim().length == 0) {
-            logger_1.logger.error(messages_1.messagesFormatter.format(messages_1.messages.missing_parameter, '--report'));
+            logger_1.logger.error(messages_1.messagesFormatter.format(messages_1.messages.missing_required_parameter, '--report'));
             process.exit(1);
         }
         if (!runOptions.parasoftToolOrJavaRootPath && !process.env.JAVA_HOME) {
-            logger_1.logger.error(messages_1.messagesFormatter.format(messages_1.messages.missing_parameter, '--parasoftToolOrJavaRootPath'));
+            logger_1.logger.error(messages_1.messagesFormatter.format(messages_1.messages.missing_java_parameter, '--parasoftToolOrJavaRootPath'));
             process.exit(1);
         }
         const bitbucketEnvs = getBitbucketEnvs();

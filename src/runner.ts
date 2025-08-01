@@ -215,6 +215,7 @@ export class StaticAnalysisParserRunner {
             .filter(result => !result.suppressions)
             .map(result => {
                 const rule = rules[result.ruleId];
+                const ruleSummary = this.getSummary(rule);
                 let unbViolId = this.getUnbViolId(result, order);
                 if (unbViolIdMap.has(unbViolId)) {
                     order = <number> unbViolIdMap.get(unbViolId);
@@ -222,14 +223,20 @@ export class StaticAnalysisParserRunner {
                 }
                 unbViolIdMap.set(unbViolId, order + 1);
 
+                let vulnerabilityDetailDescription = result.message.text;
+                if ([...vulnerabilityDetailDescription].length > 2000) {
+                    logger.debug(messagesFormatter.format(messages.vulnerability_details_description_limitation, ruleSummary, [...vulnerabilityDetailDescription].length, 2000, vulnerabilityDetailDescription));
+                    vulnerabilityDetailDescription = vulnerabilityDetailDescription.slice(0, 1997) + "...";
+                }
+
                 return {
                     external_id: unbViolId,
                     annotation_type: 'VULNERABILITY',
                     severity: this.getSeverityLevel(rule),
                     path: this.getPath(result),
                     line: this.getLine(result),
-                    summary: this.getSummary(rule),
-                    details: result.message.text
+                    summary: ruleSummary,
+                    details: vulnerabilityDetailDescription
                 };
             });
 

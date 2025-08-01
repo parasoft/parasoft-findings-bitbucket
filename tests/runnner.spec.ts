@@ -15,6 +15,7 @@ describe('runnner', () => {
         let logInfo: sinon.SinonSpy;
         let logError: sinon.SinonSpy;
         let logWarn: sinon.SinonSpy;
+        let logDebug: sinon.SinonSpy;
 
         beforeEach(() => {
             sandbox = sinon.createSandbox();
@@ -24,6 +25,8 @@ describe('runnner', () => {
             sandbox.replace(logger, 'error', logError);
             logWarn = sandbox.fake();
             sandbox.replace(logger, 'warn', logWarn);
+            logDebug = sandbox.fake();
+            sandbox.replace(logger, 'debug', logDebug);
         });
 
         afterEach(() => {
@@ -162,6 +165,7 @@ describe('runnner', () => {
                 const result = await staticAnalysisParserRunner.run(runOptions, createBitbucketEnv());
 
                 sinon.assert.match(result.exitCode, 1);
+                sinon.assert.calledWith(logDebug, messagesFormatter.format(messages.vulnerability_details_description_limitation, 'Halstead  智力内容 [METRIC.HICM]', 2177, 2000, '值9.826超出了可接受的范围：\'小于1\'。 The value 9.826 is beyond the acceptable range: less than 1 head. 9.826のあたいはきょようはんいをこえています「あたまみまん」です. 值9.826超出了可接受的范围：\'小于1\'。 The value 9.826 is beyond the acceptable range: less than 1 head. 9.826の値は許容範囲超えています「1頭未満」です. 值9.826超出了可接受的范围：\'小于1\'。 The value 9.826 is beyond the acceptable range: less than 1 head. 9.826のあたいはきょようはんいをこえています「あたまみまん」です. 值9.826超出了可接受的范围：\'小于1\'。 The value 9.826 is beyond the acceptable range: less than 1 head. 9.826の値は許容範囲超えています「1頭未満」です. 值9.826超出了可接受的范围：\'小于1\'。 The value 9.826 is beyond the acceptable range: less than 1 head. 9.826のあたいはきょようはんいをこえています「あたまみまん」です. 值9.826超出了可接受的范围：\'小于1\'。 The value 9.826 is beyond the acceptable range: less than 1 head. 9.826の値は許容範囲超えています「1頭未満」です. 值9.826超出了可接受的范围：\'小于1\'。 The value 9.826 is beyond the acceptable range: less than 1 head. 9.826のあたいはきょようはんいをこえています「あたまみまん」です. 值9.826超出了可接受的范围：\'小于1\'。 The value 9.826 is beyond the acceptable range: less than 1 head. 9.826の値は許容範囲超えています「1頭未満」です. 值9.826超出了可接受的范围：\'小于1\'。 The value 9.826 is beyond the acceptable range: less than 1 head. 9.826のあたいはきょようはんいをこえています「あたまみまん」です. 值9.826超出了可接受的范围：\'小于1\'。 The value 9.826 is beyond the acceptable range: less than 1 head. 9.826の値は許容範囲超えています「1頭未満」です. 值9.826超出了可接受的范围：\'小于1\'。 The value 9.826 is beyond the acceptable range: less than 1 head. 9.826のあたいはきょようはんいをこえています「あたまみまん」です. 值9.826超出了可接受的范围：\'小于1\'。 The value 9.826 is beyond the acceptable range: less than 1 head. 9.826の値は許容範囲超えています「1頭未満」です. 值9.826超出了可接受的范围：\'小于1\'。 The value 9.826 is beyond the acceptable range: less than 1 head. 9.826のあたいはきょようはんいをこえています「あたまみまん」です. 值9.826超出了可接受的范围：\'小于1\'。 The value 9.826 is beyond the acceptable range: less than 1 head. 9.826の値は許容範囲超えています「1頭未満」です. 值9.826超出了可接受的范围：\'小于1\'。 The value 9.826 is beyond the acceptable range: less than 1 head. 9.826のあたいはきょようはんいをこえています「あたまみまん」です. 值9.826超出了可接受的范围：\'小于1\'。 The value 9.826 is beyond the acceptable range: less than 1 head. 9.826の値は許容範囲超えています「1頭未満」です. 值9.826超出了可接受的范围：\'小于1\'。 The value 9.826 is beyond the acceptable range: less than 1 head. 9.826のあたいはきょようはんいをこえています「あたまみまん」です. 值9.826超出了可接受的范围：\'小于1\'。 The value 9.826 is beyond the acceptable range: less than 1 head. 9.826の値は許容範囲超えています「1頭未満」です.'));
                 sinon.assert.calledWith(logInfo, messagesFormatter.format(messages.parsed_parasoft_static_analysis_report, 1552, path.join(__dirname, '/res/reports/XML_STATIC.xml')));
                 sinon.assert.calledOnce(put);
                 sinon.assert.callCount(post, 10);

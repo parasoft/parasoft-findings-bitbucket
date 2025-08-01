@@ -111,7 +111,7 @@ describe('main', () => {
 
             sinon.assert.calledWith(exit, 1);
             sinon.assert.called(logError);
-            sinon.assert.calledWith(logError, messagesFormatter.format(messages.missing_parameter, '--report'));
+            sinon.assert.calledWith(logError, messagesFormatter.format(messages.missing_required_parameter, '--report'));
         });
 
         it('Missing --parasoftToolOrJavaRootPath and java home', async () => {
@@ -125,7 +125,7 @@ describe('main', () => {
                 await main.run();
 
                 sinon.assert.calledWith(exit, 1);
-                sinon.assert.calledWith(logError, messagesFormatter.format(messages.missing_parameter, '--parasoftToolOrJavaRootPath'));
+                sinon.assert.calledWith(logError, messagesFormatter.format(messages.missing_java_parameter, '--parasoftToolOrJavaRootPath'));
             } finally {
                 process.env.JAVA_HOME = javahome;
             }

@@ -43,12 +43,12 @@ export async function run(): Promise<void> {
         };
 
         if (!runOptions.report || runOptions.report.trim().length == 0) {
-            logger.error(messagesFormatter.format(messages.missing_parameter, '--report'));
+            logger.error(messagesFormatter.format(messages.missing_required_parameter, '--report'));
             process.exit(1);
         }
 
         if (!runOptions.parasoftToolOrJavaRootPath && !process.env.JAVA_HOME) {
-            logger.error(messagesFormatter.format(messages.missing_parameter, '--parasoftToolOrJavaRootPath'));
+            logger.error(messagesFormatter.format(messages.missing_java_parameter, '--parasoftToolOrJavaRootPath'));
             process.exit(1);
         }
 
