@@ -395,10 +395,20 @@ class StaticAnalysisParserRunner {
             return severityOrder[nextVuln.severity] - severityOrder[currentVuln.severity];
         });
     }
+    /**
+     * Normalize and truncate the target path to its relative portion based on the base path.
+     * For example:
+     *
+     *  Linux path handling
+     *  basePath: '/var/project', targetPath: '/var/project/report/report.xml' -> 'report/report.xml'
+     *
+     *  Windows path handling
+     *  basePath: 'C:\Workspace', targetPath: 'C:\Workspace\report\static\report.xml' -> 'report\static\report.xml'
+     **/
     extractRelativePath(basePath, targetPath) {
         const normalizedBase = pt.normalize(basePath).replace(/\\/g, '/');
         const normalizedTarget = pt.normalize(targetPath).replace(/\\/g, '/');
-        const prefix = `${normalizedBase}/`;
+        const prefix = normalizedBase.endsWith('/') ? normalizedBase : normalizedBase + '/';
         return normalizedTarget.startsWith(prefix)
             ? normalizedTarget.slice(prefix.length)
             : normalizedTarget;
