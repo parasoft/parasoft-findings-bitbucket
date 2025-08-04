@@ -311,16 +311,17 @@ class StaticAnalysisParserRunner {
             }
             vulnerabilityNum += originalVulnerabilityNum;
             logger_1.logger.info(messages_1.messagesFormatter.format(messages_1.messages.uploading_parasoft_report_results, toolName, parasoftReportPath));
+            const normalizedReportPath = this.extractRelativePath(this.BITBUCKET_ENVS.BITBUCKET_CLONE_DIR, parasoftReportPath);
             let reportDetails;
             //  A report module can contain up to 1000 annotations(vulnerabilities).
             // Reference: https://support.atlassian.com/bitbucket-cloud/docs/code-insights/#Annotations
             if (vulnerabilities.length > 1000) {
                 vulnerabilities = vulnerabilities.slice(0, 1000);
                 logger_1.logger.info(messages_1.messagesFormatter.format(messages_1.messages.only_specified_vulnerabilities_will_be_uploaded, vulnerabilities.length));
-                reportDetails = messages_1.messagesFormatter.format(messages_1.messages.report_details_description_2, parasoftReportPath, originalVulnerabilityNum, vulnerabilities.length);
+                reportDetails = messages_1.messagesFormatter.format(messages_1.messages.report_details_description_2, normalizedReportPath, originalVulnerabilityNum, vulnerabilities.length);
             }
             else {
-                reportDetails = messages_1.messagesFormatter.format(messages_1.messages.report_details_description_1, parasoftReportPath, originalVulnerabilityNum);
+                reportDetails = messages_1.messagesFormatter.format(messages_1.messages.report_details_description_1, normalizedReportPath, originalVulnerabilityNum);
             }
             const reportId = uuid.v5(parasoftReportPath + this.BITBUCKET_ENVS.BITBUCKET_COMMIT, this.UUID_NAMESPACE);
             // Create report module
@@ -393,6 +394,24 @@ class StaticAnalysisParserRunner {
         return [...vulnerabilities].sort((currentVuln, nextVuln) => {
             return severityOrder[nextVuln.severity] - severityOrder[currentVuln.severity];
         });
+    }
+    /**
+     * Normalize and truncate the target path to its relative portion based on the base path.
+     * For example:
+     *
+     *  Linux path handling
+     *  basePath: '/var/project', targetPath: '/var/project/report/report.xml' -> 'report/report.xml'
+     *
+     *  Windows path handling
+     *  basePath: 'C:\Workspace', targetPath: 'C:\Workspace\report\static\report.xml' -> 'report\static\report.xml'
+     **/
+    extractRelativePath(basePath, targetPath) {
+        const normalizedBase = pt.normalize(basePath).replace(/\\/g, '/');
+        const normalizedTarget = pt.normalize(targetPath).replace(/\\/g, '/');
+        const prefix = normalizedBase.endsWith('/') ? normalizedBase : normalizedBase + '/';
+        return normalizedTarget.startsWith(prefix)
+            ? normalizedTarget.slice(prefix.length)
+            : normalizedTarget;
     }
 }
 exports.StaticAnalysisParserRunner = StaticAnalysisParserRunner;
