@@ -1,1 +1,61 @@
-# parasoft-findings-bitbucket
+# Parasoft Findings Bitbucket
+A CLI tool to read Parasoft static analysis reports and upload results to Bitbucket.
+
+## Quick Start
+To display Parasoft static analysis results on Bitbucket, you need to customize your Bitbucket pipeline that generates a Parasoft XML static analysis report and adds this tool after the report is generated.
+
+### Prerequisites
+- Node.js 18+
+
+- Java 17+
+
+- To generate a Parasoft coverage XML report.
+
+- BitBucket Configuration:
+
+  Create Repository Variables **USER_EMAIL** and **API_TOKEN** used for BitBucket API access.
+
+- Install parasoft-findings-bitbucket:
+    ```yaml
+    npm i -g github:parasoft/parasoft-findings-bitbucket
+    ```
+
+### Adding the Parasoft Findings Bitbucket tool to Bitbucket Pipeline
+```yaml
+name: "Add Parasoft Findings Bitbucket tool to Bitbucket Pipeline"
+script:
+  # Use parasoft-findings-bitbucket to upload Parasoft static analysis report results to Bitbucket
+  - parasoft-findings-bitbucket --report "</path/to/report.xml>" --parasoftToolOrJavaRootPath "<path/to/java>" --debug
+```
+
+### Command line options:
+
+| Parameters                              | Description                                                                                                                                                                                                         |
+|-----------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| --report (Required)                     | Path or minimatch pattern to locate Parasoft static analysis report files. If using a relative path, it is relative to the Bitbucket clone directory.                                                               |
+| --parasoftToolOrJavaRootPath (Optional) | Root path to the Parasoft tool or Java installation required to locate the Java environment for report processing. If not specified, the tool will attempt to use the path from the JAVA_HOME environment variable. |
+| --debug (Optional)                      | Enable to show debug log messages.                                                                                                                                                                                  |
+| --version                               | Print version number and exit.                                                                                                                                                                                      |
+| --help                                  | Print help information and exit.                                                                                                                                                                                    |
+
+## Example configuration file for Bitbucket pipeline
+Here is a basic Bitbucket pipeline example to help you get started with the parasoft-findings-bitbucket tool:
+
+```yaml
+pipelines:
+  default:
+      - step:
+          runs-on:
+            - self.hosted
+            - windows
+          name: "Upload Parasoft static analysis report results via Parasoft Findings Bitbucket"
+          script:
+            # Install Parasoft Findings Bitbucket tool
+            - npm i -g github:parasoft/parasoft-findings-bitbucket
+
+            # Generate Parasoft Static Analysis report
+            - jtestcli.exe -config "builtin://Recommended Rules" -settings="localsettings.properties" -data demo.data.json -report report
+
+            # Use parasoft-findings-bitbucket to upload Parasoft static analysis report results to Bitbucket
+            - parasoft-findings-bitbucket --report "reports/static/report.xml" --parasoftToolOrJavaRootPath "C:/Java/jdk-17" --debug
+```
