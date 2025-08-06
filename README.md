@@ -1,15 +1,15 @@
 # Parasoft Findings Bitbucket
-A CLI tool to read Parasoft static analysis reports and upload results to Bitbucket.
+A CLI tool to read Parasoft static analysis XML reports and upload results to Bitbucket.
 
 ## Quick Start
-To display Parasoft static analysis results on Bitbucket, you need to customize your Bitbucket pipeline that generates a Parasoft XML static analysis report and adds this tool after the report is generated.
+To display Parasoft static analysis results on Bitbucket, you need to customize your Bitbucket pipeline that generates a Parasoft static analysis XML report and uses this tool after the report is generated.
 
 ### Prerequisites
 - Node.js 18+
 
 - Java 17+
 
-- To generate a Parasoft coverage XML report.
+- Parasoft static analysis XML report is generated.
 
 - BitBucket Configuration:
 
@@ -22,9 +22,9 @@ To display Parasoft static analysis results on Bitbucket, you need to customize 
 
 ### Adding the Parasoft Findings Bitbucket tool to Bitbucket Pipeline
 ```yaml
-name: "Add Parasoft Findings Bitbucket tool to Bitbucket Pipeline"
+name: "Parasoft Findings Bitbucket"
 script:
-  # Use parasoft-findings-bitbucket to upload Parasoft static analysis report results to Bitbucket
+  # Use parasoft-findings-bitbucket to upload Parasoft static analysis XML report results to Bitbucket
   - parasoft-findings-bitbucket --report "</path/to/report.xml>" --parasoftToolOrJavaRootPath "<path/to/java>" --debug
 ```
 
@@ -48,14 +48,14 @@ pipelines:
           runs-on:
             - self.hosted
             - windows
-          name: "Upload Parasoft static analysis report results via Parasoft Findings Bitbucket"
+          name: "Upload Parasoft static analysis XML report results via Parasoft Findings Bitbucket"
           script:
             # Install Parasoft Findings Bitbucket tool
             - npm i -g github:parasoft/parasoft-findings-bitbucket
 
-            # Generate Parasoft Static Analysis report
-            - jtestcli.exe -config "builtin://Recommended Rules" -settings="localsettings.properties" -data demo.data.json -report report
+            # Generate Parasoft Static Analysis XML report
+            - jtestcli.exe -config "builtin://Recommended Rules" -settings "localsettings.properties" -data "demo.data.json" -report "reports/static/report.xml"
 
-            # Use parasoft-findings-bitbucket to upload Parasoft static analysis report results to Bitbucket
+            # Use parasoft-findings-bitbucket to upload Parasoft static analysis XML report results to Bitbucket
             - parasoft-findings-bitbucket --report "reports/static/report.xml" --parasoftToolOrJavaRootPath "C:/Java/jdk-17" --debug
 ```
