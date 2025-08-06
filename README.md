@@ -2,7 +2,9 @@
 A CLI tool to read Parasoft static analysis XML reports and upload results to Bitbucket.
 
 ## Quick Start
-To display Parasoft static analysis results on Bitbucket, you need to customize your Bitbucket pipeline that generates a Parasoft static analysis XML report and uses this tool after the report is generated.
+To display Parasoft static analysis results on Bitbucket, you need to customize your Bitbucket pipeline to:
+  1. Generate a Parasoft static analysis XML report
+  2. Use this tool to upload the report results to Bitbucket.
 
 ### Prerequisites
 - Node.js 18+
@@ -11,11 +13,10 @@ To display Parasoft static analysis results on Bitbucket, you need to customize 
 
 - Parasoft static analysis XML report is generated.
 
-- BitBucket Configuration:
+### Bitbucket configuration
+- Create Repository Variables **USER_EMAIL** and **API_TOKEN** used for BitBucket API access.
 
-  Create Repository Variables **USER_EMAIL** and **API_TOKEN** used for BitBucket API access.
-
-- Install parasoft-findings-bitbucket:
+- Install the Parasoft Findings Bitbucket CLI globally:
     ```yaml
     npm i -g github:parasoft/parasoft-findings-bitbucket
     ```
@@ -25,7 +26,7 @@ To display Parasoft static analysis results on Bitbucket, you need to customize 
 name: "Parasoft Findings Bitbucket"
 script:
   # Use parasoft-findings-bitbucket to upload Parasoft static analysis XML report results to Bitbucket
-  - parasoft-findings-bitbucket --report "</path/to/report.xml>" --parasoftToolOrJavaRootPath "<path/to/java>" --debug
+  - parasoft-findings-bitbucket --report "</path/to/report.xml>" --parasoftToolOrJavaRootPath "<path/to/parasoftTool>" --debug
 ```
 
 ### Command line options:
