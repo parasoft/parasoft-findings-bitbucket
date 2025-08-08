@@ -3,7 +3,7 @@ A CLI tool to read Parasoft static analysis XML reports and upload results to Bi
 
 ## Quick Start
 To display Parasoft static analysis results on Bitbucket, you need to customize your Bitbucket pipeline to:
-  1. Generate a Parasoft static analysis XML report
+  1. Generate a Parasoft static analysis XML report.
   2. Use this tool to upload the report results to Bitbucket.
 
 ### Prerequisites
@@ -11,7 +11,7 @@ To display Parasoft static analysis results on Bitbucket, you need to customize 
 
 - Java 17+
 
-- Parasoft static analysis XML report is generated.
+- Parasoft static analysis XML report is generated
 
 ### Bitbucket configuration
 - Create Repository Variables **USER_EMAIL** and **API_TOKEN** used for BitBucket API access.
