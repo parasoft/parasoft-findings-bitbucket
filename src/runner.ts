@@ -5,11 +5,12 @@ import * as pt from 'path';
 import * as glob from 'glob';
 import * as sax from 'sax';
 import * as sarifReportTypes from './sarifReportTypes';
-import * as uuid from 'uuid'
+import * as uuid from 'uuid';
 import axios, {AxiosBasicCredentials, AxiosError} from "axios";
 import {logger} from './logger';
 import {messages, messagesFormatter} from './messages';
-import {BitbucketEnvs} from './main'
+import {BitbucketEnvs} from './main';
+import {marked} from 'marked';
 
 (sax as any).MAX_BUFFER_LENGTH = 2 * 1024 * 1024 * 1024; // 2GB
 
@@ -223,11 +224,14 @@ export class StaticAnalysisParserRunner {
                 }
                 unbViolIdMap.set(unbViolId, order + 1);
 
-                let vulnerabilityDetailDescription = result.message.text;
-                if ([...vulnerabilityDetailDescription].length > 2000) {
-                    logger.debug(messagesFormatter.format(messages.vulnerability_details_description_limitation, ruleSummary, [...vulnerabilityDetailDescription].length, 2000, vulnerabilityDetailDescription));
-                    vulnerabilityDetailDescription = vulnerabilityDetailDescription.slice(0, 1997) + "...";
-                }
+                let vulnerabilityDetailDescription = result.message.markdown ? result.message.markdown : result.message.text;
+                let html = marked.parse(vulnerabilityDetailDescription);
+
+
+                // if ([...vulnerabilityDetailDescription].length > 2000) {
+                //     logger.debug(messagesFormatter.format(messages.vulnerability_details_description_limitation, ruleSummary, [...vulnerabilityDetailDescription].length, 2000, vulnerabilityDetailDescription));
+                //     vulnerabilityDetailDescription = vulnerabilityDetailDescription.slice(0, 1997) + "...";
+                // }
 
                 return {
                     external_id: unbViolId,
@@ -236,7 +240,7 @@ export class StaticAnalysisParserRunner {
                     path: this.getPath(result),
                     line: this.getLine(result),
                     summary: ruleSummary,
-                    details: vulnerabilityDetailDescription
+                    details: `${html}`
                 };
             });
 

@@ -24,10 +24,14 @@ export type Rule = {
 export type ReportResult = {
     ruleId: string;
     level: 'note' | 'warning' | 'error' | 'none';
-    message: { text: string };
+    message: {
+        text: string;
+        markdown?: string;
+    };
     partialFingerprints: PartialFingerprints;
     locations: VulnerabilityLocation[];
     suppressions: object[];
+    codeFlows?: ThreadFlows[];
 }
 
 type VulnerabilityLocation = {
@@ -38,6 +42,18 @@ type VulnerabilityLocation = {
             endLine?: number;
         };
     };
+    message?: {
+        text: string;
+    };
+}
+
+type ThreadFlows = {
+    locations: Location[];
+}
+
+type Location = {
+    location: VulnerabilityLocation;
+    nestingLevel: number;
 }
 
 type PartialFingerprints = {
@@ -53,5 +69,5 @@ export type VulnerabilityDetail = {
     path: string;
     line: number;
     summary?: string;
-    details: string;
+    details: string | Promise<string>;
 }
