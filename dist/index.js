@@ -242,6 +242,12 @@ class StaticAnalysisParserRunner {
                 logger_1.logger.debug(messages_1.messagesFormatter.format(messages_1.messages.vulnerability_details_description_limitation, ruleSummary, [...vulnerabilityDetailDescription].length, 2000, vulnerabilityDetailDescription));
                 vulnerabilityDetailDescription = vulnerabilityDetailDescription.slice(0, 1997) + "...";
             }
+            if (result.partialFingerprints.violType == "FlowViol") {
+                vulnerabilityDetailDescription = vulnerabilityDetailDescription + ` (${messages_1.messagesFormatter.format(messages_1.messages.flow_or_duplicate_violation_details_description, "Flow")})`;
+            }
+            else if (result.partialFingerprints.violType == "DupViol") {
+                vulnerabilityDetailDescription = vulnerabilityDetailDescription + ` (${messages_1.messagesFormatter.format(messages_1.messages.flow_or_duplicate_violation_details_description, "Duplicate")})`;
+            }
             return {
                 external_id: unbViolId,
                 annotation_type: 'VULNERABILITY',
