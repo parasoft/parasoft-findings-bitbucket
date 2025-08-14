@@ -224,15 +224,23 @@ export class StaticAnalysisParserRunner {
                 unbViolIdMap.set(unbViolId, order + 1);
 
                 let vulnerabilityDetailDescription = result.message.text;
-                if ([...vulnerabilityDetailDescription].length > 2000) {
-                    logger.debug(messagesFormatter.format(messages.vulnerability_details_description_limitation, ruleSummary, [...vulnerabilityDetailDescription].length, 2000, vulnerabilityDetailDescription));
-                    vulnerabilityDetailDescription = vulnerabilityDetailDescription.slice(0, 1997) + "...";
-                }
-
-                if (result.partialFingerprints.violType == "FlowViol") {
-                    vulnerabilityDetailDescription = vulnerabilityDetailDescription + ` (${messagesFormatter.format(messages.flow_or_duplicate_violation_details_description, "Flow")})`;
-                } else if (result.partialFingerprints.violType == "DupViol") {
-                    vulnerabilityDetailDescription = vulnerabilityDetailDescription + ` (${messagesFormatter.format(messages.flow_or_duplicate_violation_details_description, "Duplicate")})`;
+                const descriptionLength = [...vulnerabilityDetailDescription].length;
+                const isFlowOrDuplicateViolation = ["FlowViol", "DupViol"].includes(result.partialFingerprints.violType);
+                if (isFlowOrDuplicateViolation) {
+                    const violationType = result.partialFingerprints.violType == "FlowViol" ? "Flow" : "Duplicate";
+                    const additionalText = ` (${messagesFormatter.format(messages.flow_or_duplicate_violation_details_description, violationType)})`;
+                    const additionalLength = [...additionalText].length;
+                    if ((descriptionLength + additionalLength) > 2000) {
+                        logger.debug(messagesFormatter.format(messages.vulnerability_details_description_limitation, ruleSummary, descriptionLength + additionalLength, 2000, vulnerabilityDetailDescription + additionalText));
+                        vulnerabilityDetailDescription = vulnerabilityDetailDescription.slice(0, (1997 - additionalLength)) + "..." + additionalText;
+                    } else {
+                        vulnerabilityDetailDescription = vulnerabilityDetailDescription + additionalText;
+                    }
+                } else {
+                   if (descriptionLength > 2000) {
+                        logger.debug(messagesFormatter.format(messages.vulnerability_details_description_limitation, ruleSummary, [...vulnerabilityDetailDescription].length, 2000, vulnerabilityDetailDescription));
+                        vulnerabilityDetailDescription = vulnerabilityDetailDescription.slice(0, 1997) + "...";
+                    }
                 }
 
                 return {
