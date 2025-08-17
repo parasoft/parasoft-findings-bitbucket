@@ -3,7 +3,6 @@ import * as main from '../src/main';
 import * as runner from '../src/runner';
 import {messages, messagesFormatter} from '../src/messages';
 import {logger} from '../src/logger';
-import {beforeEach} from "mocha";
 
 describe('main', () => {
     describe('run()', () => {
