@@ -143,10 +143,18 @@ class StaticAnalysisParserRunner {
         const xslPath = pt.join(__dirname, 'sarif.xsl');
         const workspace = pt.normalize(this.BITBUCKET_ENVS.BITBUCKET_CLONE_DIR).replace(/\\/g, '/');
         const outPath = sourcePath.substring(0, sourcePath.toLocaleLowerCase().lastIndexOf('.xml')) + '.sarif';
-        const commandLine = `"${javaPath}" -jar "${jarPath}" -s:"${sourcePath}" -xsl:"${xslPath}" -o:"${outPath}" -versionmsg:off projectRootPaths="${workspace}"`;
-        logger_1.logger.debug(commandLine);
+        // Use spawn with argument array for better cross-platform compatibility
+        const args = [
+            '-jar', jarPath,
+            `-s:${sourcePath}`,
+            `-xsl:${xslPath}`,
+            `-o:${outPath}`,
+            '-versionmsg:off',
+            `projectRootPaths=${workspace}`
+        ];
+        logger_1.logger.debug(`${javaPath} ${args.join(' ')}`);
         const exitCode = await new Promise((resolve, reject) => {
-            const process = cp.spawn(`${commandLine}`, { shell: true, windowsHide: true });
+            const process = cp.spawn(javaPath, args, { windowsHide: true });
             this.handleProcess(process, resolve, reject);
         });
         if (exitCode != 0) {
