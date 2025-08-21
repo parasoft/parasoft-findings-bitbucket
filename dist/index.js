@@ -249,7 +249,7 @@ class StaticAnalysisParserRunner {
             const descriptionLength = [...vulnerabilityDetailDescription].length;
             const isFlowOrDuplicateViolation = ["FlowViol", "DupViol"].includes(result.partialFingerprints.violType);
             if (isFlowOrDuplicateViolation) {
-                const violationType = result.partialFingerprints.violType == "FlowViol" ? "flow" : "duplicate";
+                const violationType = result.partialFingerprints.violType == "FlowViol" ? "flow" : "code duplicate";
                 const additionalText = ` (${messages_1.messagesFormatter.format(messages_1.messages.flow_or_duplicate_violation_details_description, violationType)})`;
                 const additionalLength = [...additionalText].length;
                 if ((descriptionLength + additionalLength) > 2000) {
