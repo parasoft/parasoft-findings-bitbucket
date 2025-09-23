@@ -69,6 +69,7 @@ describe('main', () => {
     Options:
         --report                            Path or minimatch pattern to locate Parasoft static analysis report files. (required)
         --parasoftToolOrJavaRootPath        Path to Java installation or Parasoft tool (required if JAVA_HOME not set) for report processing.
+        --qualityGate                       Specify a quality gate for a Bitbucket build. The value format should be 'BITBUCKET_SECURITY_LEVEL=THRESHOLD' (e.g. CRITICAL=1). Available security levels: ALL, CRITICAL, HIGH, MEDIUM, LOW.
         --debug                             Enable debug logging.
         --version                           Print version number and exit.
         --help                              Show this help information and exit.
@@ -76,6 +77,7 @@ describe('main', () => {
     Examples:
         parasoft-findings-bitbucket --report "</path/to/report.xml>"
         parasoft-findings-bitbucket --report "</path/to/report.xml>" --parasoftToolOrJavaRootPath "<path/to/java_home>"
+        parasoft-findings-bitbucket --report "</path/to/report.xml>" --parasoftToolOrJavaRootPath "<path/to/java_home>" --qualityGate "ALL=5" --qualityGate "CRITICAL=1"
         parasoft-findings-bitbucket --report "</path/to/report.xml>" --parasoftToolOrJavaRootPath "<path/to/parasoft/tool/installation/dir>" --debug`);
         });
 
