@@ -121,7 +121,37 @@ function getBitbucketEnvs(): BitbucketEnvs {
     return requiredEnvs;
 }
 
-function parseQualityGateValues(qualityGateValues: string[]): string[] {
-    // TODO: CICD-1075 Parse value and handle exceptions
-    return qualityGateValues.map(item => item.toUpperCase());
+function parseQualityGateValues(qualityGateValues: string[]): runner.QualityGate {
+    const parsedQualityGateValues: runner.QualityGate = {};
+    const bitbucketSecurityLevels = ['ALL', 'CRITICAL', 'HIGH', 'MEDIUM', 'LOW'];
+
+    for (let qualityGateValue of qualityGateValues) {
+        const [securityLevel, thresholdString] = qualityGateValue.split('=');
+        let normalizedSecurityLevel = securityLevel.trim().toUpperCase();
+        let threshold = parseInt(thresholdString || '0');
+
+        if (!bitbucketSecurityLevels.includes(normalizedSecurityLevel)) {
+           logger.warn(messagesFormatter.format(messages.invalid_bitbucket_security_level, securityLevel));
+           normalizedSecurityLevel = 'ALL';
+        }
+
+        if (isNaN(threshold)) {
+            logger.warn(messagesFormatter.format(messages.invalid_threshold_value, thresholdString));
+            threshold = 0;
+        }
+
+        if (threshold < 0) {
+            logger.warn(messagesFormatter.format(messages.threshold_value_less_than_zero, thresholdString));
+            threshold = 0;
+        }
+
+        if (parsedQualityGateValues[normalizedSecurityLevel]) {
+            logger.warn(messagesFormatter.format(messages.parsed_quality_gate_with_same_bitbucket_security_level, normalizedSecurityLevel, threshold))
+            continue;
+        }
+
+        parsedQualityGateValues[normalizedSecurityLevel] = threshold;
+    }
+
+    return parsedQualityGateValues;
 }

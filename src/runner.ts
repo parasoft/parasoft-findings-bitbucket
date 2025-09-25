@@ -25,6 +25,10 @@ export interface RunOptions {
     parasoftToolOrJavaRootPath?: string;
 }
 
+export interface QualityGate {
+    [key: string]: number
+}
+
 interface ReportVulnerability {
     toolName: string;
     vulnerabilityDetails: sarifReportTypes.VulnerabilityDetail[];
