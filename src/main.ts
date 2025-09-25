@@ -17,7 +17,7 @@ export interface BitbucketEnvs {
 export async function run(): Promise<void> {
     const args = minimist(process.argv.slice(2), {
         boolean: ['debug', 'help', 'version'],
-        string: ['report', 'parasoftToolOrJavaRootPath'],
+        string: ['report', 'parasoftToolOrJavaRootPath', 'qualityGate']
     });
 
     if (args['version']) {
@@ -52,6 +52,14 @@ export async function run(): Promise<void> {
             process.exit(1);
         }
 
+        if (args['qualityGate']?.length > 0) {
+            const normalizedQualityGateValues: string[] = Array.isArray(args['qualityGate']) ? args['qualityGate'] : [args['qualityGate']];
+            args['qualityGate'] = parseQualityGateValues(normalizedQualityGateValues);
+
+            // TODO: This is the test log of quality gate. This will be removed in other task
+            logger.debug(messagesFormatter.format('Configured quality gates: {0}', JSON.stringify(args['qualityGate'])));
+        }
+
         const bitbucketEnvs = getBitbucketEnvs();
 
         const theRunner = new runner.StaticAnalysisParserRunner();
@@ -80,6 +88,8 @@ function showHelp() {
     Options:
         --report                            Path or minimatch pattern to locate Parasoft static analysis report files. (required)
         --parasoftToolOrJavaRootPath        Path to Java installation or Parasoft tool (required if JAVA_HOME not set) for report processing.
+        --qualityGate                       Specify a quality gate for a Bitbucket build. The value must be in the format:
+                                                'BITBUCKET_SECURITY_LEVEL=THRESHOLD' (e.g., CRITICAL=1). Available security levels: ALL, CRITICAL, HIGH, MEDIUM, LOW.
         --debug                             Enable debug logging.
         --version                           Print version number and exit.
         --help                              Show this help information and exit.
@@ -87,6 +97,7 @@ function showHelp() {
     Examples:
         parasoft-findings-bitbucket --report "</path/to/report.xml>"
         parasoft-findings-bitbucket --report "</path/to/report.xml>" --parasoftToolOrJavaRootPath "<path/to/java_home>"
+        parasoft-findings-bitbucket --report "</path/to/report.xml>" --parasoftToolOrJavaRootPath "<path/to/java_home>" --qualityGate "ALL=5" --qualityGate "CRITICAL=1"
         parasoft-findings-bitbucket --report "</path/to/report.xml>" --parasoftToolOrJavaRootPath "<path/to/parasoft/tool/installation/dir>" --debug`
     );
 }
@@ -108,4 +119,9 @@ function getBitbucketEnvs(): BitbucketEnvs {
     }
 
     return requiredEnvs;
+}
+
+function parseQualityGateValues(qualityGateValues: string[]): string[] {
+    // TODO: CICD-1075 Parse value and handle exceptions
+    return qualityGateValues.map(item => item.toUpperCase());
 }

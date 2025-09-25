@@ -38433,9 +38433,10 @@ const pkg = __nccwpck_require__(8330);
 const messages_1 = __nccwpck_require__(6250);
 const logger_1 = __nccwpck_require__(3258);
 async function run() {
+    var _a;
     const args = minimist(process.argv.slice(2), {
         boolean: ['debug', 'help', 'version'],
-        string: ['report', 'parasoftToolOrJavaRootPath'],
+        string: ['report', 'parasoftToolOrJavaRootPath', 'qualityGate']
     });
     if (args['version']) {
         console.log(pkg.version);
@@ -38463,6 +38464,12 @@ async function run() {
             logger_1.logger.error(messages_1.messagesFormatter.format(messages_1.messages.missing_java_parameter, '--parasoftToolOrJavaRootPath'));
             process.exit(1);
         }
+        if (((_a = args['qualityGate']) === null || _a === void 0 ? void 0 : _a.length) > 0) {
+            const normalizedQualityGateValues = Array.isArray(args['qualityGate']) ? args['qualityGate'] : [args['qualityGate']];
+            args['qualityGate'] = parseQualityGateValues(normalizedQualityGateValues);
+            // TODO: This is the test log of quality gate. This will be removed in other task
+            logger_1.logger.debug(messages_1.messagesFormatter.format('Configured quality gates: {0}', JSON.stringify(args['qualityGate'])));
+        }
         const bitbucketEnvs = getBitbucketEnvs();
         const theRunner = new runner.StaticAnalysisParserRunner();
         const result = await theRunner.run(runOptions, bitbucketEnvs);
@@ -38488,6 +38495,8 @@ function showHelp() {
     Options:
         --report                            Path or minimatch pattern to locate Parasoft static analysis report files. (required)
         --parasoftToolOrJavaRootPath        Path to Java installation or Parasoft tool (required if JAVA_HOME not set) for report processing.
+        --qualityGate                       Specify a quality gate for a Bitbucket build. The value must be in the format:
+                                                'BITBUCKET_SECURITY_LEVEL=THRESHOLD' (e.g., CRITICAL=1). Available security levels: ALL, CRITICAL, HIGH, MEDIUM, LOW.
         --debug                             Enable debug logging.
         --version                           Print version number and exit.
         --help                              Show this help information and exit.
@@ -38495,6 +38504,7 @@ function showHelp() {
     Examples:
         parasoft-findings-bitbucket --report "</path/to/report.xml>"
         parasoft-findings-bitbucket --report "</path/to/report.xml>" --parasoftToolOrJavaRootPath "<path/to/java_home>"
+        parasoft-findings-bitbucket --report "</path/to/report.xml>" --parasoftToolOrJavaRootPath "<path/to/java_home>" --qualityGate "ALL=5" --qualityGate "CRITICAL=1"
         parasoft-findings-bitbucket --report "</path/to/report.xml>" --parasoftToolOrJavaRootPath "<path/to/parasoft/tool/installation/dir>" --debug`);
 }
 function getBitbucketEnvs() {
@@ -38512,6 +38522,10 @@ function getBitbucketEnvs() {
         throw new Error(messages_1.messagesFormatter.format(messages_1.messages.missing_required_environment_variables, missingEnvs.join(', ')));
     }
     return requiredEnvs;
+}
+function parseQualityGateValues(qualityGateValues) {
+    // TODO: CICD-1075 Parse value and handle exceptions
+    return qualityGateValues.map(item => item.toUpperCase());
 }
 //# sourceMappingURL=main.js.map
 })();
