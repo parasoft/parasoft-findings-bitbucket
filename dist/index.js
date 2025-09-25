@@ -38451,12 +38451,6 @@ async function run() {
     if (args['debug']) {
         (0, logger_1.configureLogger)({ level: 'debug' });
     }
-    if (((_a = args['qualityGate']) === null || _a === void 0 ? void 0 : _a.length) > 0) {
-        const normalizedQualityGateValues = Array.isArray(args['qualityGate']) ? args['qualityGate'] : [args['qualityGate']];
-        args['qualityGate'] = parseQualityGateValues(normalizedQualityGateValues);
-        // TODO: This is the test log of quality gate. This will be removed in other task
-        logger_1.logger.debug(`Quality gate value: ${args['qualityGate']}`);
-    }
     try {
         const runOptions = {
             report: args['report'],
@@ -38469,6 +38463,12 @@ async function run() {
         if (!runOptions.parasoftToolOrJavaRootPath && !process.env.JAVA_HOME) {
             logger_1.logger.error(messages_1.messagesFormatter.format(messages_1.messages.missing_java_parameter, '--parasoftToolOrJavaRootPath'));
             process.exit(1);
+        }
+        if (((_a = args['qualityGate']) === null || _a === void 0 ? void 0 : _a.length) > 0) {
+            const normalizedQualityGateValues = Array.isArray(args['qualityGate']) ? args['qualityGate'] : [args['qualityGate']];
+            args['qualityGate'] = parseQualityGateValues(normalizedQualityGateValues);
+            // TODO: This is the test log of quality gate. This will be removed in other task
+            logger_1.logger.debug(messages_1.messagesFormatter.format('Configured quality gates: {0}', JSON.stringify(args['qualityGate'])));
         }
         const bitbucketEnvs = getBitbucketEnvs();
         const theRunner = new runner.StaticAnalysisParserRunner();
@@ -38495,7 +38495,8 @@ function showHelp() {
     Options:
         --report                            Path or minimatch pattern to locate Parasoft static analysis report files. (required)
         --parasoftToolOrJavaRootPath        Path to Java installation or Parasoft tool (required if JAVA_HOME not set) for report processing.
-        --qualityGate                       Specify a quality gate for a Bitbucket build. The value format should be 'BITBUCKET_SECURITY_LEVEL=THRESHOLD' (e.g. CRITICAL=1). Available security levels: ALL, CRITICAL, HIGH, MEDIUM, LOW.
+        --qualityGate                       Specify a quality gate for a Bitbucket build. The value must be in the format:
+                                                'BITBUCKET_SECURITY_LEVEL=THRESHOLD' (e.g., CRITICAL=1). Available security levels: ALL, CRITICAL, HIGH, MEDIUM, LOW.
         --debug                             Enable debug logging.
         --version                           Print version number and exit.
         --help                              Show this help information and exit.
