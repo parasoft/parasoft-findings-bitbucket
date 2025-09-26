@@ -38464,11 +38464,16 @@ async function run() {
             logger_1.logger.error(messages_1.messagesFormatter.format(messages_1.messages.missing_java_parameter, '--parasoftToolOrJavaRootPath'));
             process.exit(1);
         }
+        // TODO: This is the test log of quality gate. This will be removed in other task
+        logger_1.logger.debug(messages_1.messagesFormatter.format('Configured quality gates: {0}', JSON.stringify(args['qualityGate'])));
         if (((_a = args['qualityGate']) === null || _a === void 0 ? void 0 : _a.length) > 0) {
-            const normalizedQualityGateValues = Array.isArray(args['qualityGate']) ? args['qualityGate'] : [args['qualityGate']];
-            args['qualityGate'] = parseQualityGateValues(normalizedQualityGateValues);
+            const normalizedQualityGatePairs = Array.isArray(args['qualityGate']) ? args['qualityGate'] : [args['qualityGate']];
+            runOptions.qualityGates = parseQualityGates(normalizedQualityGatePairs);
             // TODO: This is the test log of quality gate. This will be removed in other task
-            logger_1.logger.debug(messages_1.messagesFormatter.format('Configured quality gates: {0}', JSON.stringify(args['qualityGate'])));
+            logger_1.logger.debug(messages_1.messagesFormatter.format('Normalized quality gates: {0}', JSON.stringify(runOptions.qualityGates)));
+        }
+        else {
+            logger_1.logger.debug(messages_1.messagesFormatter.format(messages_1.messages.no_quality_gate_is_configured));
         }
         const bitbucketEnvs = getBitbucketEnvs();
         const theRunner = new runner.StaticAnalysisParserRunner();
@@ -38524,36 +38529,36 @@ function getBitbucketEnvs() {
     }
     return requiredEnvs;
 }
-function parseQualityGateValues(qualityGateValues) {
-    const parsedQualityGateValues = {};
-    const bitbucketSecurityLevels = ['ALL', 'CRITICAL', 'HIGH', 'MEDIUM', 'LOW'];
-    for (let qualityGateValue of qualityGateValues) {
-        const [securityLevel, thresholdString] = qualityGateValue.split('=');
-        let normalizedSecurityLevel = securityLevel.trim().toUpperCase();
-        if (!bitbucketSecurityLevels.includes(normalizedSecurityLevel)) {
-            logger_1.logger.warn(messages_1.messagesFormatter.format(messages_1.messages.skipped_quality_gate_with_invalid_bitbucket_security_level, qualityGateValue, securityLevel));
+function parseQualityGates(qualityGatePairs) {
+    const parsedQualityGates = {};
+    const qualityGateNames = ['ALL', 'CRITICAL', 'HIGH', 'MEDIUM', 'LOW'];
+    for (const qualityGatePair of qualityGatePairs) {
+        const [qualityName, thresholdString] = qualityGatePair.split('=');
+        const normalizedQualityName = qualityName.trim().toUpperCase();
+        if (!qualityGateNames.includes(normalizedQualityName)) {
+            logger_1.logger.warn(messages_1.messagesFormatter.format(messages_1.messages.skipped_quality_gate_with_invalid_bitbucket_security_level, qualityGatePair, qualityName));
             continue;
         }
         if (thresholdString == undefined || thresholdString.trim() == '') {
-            logger_1.logger.warn(messages_1.messagesFormatter.format(messages_1.messages.skipped_quality_gate_with_empty_threshold, qualityGateValue, thresholdString));
+            logger_1.logger.warn(messages_1.messagesFormatter.format(messages_1.messages.skipped_quality_gate_with_empty_threshold, qualityGatePair, thresholdString));
+            continue;
+        }
+        if (parsedQualityGates[normalizedQualityName]) {
+            logger_1.logger.warn(messages_1.messagesFormatter.format(messages_1.messages.skipped_quality_gate_with_same_bitbucket_security_level, qualityGatePair));
             continue;
         }
         let threshold = parseInt(thresholdString);
         if (isNaN(threshold)) {
-            logger_1.logger.warn(messages_1.messagesFormatter.format(messages_1.messages.invalid_threshold_value, thresholdString));
             threshold = 0;
+            logger_1.logger.warn(messages_1.messagesFormatter.format(messages_1.messages.invalid_threshold_value_but_use_default_value, thresholdString, threshold));
         }
         if (threshold < 0) {
-            logger_1.logger.warn(messages_1.messagesFormatter.format(messages_1.messages.threshold_value_less_than_zero, thresholdString));
             threshold = 0;
+            logger_1.logger.warn(messages_1.messagesFormatter.format(messages_1.messages.threshold_value_less_than_zero_but_use_default_value, thresholdString, threshold));
         }
-        if (parsedQualityGateValues[normalizedSecurityLevel]) {
-            logger_1.logger.warn(messages_1.messagesFormatter.format(messages_1.messages.skipped_quality_gate_with_same_bitbucket_security_level, securityLevel, threshold));
-            continue;
-        }
-        parsedQualityGateValues[normalizedSecurityLevel] = threshold;
+        parsedQualityGates[normalizedQualityName] = threshold;
     }
-    return parsedQualityGateValues;
+    return parsedQualityGates;
 }
 //# sourceMappingURL=main.js.map
 })();

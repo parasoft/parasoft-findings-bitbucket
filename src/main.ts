@@ -52,12 +52,17 @@ export async function run(): Promise<void> {
             process.exit(1);
         }
 
+        // TODO: This is the test log of quality gate. This will be removed in other task
+        logger.debug(messagesFormatter.format('Configured quality gates: {0}', JSON.stringify(args['qualityGate'])));
+
         if (args['qualityGate']?.length > 0) {
-            const normalizedQualityGateValues: string[] = Array.isArray(args['qualityGate']) ? args['qualityGate'] : [args['qualityGate']];
-            args['qualityGate'] = parseQualityGateValues(normalizedQualityGateValues);
+            const normalizedQualityGatePairs: string[] = Array.isArray(args['qualityGate']) ? args['qualityGate'] : [args['qualityGate']];
+            runOptions.qualityGates = parseQualityGates(normalizedQualityGatePairs);
 
             // TODO: This is the test log of quality gate. This will be removed in other task
-            logger.debug(messagesFormatter.format('Configured quality gates: {0}', JSON.stringify(args['qualityGate'])));
+            logger.debug(messagesFormatter.format('Normalized quality gates: {0}', JSON.stringify(runOptions.qualityGates)));
+        } else {
+            logger.debug(messagesFormatter.format(messages.no_quality_gate_is_configured));
         }
 
         const bitbucketEnvs = getBitbucketEnvs();
@@ -122,42 +127,42 @@ function getBitbucketEnvs(): BitbucketEnvs {
     return requiredEnvs;
 }
 
-function parseQualityGateValues(qualityGateValues: string[]): runner.QualityGate {
-    const parsedQualityGateValues: runner.QualityGate = {};
-    const bitbucketSecurityLevels = ['ALL', 'CRITICAL', 'HIGH', 'MEDIUM', 'LOW'];
+function parseQualityGates(qualityGatePairs: string[]): runner.QualityGates {
+    const parsedQualityGates: runner.QualityGates = {};
+    const qualityGateNames = ['ALL', 'CRITICAL', 'HIGH', 'MEDIUM', 'LOW'];
 
-    for (let qualityGateValue of qualityGateValues) {
-        const [securityLevel, thresholdString] = qualityGateValue.split('=');
-        let normalizedSecurityLevel = securityLevel.trim().toUpperCase();
+    for (const qualityGatePair of qualityGatePairs) {
+        const [qualityName, thresholdString] = qualityGatePair.split('=');
+        const normalizedQualityName = qualityName.trim().toUpperCase();
 
-        if (!bitbucketSecurityLevels.includes(normalizedSecurityLevel)) {
-           logger.warn(messagesFormatter.format(messages.skipped_quality_gate_with_invalid_bitbucket_security_level, qualityGateValue, securityLevel));
+        if (!qualityGateNames.includes(normalizedQualityName)) {
+           logger.warn(messagesFormatter.format(messages.skipped_quality_gate_with_invalid_bitbucket_security_level, qualityGatePair, qualityName));
            continue;
         }
 
         if (thresholdString == undefined || thresholdString.trim() == '') {
-            logger.warn(messagesFormatter.format(messages.skipped_quality_gate_with_empty_threshold, qualityGateValue, thresholdString));
+            logger.warn(messagesFormatter.format(messages.skipped_quality_gate_with_empty_threshold, qualityGatePair, thresholdString));
+            continue;
+        }
+
+        if (parsedQualityGates[normalizedQualityName]) {
+            logger.warn(messagesFormatter.format(messages.skipped_quality_gate_with_same_bitbucket_security_level, qualityGatePair))
             continue;
         }
 
         let threshold = parseInt(thresholdString);
         if (isNaN(threshold)) {
-            logger.warn(messagesFormatter.format(messages.invalid_threshold_value, thresholdString));
             threshold = 0;
+            logger.warn(messagesFormatter.format(messages.invalid_threshold_value_but_use_default_value, thresholdString, threshold));
         }
 
         if (threshold < 0) {
-            logger.warn(messagesFormatter.format(messages.threshold_value_less_than_zero, thresholdString));
             threshold = 0;
+            logger.warn(messagesFormatter.format(messages.threshold_value_less_than_zero_but_use_default_value, thresholdString, threshold));
         }
 
-        if (parsedQualityGateValues[normalizedSecurityLevel]) {
-            logger.warn(messagesFormatter.format(messages.skipped_quality_gate_with_same_bitbucket_security_level, securityLevel, threshold))
-            continue;
-        }
-
-        parsedQualityGateValues[normalizedSecurityLevel] = threshold;
+        parsedQualityGates[normalizedQualityName] = threshold;
     }
 
-    return parsedQualityGateValues;
+    return parsedQualityGates;
 }

@@ -23,9 +23,10 @@ export interface RunOptions {
 
     /* Specify a path to Parasoft tool installation folder or Java installation folder */
     parasoftToolOrJavaRootPath?: string;
+    qualityGates?: QualityGates;
 }
 
-export interface QualityGate {
+export interface QualityGates {
     [key: string]: number
 }
 
