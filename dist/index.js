@@ -38495,8 +38495,9 @@ function showHelp() {
     Options:
         --report                            Path or minimatch pattern to locate Parasoft static analysis report files. (required)
         --parasoftToolOrJavaRootPath        Path to Java installation or Parasoft tool (required if JAVA_HOME not set) for report processing.
-        --qualityGate                       Specify a quality gate for a Bitbucket build. The value must be in the format:
-                                                'BITBUCKET_SECURITY_LEVEL=THRESHOLD' (e.g., CRITICAL=1). Available security levels: ALL, CRITICAL, HIGH, MEDIUM, LOW.
+        --qualityGate                       Specify a quality gate for a Bitbucket build. 
+                                                The value must be in the format: 'BITBUCKET_SECURITY_LEVEL=THRESHOLD' (e.g., CRITICAL=1).
+                                                Available security levels: ALL, CRITICAL, HIGH, MEDIUM, LOW.
         --debug                             Enable debug logging.
         --version                           Print version number and exit.
         --help                              Show this help information and exit.
@@ -38529,11 +38530,15 @@ function parseQualityGateValues(qualityGateValues) {
     for (let qualityGateValue of qualityGateValues) {
         const [securityLevel, thresholdString] = qualityGateValue.split('=');
         let normalizedSecurityLevel = securityLevel.trim().toUpperCase();
-        let threshold = parseInt(thresholdString || '0');
         if (!bitbucketSecurityLevels.includes(normalizedSecurityLevel)) {
-            logger_1.logger.warn(messages_1.messagesFormatter.format(messages_1.messages.invalid_bitbucket_security_level, securityLevel));
-            normalizedSecurityLevel = 'ALL';
+            logger_1.logger.warn(messages_1.messagesFormatter.format(messages_1.messages.skipped_quality_gate_with_invalid_bitbucket_security_level, qualityGateValue, securityLevel));
+            continue;
         }
+        if (thresholdString == undefined || thresholdString.trim() == '') {
+            logger_1.logger.warn(messages_1.messagesFormatter.format(messages_1.messages.skipped_quality_gate_with_empty_threshold, qualityGateValue, thresholdString));
+            continue;
+        }
+        let threshold = parseInt(thresholdString);
         if (isNaN(threshold)) {
             logger_1.logger.warn(messages_1.messagesFormatter.format(messages_1.messages.invalid_threshold_value, thresholdString));
             threshold = 0;
@@ -38543,7 +38548,7 @@ function parseQualityGateValues(qualityGateValues) {
             threshold = 0;
         }
         if (parsedQualityGateValues[normalizedSecurityLevel]) {
-            logger_1.logger.warn(messages_1.messagesFormatter.format(messages_1.messages.parsed_quality_gate_with_same_bitbucket_security_level, normalizedSecurityLevel, threshold));
+            logger_1.logger.warn(messages_1.messagesFormatter.format(messages_1.messages.skipped_quality_gate_with_same_bitbucket_security_level, securityLevel, threshold));
             continue;
         }
         parsedQualityGateValues[normalizedSecurityLevel] = threshold;

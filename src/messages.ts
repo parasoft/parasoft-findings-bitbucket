@@ -31,10 +31,11 @@ class Messages implements ISerializable<Messages> {
     report_details_description_1!: string;
     report_details_description_2!: string;
     missing_required_environment_variables!: string;
-    invalid_bitbucket_security_level!: string;
+    skipped_quality_gate_with_invalid_bitbucket_security_level!: string;
+    skipped_quality_gate_with_empty_threshold!: string;
     invalid_threshold_value!: string;
     threshold_value_less_than_zero!: string;
-    parsed_quality_gate_with_same_bitbucket_security_level!: string;
+    skipped_quality_gate_with_same_bitbucket_security_level!: string;
     uploading_parasoft_report_results!: string;
     only_specified_vulnerabilities_will_be_uploaded!: string;
     uploaded_parasoft_report_results!: string;
