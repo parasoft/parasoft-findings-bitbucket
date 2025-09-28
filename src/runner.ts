@@ -23,6 +23,13 @@ export interface RunOptions {
 
     /* Specify a path to Parasoft tool installation folder or Java installation folder */
     parasoftToolOrJavaRootPath?: string;
+
+    /* Specify quality gates for a Bitbucket build. The value is in the format: '{BITBUCKET_SECURITY_LEVEL=THRESHOLD}', eg. {'ALL=5', 'HIGH=2'} */
+    qualityGates?: QualityGates;
+}
+
+export interface QualityGates {
+    [key: string]: number
 }
 
 interface ReportVulnerability {

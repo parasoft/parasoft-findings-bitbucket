@@ -52,12 +52,17 @@ export async function run(): Promise<void> {
             process.exit(1);
         }
 
+        // TODO: This is the test log of quality gate. This will be removed in other task
+        logger.debug(messagesFormatter.format('Configured quality gates: {0}', JSON.stringify(args['qualityGate'])));
+
         if (args['qualityGate']?.length > 0) {
-            const normalizedQualityGateValues: string[] = Array.isArray(args['qualityGate']) ? args['qualityGate'] : [args['qualityGate']];
-            args['qualityGate'] = parseQualityGateValues(normalizedQualityGateValues);
+            const normalizedQualityGatePairs: string[] = Array.isArray(args['qualityGate']) ? args['qualityGate'] : [args['qualityGate']];
+            runOptions.qualityGates = parseQualityGates(normalizedQualityGatePairs);
 
             // TODO: This is the test log of quality gate. This will be removed in other task
-            logger.debug(messagesFormatter.format('Configured quality gates: {0}', JSON.stringify(args['qualityGate'])));
+            logger.debug(messagesFormatter.format('Normalized quality gates: {0}', JSON.stringify(runOptions.qualityGates)));
+        } else {
+            logger.debug(messagesFormatter.format(messages.no_quality_gate_is_configured));
         }
 
         const bitbucketEnvs = getBitbucketEnvs();
@@ -88,8 +93,9 @@ function showHelp() {
     Options:
         --report                            Path or minimatch pattern to locate Parasoft static analysis report files. (required)
         --parasoftToolOrJavaRootPath        Path to Java installation or Parasoft tool (required if JAVA_HOME not set) for report processing.
-        --qualityGate                       Specify a quality gate for a Bitbucket build. The value must be in the format:
-                                                'BITBUCKET_SECURITY_LEVEL=THRESHOLD' (e.g., CRITICAL=1). Available security levels: ALL, CRITICAL, HIGH, MEDIUM, LOW.
+        --qualityGate                       Specify a quality gate for a Bitbucket build. 
+                                                The value must be in the format: 'BITBUCKET_SECURITY_LEVEL=THRESHOLD' (e.g., CRITICAL=1).
+                                                Available security levels: ALL, CRITICAL, HIGH, MEDIUM, LOW.
         --debug                             Enable debug logging.
         --version                           Print version number and exit.
         --help                              Show this help information and exit.
@@ -121,7 +127,42 @@ function getBitbucketEnvs(): BitbucketEnvs {
     return requiredEnvs;
 }
 
-function parseQualityGateValues(qualityGateValues: string[]): string[] {
-    // TODO: CICD-1075 Parse value and handle exceptions
-    return qualityGateValues.map(item => item.toUpperCase());
+function parseQualityGates(qualityGatePairs: string[]): runner.QualityGates {
+    const parsedQualityGates: runner.QualityGates = {};
+    const qualityGateNames = ['ALL', 'CRITICAL', 'HIGH', 'MEDIUM', 'LOW'];
+
+    for (const qualityGatePair of qualityGatePairs) {
+        const [qualityName, thresholdString] = qualityGatePair.split('=');
+        const normalizedQualityName = qualityName.trim().toUpperCase();
+
+        if (!qualityGateNames.includes(normalizedQualityName)) {
+           logger.warn(messagesFormatter.format(messages.skipped_quality_gate_with_invalid_bitbucket_security_level, qualityGatePair, qualityName));
+           continue;
+        }
+
+        if (thresholdString == undefined || thresholdString.trim() == '') {
+            logger.warn(messagesFormatter.format(messages.skipped_quality_gate_with_empty_threshold, qualityGatePair, thresholdString));
+            continue;
+        }
+
+        if (parsedQualityGates[normalizedQualityName]) {
+            logger.warn(messagesFormatter.format(messages.skipped_quality_gate_with_same_bitbucket_security_level, qualityGatePair))
+            continue;
+        }
+
+        let threshold = parseInt(thresholdString);
+        if (isNaN(threshold)) {
+            threshold = 0;
+            logger.warn(messagesFormatter.format(messages.invalid_threshold_value_but_use_default_value, thresholdString, threshold));
+        }
+
+        if (threshold < 0) {
+            threshold = 0;
+            logger.warn(messagesFormatter.format(messages.threshold_value_less_than_zero_but_use_default_value, thresholdString, threshold));
+        }
+
+        parsedQualityGates[normalizedQualityName] = threshold;
+    }
+
+    return parsedQualityGates;
 }
