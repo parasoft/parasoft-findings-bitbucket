@@ -145,13 +145,15 @@ function parseQualityGates(qualityGatePairs: string[]): runner.QualityGates {
             continue;
         }
 
-        if (parsedQualityGates[normalizedQualityName]) {
+        if (JSON.stringify(parsedQualityGates[normalizedQualityName])) {
             logger.warn(messagesFormatter.format(messages.skipped_quality_gate_with_same_bitbucket_security_level, qualityGatePair))
             continue;
         }
 
+        const isPureNumber = new RegExp('^-?\\d+$').test(thresholdString);
         let threshold = parseInt(thresholdString);
-        if (isNaN(threshold)) {
+
+        if (!isPureNumber || isNaN(threshold)) {
             threshold = 0;
             logger.warn(messagesFormatter.format(messages.invalid_threshold_value_but_use_default_value, thresholdString, threshold));
         }

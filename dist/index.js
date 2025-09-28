@@ -102,7 +102,12 @@ class StaticAnalysisParserRunner {
                 logger_1.logger.warn(messages_1.messagesFormatter.format(messages_1.messages.skip_static_analysis_report, parasoftReportPath));
             }
         }
-        return await this.uploadReportResultsToBitbucket();
+        await this.uploadReportResultsToBitbucket();
+        const qualityGates = runOptions.qualityGates;
+        if (qualityGates && Object.keys(qualityGates).length > 0) {
+            return this.evaluateQualityGate(qualityGates);
+        }
+        return { exitCode: 0 };
     }
     async findParasoftStaticAnalysisReports(reportPath) {
         if (pt.isAbsolute(reportPath)) {
@@ -324,7 +329,6 @@ class StaticAnalysisParserRunner {
     }
     async uploadReportResultsToBitbucket() {
         var _a, _b;
-        let vulnerabilityNum = 0;
         for (const [parasoftReportPath, vulnerability] of this.vulnerabilityMap) {
             const toolName = vulnerability.toolName;
             let vulnerabilities = this.sortVulnerabilitiesBySevLevel(vulnerability.vulnerabilityDetails);
@@ -333,7 +337,6 @@ class StaticAnalysisParserRunner {
                 logger_1.logger.info(messages_1.messagesFormatter.format(messages_1.messages.skip_static_analysis_report, parasoftReportPath));
                 continue;
             }
-            vulnerabilityNum += originalVulnerabilityNum;
             logger_1.logger.info(messages_1.messagesFormatter.format(messages_1.messages.uploading_parasoft_report_results, toolName, parasoftReportPath));
             const normalizedReportPath = this.extractRelativePath(this.BITBUCKET_ENVS.BITBUCKET_CLONE_DIR, parasoftReportPath);
             let reportDetails;
@@ -391,14 +394,46 @@ class StaticAnalysisParserRunner {
             }
             logger_1.logger.info(messages_1.messagesFormatter.format(messages_1.messages.uploaded_parasoft_report_results, toolName, vulnerabilities.length));
         }
-        const uploadResult = {
+    }
+    evaluateQualityGate(qualityGates) {
+        const failedQualityGates = [];
+        const qualityGateResult = {
             exitCode: 0,
         };
-        if (vulnerabilityNum > 0) {
-            uploadResult.exitCode = 1;
-            logger_1.logger.info(messages_1.messagesFormatter.format(messages_1.messages.mark_build_to_failed_due_to_vulnerability));
+        const vulnerabilityCounts = {
+            'ALL': 0,
+            'CRITICAL': 0,
+            'HIGH': 0,
+            'MEDIUM': 0,
+            'LOW': 0
+        };
+        logger_1.logger.info(messages_1.messagesFormatter.format(messages_1.messages.evaluating_quality_gates));
+        // Collect vulnerabilities in all reports
+        for (const reportVulnerability of this.vulnerabilityMap.values()) {
+            // Count the number of vulnerabilities at each severity level
+            const vulnerabilities = reportVulnerability.vulnerabilityDetails;
+            vulnerabilityCounts['ALL'] += vulnerabilities.length;
+            for (const { severity } of vulnerabilities) {
+                vulnerabilityCounts[severity] += 1;
+            }
         }
-        return uploadResult;
+        logger_1.logger.info(messages_1.messagesFormatter.format(messages_1.messages.details_for_each_quality_gate));
+        // Check if the number of vulnerabilities exceeds the threshold
+        for (const qualityGate of Object.entries(qualityGates)) {
+            const [severity, threshold] = qualityGate;
+            if (vulnerabilityCounts[severity] > threshold) {
+                logger_1.logger.info(messages_1.messagesFormatter.format(messages_1.messages.quality_gate_failed, severity, vulnerabilityCounts[severity], threshold));
+                failedQualityGates.push(qualityGate);
+            }
+            else {
+                logger_1.logger.info(messages_1.messagesFormatter.format(messages_1.messages.quality_gate_passed, severity, vulnerabilityCounts[severity], threshold));
+            }
+        }
+        if (failedQualityGates.length > 0) {
+            qualityGateResult.exitCode = 1;
+            logger_1.logger.info(messages_1.messagesFormatter.format(messages_1.messages.mark_build_to_failed_due_to_quality_gate_failed));
+        }
+        return qualityGateResult;
     }
     getReportUrl(reportId) {
         const { BITBUCKET_API_URL, BITBUCKET_WORKSPACE, BITBUCKET_REPO_SLUG, BITBUCKET_COMMIT } = this.BITBUCKET_ENVS;
@@ -38543,12 +38578,13 @@ function parseQualityGates(qualityGatePairs) {
             logger_1.logger.warn(messages_1.messagesFormatter.format(messages_1.messages.skipped_quality_gate_with_empty_threshold, qualityGatePair, thresholdString));
             continue;
         }
-        if (parsedQualityGates[normalizedQualityName]) {
+        if (JSON.stringify(parsedQualityGates[normalizedQualityName])) {
             logger_1.logger.warn(messages_1.messagesFormatter.format(messages_1.messages.skipped_quality_gate_with_same_bitbucket_security_level, qualityGatePair));
             continue;
         }
+        const isPureNumber = new RegExp('^-?\\d+$').test(thresholdString);
         let threshold = parseInt(thresholdString);
-        if (isNaN(threshold)) {
+        if (!isPureNumber || isNaN(threshold)) {
             threshold = 0;
             logger_1.logger.warn(messages_1.messagesFormatter.format(messages_1.messages.invalid_threshold_value_but_use_default_value, thresholdString, threshold));
         }
