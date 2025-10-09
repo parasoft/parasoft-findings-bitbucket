@@ -436,7 +436,7 @@ export class StaticAnalysisParserRunner {
             const [severity, threshold] = qualityGate;
             if (vulnerabilityCounts[severity] > threshold) {
                 logger.info(messagesFormatter.format(messages.quality_gate_failed, severity, vulnerabilityCounts[severity], threshold));
-                failedQualityGates.push(qualityGate)
+                failedQualityGates.push(qualityGate);
             } else {
                 logger.info(messagesFormatter.format(messages.quality_gate_passed, severity, vulnerabilityCounts[severity], threshold));
             }
@@ -444,7 +444,11 @@ export class StaticAnalysisParserRunner {
 
         if (failedQualityGates.length > 0) {
             qualityGateResult.exitCode = 1;
-            logger.info(messagesFormatter.format(messages.mark_build_to_failed_due_to_quality_gate_failed));
+            if (failedQualityGates.length === 1) {
+                logger.info(messagesFormatter.format(messages.mark_build_to_failed_due_to_quality_gate_failed));
+            } else {
+                logger.info(messagesFormatter.format(messages.mark_build_to_failed_due_to_quality_gates_failed));
+            }
         }
 
         return qualityGateResult;

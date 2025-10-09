@@ -431,7 +431,12 @@ class StaticAnalysisParserRunner {
         }
         if (failedQualityGates.length > 0) {
             qualityGateResult.exitCode = 1;
-            logger_1.logger.info(messages_1.messagesFormatter.format(messages_1.messages.mark_build_to_failed_due_to_quality_gate_failed));
+            if (failedQualityGates.length === 1) {
+                logger_1.logger.info(messages_1.messagesFormatter.format(messages_1.messages.mark_build_to_failed_due_to_quality_gate_failed));
+            }
+            else {
+                logger_1.logger.info(messages_1.messagesFormatter.format(messages_1.messages.mark_build_to_failed_due_to_quality_gates_failed));
+            }
         }
         return qualityGateResult;
     }
@@ -38582,11 +38587,14 @@ function parseQualityGates(qualityGatePairs) {
             logger_1.logger.warn(messages_1.messagesFormatter.format(messages_1.messages.skipped_quality_gate_with_same_bitbucket_security_level, qualityGatePair));
             continue;
         }
-        const isPureNumber = new RegExp('^-?\\d+$').test(thresholdString);
-        let threshold = parseInt(thresholdString);
-        if (!isPureNumber || isNaN(threshold)) {
+        const isPureNumber = new RegExp('^\\d+$').test(thresholdString);
+        let threshold = undefined;
+        if (!isPureNumber) {
             threshold = 0;
             logger_1.logger.warn(messages_1.messagesFormatter.format(messages_1.messages.invalid_threshold_value_but_use_default_value, thresholdString, threshold));
+        }
+        else {
+            threshold = parseInt(thresholdString);
         }
         if (threshold < 0) {
             threshold = 0;

@@ -47,6 +47,7 @@ class Messages implements ISerializable<Messages> {
     details_for_each_quality_gate!: string;
     quality_gate_failed!: string;
     quality_gate_passed!: string;
+    mark_build_to_failed_due_to_quality_gates_failed!: string;
     mark_build_to_failed_due_to_quality_gate_failed!: string;
 
     deserialize(jsonPath: string) : Messages {
