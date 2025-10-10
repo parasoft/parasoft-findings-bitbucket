@@ -445,9 +445,9 @@ export class StaticAnalysisParserRunner {
         if (failedQualityGates.length > 0) {
             qualityGateResult.exitCode = 1;
             if (failedQualityGates.length === 1) {
-                logger.info(messagesFormatter.format(messages.mark_build_to_failed_due_to_quality_gate_failed));
+                logger.info(messagesFormatter.format(messages.mark_build_to_failed_due_to_quality_gate_failure));
             } else {
-                logger.info(messagesFormatter.format(messages.mark_build_to_failed_due_to_quality_gates_failed));
+                logger.info(messagesFormatter.format(messages.mark_build_to_failed_due_to_quality_gate_failures));
             }
         }
 

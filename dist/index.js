@@ -432,10 +432,10 @@ class StaticAnalysisParserRunner {
         if (failedQualityGates.length > 0) {
             qualityGateResult.exitCode = 1;
             if (failedQualityGates.length === 1) {
-                logger_1.logger.info(messages_1.messagesFormatter.format(messages_1.messages.mark_build_to_failed_due_to_quality_gate_failed));
+                logger_1.logger.info(messages_1.messagesFormatter.format(messages_1.messages.mark_build_to_failed_due_to_quality_gate_failure));
             }
             else {
-                logger_1.logger.info(messages_1.messagesFormatter.format(messages_1.messages.mark_build_to_failed_due_to_quality_gates_failed));
+                logger_1.logger.info(messages_1.messagesFormatter.format(messages_1.messages.mark_build_to_failed_due_to_quality_gate_failures));
             }
         }
         return qualityGateResult;
