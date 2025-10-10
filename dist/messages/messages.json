@@ -34,6 +34,11 @@
   "uploaded_parasoft_report_results": "Uploaded Parasoft {0} Static Analysis results: {1} vulnerabilities.",
   "failed_to_create_report_module": "Failed to create Parasoft {0} report module. Error: {1}",
   "failed_to_upload_parasoft_report_results": "Failed to upload Parasoft {0} Static Analysis results. Error: {1}",
-  "mark_build_to_failed_due_to_vulnerability": "Mark the build as failed, due to vulnerabilities found in Parasoft Static Analysis reports.",
-  "flow_or_duplicate_violation_details_description": "This is a {0} analysis violation. See the Parasoft HTML report for details"
+  "mark_build_to_failed_due_to_quality_gate_failure": "Mark the build as failed, due to a quality gate failure.",
+  "mark_build_to_failed_due_to_quality_gate_failures": "Mark the build as failed, due to some quality gate failures.",
+  "flow_or_duplicate_violation_details_description": "This is a {0} analysis violation. See the Parasoft HTML report for details",
+  "evaluating_quality_gates": "Evaluating quality gates...",
+  "details_for_each_quality_gate": "Details for each quality gate:",
+  "quality_gate_failed": "  [{0}]: <<Failed>> - (Actual value: {1}, Quality gate: {2})",
+  "quality_gate_passed": "  [{0}]: <<Passed>> - (Actual value: {1}, Quality gate: {2})"
 }

@@ -73,7 +73,14 @@ export class StaticAnalysisParserRunner {
             }
         }
 
-        return await this.uploadReportResultsToBitbucket();
+        await this.uploadReportResultsToBitbucket();
+
+        const qualityGates = runOptions.qualityGates;
+        if (qualityGates && Object.keys(qualityGates).length > 0) {
+            return this.evaluateQualityGate(qualityGates);
+        }
+
+        return {exitCode: 0}
     }
 
     private async findParasoftStaticAnalysisReports(reportPath: string): Promise<string[]> {
@@ -253,7 +260,7 @@ export class StaticAnalysisParserRunner {
                         vulnerabilityDetailDescription = vulnerabilityDetailDescription + additionalText;
                     }
                 } else {
-                   if (descriptionLength > 2000) {
+                    if (descriptionLength > 2000) {
                         logger.debug(messagesFormatter.format(messages.vulnerability_details_description_limitation, ruleSummary, [...vulnerabilityDetailDescription].length, 2000, vulnerabilityDetailDescription));
                         vulnerabilityDetailDescription = vulnerabilityDetailDescription.slice(0, 1997) + "...";
                     }
@@ -323,8 +330,7 @@ export class StaticAnalysisParserRunner {
         return uuid.v5(violType + ruleId + msg + severity + lineHash + uri + order, this.UUID_NAMESPACE);
     }
 
-    private async uploadReportResultsToBitbucket(): Promise<Result> {
-        let vulnerabilityNum = 0;
+    private async uploadReportResultsToBitbucket(): Promise<void> {
         for (const [parasoftReportPath, vulnerability] of this.vulnerabilityMap) {
             const toolName = vulnerability.toolName;
             let vulnerabilities = this.sortVulnerabilitiesBySevLevel(vulnerability.vulnerabilityDetails);
@@ -334,7 +340,6 @@ export class StaticAnalysisParserRunner {
                 continue;
             }
 
-            vulnerabilityNum += originalVulnerabilityNum;
             logger.info(messagesFormatter.format(messages.uploading_parasoft_report_results, toolName, parasoftReportPath));
 
             const normalizedReportPath = this.extractRelativePath(this.BITBUCKET_ENVS.BITBUCKET_CLONE_DIR, parasoftReportPath);
@@ -399,15 +404,54 @@ export class StaticAnalysisParserRunner {
 
             logger.info(messagesFormatter.format(messages.uploaded_parasoft_report_results, toolName, vulnerabilities.length));
         }
+    }
 
-        const uploadResult: Result = {
+    private evaluateQualityGate(qualityGates: QualityGates): Result {
+        const failedQualityGates: [string, number][] = [];
+        const qualityGateResult: Result = {
             exitCode: 0,
         }
-        if (vulnerabilityNum > 0) {
-            uploadResult.exitCode = 1;
-            logger.info(messagesFormatter.format(messages.mark_build_to_failed_due_to_vulnerability));
+        const vulnerabilityCounts: Record<string, number> = {
+            'ALL': 0,
+            'CRITICAL': 0,
+            'HIGH': 0,
+            'MEDIUM': 0,
+            'LOW': 0
+        };
+
+        logger.info(messagesFormatter.format(messages.evaluating_quality_gates));
+        // Collect vulnerabilities in all reports
+        for (const reportVulnerability of this.vulnerabilityMap.values()) {
+            // Count the number of vulnerabilities at each severity level
+            const vulnerabilities = reportVulnerability.vulnerabilityDetails;
+            vulnerabilityCounts['ALL'] += vulnerabilities.length;
+            for (const { severity } of vulnerabilities) {
+                vulnerabilityCounts[severity] += 1;
+            }
         }
-        return uploadResult;
+
+        logger.info(messagesFormatter.format(messages.details_for_each_quality_gate));
+        // Check if the number of vulnerabilities exceeds the threshold
+        for (const qualityGate of Object.entries(qualityGates)) {
+            const [severity, threshold] = qualityGate;
+            if (vulnerabilityCounts[severity] > threshold) {
+                logger.info(messagesFormatter.format(messages.quality_gate_failed, severity, vulnerabilityCounts[severity], threshold));
+                failedQualityGates.push(qualityGate);
+            } else {
+                logger.info(messagesFormatter.format(messages.quality_gate_passed, severity, vulnerabilityCounts[severity], threshold));
+            }
+        }
+
+        if (failedQualityGates.length > 0) {
+            qualityGateResult.exitCode = 1;
+            if (failedQualityGates.length === 1) {
+                logger.info(messagesFormatter.format(messages.mark_build_to_failed_due_to_quality_gate_failure));
+            } else {
+                logger.info(messagesFormatter.format(messages.mark_build_to_failed_due_to_quality_gate_failures));
+            }
+        }
+
+        return qualityGateResult;
     }
 
     private getReportUrl(reportId: string): string {
