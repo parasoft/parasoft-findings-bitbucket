@@ -395,7 +395,7 @@ class StaticAnalysisParserRunner {
             logger_1.logger.info(messages_1.messagesFormatter.format(messages_1.messages.uploaded_parasoft_report_results, toolName, vulnerabilities.length));
         }
     }
-    evaluateQualityGate(qualityGates) {
+    async evaluateQualityGate(qualityGates) {
         const failedQualityGates = [];
         const qualityGateResult = {
             exitCode: 0,
@@ -422,11 +422,11 @@ class StaticAnalysisParserRunner {
         for (const qualityGate of Object.entries(qualityGates)) {
             const [severity, threshold] = qualityGate;
             if (vulnerabilityCounts[severity] > threshold) {
-                logger_1.logger.info(messages_1.messagesFormatter.format(messages_1.messages.quality_gate_failed, severity, vulnerabilityCounts[severity], threshold));
+                logger_1.logger.info(messages_1.messagesFormatter.format(messages_1.messages.quality_gate_failed_details, severity, vulnerabilityCounts[severity], threshold));
                 failedQualityGates.push(qualityGate);
             }
             else {
-                logger_1.logger.info(messages_1.messagesFormatter.format(messages_1.messages.quality_gate_passed, severity, vulnerabilityCounts[severity], threshold));
+                logger_1.logger.info(messages_1.messagesFormatter.format(messages_1.messages.quality_gate_passed_details, severity, vulnerabilityCounts[severity], threshold));
             }
         }
         if (failedQualityGates.length > 0) {
@@ -438,11 +438,60 @@ class StaticAnalysisParserRunner {
                 logger_1.logger.info(messages_1.messagesFormatter.format(messages_1.messages.mark_build_to_failed_due_to_quality_gate_failures));
             }
         }
+        if (this.BITBUCKET_ENVS.BITBUCKET_PR_ID) {
+            await this.createQualityGateBuildToPullRequest(qualityGateResult, failedQualityGates, vulnerabilityCounts);
+        }
         return qualityGateResult;
+    }
+    async createQualityGateBuildToPullRequest(qualityGateResult, failedQualityGates, vulnerabilityCounts) {
+        var _a;
+        let buildKey;
+        let buildStatus;
+        let buildDescription;
+        if (qualityGateResult.exitCode) {
+            buildKey = messages_1.messagesFormatter.format(messages_1.messages.quality_gate_failed);
+            buildStatus = "FAILED";
+            buildDescription = "";
+            for (const failedQualityGate of failedQualityGates) {
+                const [severity, threshold] = failedQualityGate;
+                const description = messages_1.messagesFormatter.format(messages_1.messages.quality_gate_failed_details, severity, vulnerabilityCounts[severity], threshold).trimStart();
+                buildDescription += `${description}\r`;
+            }
+        }
+        else {
+            buildKey = messages_1.messagesFormatter.format(messages_1.messages.quality_gate_passed);
+            buildStatus = "SUCCESSFUL";
+            buildDescription = messages_1.messagesFormatter.format(messages_1.messages.all_quality_gate_passed);
+        }
+        try {
+            await axios_1.default.post(this.getBuildStatusUrl(), {
+                key: buildKey,
+                state: buildStatus,
+                description: buildDescription,
+                url: this.getBuildUrl()
+            }, { auth: this.getAuth() });
+        }
+        catch (error) {
+            if (error instanceof axios_1.AxiosError) {
+                const data = (_a = error.response) === null || _a === void 0 ? void 0 : _a.data;
+                if (data) {
+                    logger_1.logger.error(JSON.stringify(data, null, 2));
+                }
+            }
+            throw new Error("Error uploading build status: " + error);
+        }
     }
     getReportUrl(reportId) {
         const { BITBUCKET_API_URL, BITBUCKET_WORKSPACE, BITBUCKET_REPO_SLUG, BITBUCKET_COMMIT } = this.BITBUCKET_ENVS;
         return `${BITBUCKET_API_URL}/${BITBUCKET_WORKSPACE}/${BITBUCKET_REPO_SLUG}/commit/${BITBUCKET_COMMIT}/reports/${reportId}`;
+    }
+    getBuildUrl() {
+        const { BITBUCKET_BUILD_NUMBER, BITBUCKET_WORKSPACE, BITBUCKET_REPO_SLUG } = this.BITBUCKET_ENVS;
+        return `https://bitbucket.org/${BITBUCKET_WORKSPACE}/${BITBUCKET_REPO_SLUG}/pipelines/results/${BITBUCKET_BUILD_NUMBER}`;
+    }
+    getBuildStatusUrl() {
+        const { BITBUCKET_API_URL, BITBUCKET_WORKSPACE, BITBUCKET_REPO_SLUG, BITBUCKET_COMMIT } = this.BITBUCKET_ENVS;
+        return `${BITBUCKET_API_URL}/${BITBUCKET_WORKSPACE}/${BITBUCKET_REPO_SLUG}/commit/${BITBUCKET_COMMIT}/statuses/build`;
     }
     getAuth() {
         const { USER_EMAIL, API_TOKEN } = this.BITBUCKET_ENVS;
@@ -38504,13 +38553,10 @@ async function run() {
             logger_1.logger.error(messages_1.messagesFormatter.format(messages_1.messages.missing_java_parameter, '--parasoftToolOrJavaRootPath'));
             process.exit(1);
         }
-        // TODO: This is the test log of quality gate. This will be removed in other task
-        logger_1.logger.debug(messages_1.messagesFormatter.format('Configured quality gates: {0}', JSON.stringify(args['qualityGate'])));
         if (((_a = args['qualityGate']) === null || _a === void 0 ? void 0 : _a.length) > 0) {
             const normalizedQualityGatePairs = Array.isArray(args['qualityGate']) ? args['qualityGate'] : [args['qualityGate']];
             runOptions.qualityGates = parseQualityGates(normalizedQualityGatePairs);
-            // TODO: This is the test log of quality gate. This will be removed in other task
-            logger_1.logger.debug(messages_1.messagesFormatter.format('Normalized quality gates: {0}', JSON.stringify(runOptions.qualityGates)));
+            logger_1.logger.debug(messages_1.messagesFormatter.format(messages_1.messages.configured_quality_gates, JSON.stringify(runOptions.qualityGates)));
         }
         else {
             logger_1.logger.debug(messages_1.messagesFormatter.format(messages_1.messages.no_quality_gate_is_configured));
@@ -38561,7 +38607,9 @@ function getBitbucketEnvs() {
         BITBUCKET_COMMIT: process.env.BITBUCKET_COMMIT || '',
         BITBUCKET_WORKSPACE: process.env.BITBUCKET_WORKSPACE || '',
         BITBUCKET_CLONE_DIR: process.env.BITBUCKET_CLONE_DIR || '',
-        BITBUCKET_API_URL: 'https://api.bitbucket.org/2.0/repositories'
+        BITBUCKET_API_URL: 'https://api.bitbucket.org/2.0/repositories',
+        BITBUCKET_PR_ID: process.env.BITBUCKET_PR_ID || '',
+        BITBUCKET_BUILD_NUMBER: process.env.BITBUCKET_BUILD_NUMBER || ''
     };
     const missingEnvs = Object.keys(requiredEnvs).filter(key => requiredEnvs[key] == '');
     if (missingEnvs.length > 0) {

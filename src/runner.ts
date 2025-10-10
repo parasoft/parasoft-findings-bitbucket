@@ -406,7 +406,7 @@ export class StaticAnalysisParserRunner {
         }
     }
 
-    private evaluateQualityGate(qualityGates: QualityGates): Result {
+    private async evaluateQualityGate(qualityGates: QualityGates): Promise<Result> {
         const failedQualityGates: [string, number][] = [];
         const qualityGateResult: Result = {
             exitCode: 0,
@@ -435,10 +435,10 @@ export class StaticAnalysisParserRunner {
         for (const qualityGate of Object.entries(qualityGates)) {
             const [severity, threshold] = qualityGate;
             if (vulnerabilityCounts[severity] > threshold) {
-                logger.info(messagesFormatter.format(messages.quality_gate_failed, severity, vulnerabilityCounts[severity], threshold));
+                logger.info(messagesFormatter.format(messages.quality_gate_failed_details, severity, vulnerabilityCounts[severity], threshold));
                 failedQualityGates.push(qualityGate);
             } else {
-                logger.info(messagesFormatter.format(messages.quality_gate_passed, severity, vulnerabilityCounts[severity], threshold));
+                logger.info(messagesFormatter.format(messages.quality_gate_passed_details, severity, vulnerabilityCounts[severity], threshold));
             }
         }
 
@@ -451,12 +451,64 @@ export class StaticAnalysisParserRunner {
             }
         }
 
+        if (this.BITBUCKET_ENVS.BITBUCKET_PR_ID) {
+            await this.createQualityGateBuildToPullRequest(qualityGateResult, failedQualityGates, vulnerabilityCounts);
+        }
+
         return qualityGateResult;
+    }
+
+    private async createQualityGateBuildToPullRequest(qualityGateResult: Result, failedQualityGates: [string, number][], vulnerabilityCounts: Record<string, number>): Promise<void> {
+        let buildKey;
+        let buildStatus;
+        let buildDescription;
+
+        if (qualityGateResult.exitCode) {
+            buildKey = messagesFormatter.format(messages.quality_gate_failed);
+            buildStatus = "FAILED";
+            buildDescription = "";
+            for (const failedQualityGate of failedQualityGates) {
+                const [severity, threshold] = failedQualityGate;
+                const description = messagesFormatter.format(messages.quality_gate_failed_details, severity, vulnerabilityCounts[severity], threshold).trimStart();
+                buildDescription += `${description}\r`;
+            }
+        } else {
+            buildKey = messagesFormatter.format(messages.quality_gate_passed);
+            buildStatus = "SUCCESSFUL";
+            buildDescription = messagesFormatter.format(messages.all_quality_gate_passed);
+        }
+
+        try {
+            await axios.post(this.getBuildStatusUrl(), {
+                key: buildKey,
+                state: buildStatus,
+                description: buildDescription,
+                url: this.getBuildUrl()
+            }, {auth: this.getAuth()});
+        } catch (error) {
+            if (error instanceof AxiosError) {
+                const data = error.response?.data;
+                if (data) {
+                    logger.error(JSON.stringify(data, null, 2));
+                }
+            }
+            throw new Error("Error uploading build status: " + error);
+        }
     }
 
     private getReportUrl(reportId: string): string {
         const { BITBUCKET_API_URL, BITBUCKET_WORKSPACE, BITBUCKET_REPO_SLUG, BITBUCKET_COMMIT } = this.BITBUCKET_ENVS;
         return `${BITBUCKET_API_URL}/${BITBUCKET_WORKSPACE}/${BITBUCKET_REPO_SLUG}/commit/${BITBUCKET_COMMIT}/reports/${reportId}`;
+    }
+
+    private getBuildUrl(): string {
+        const { BITBUCKET_BUILD_NUMBER, BITBUCKET_WORKSPACE, BITBUCKET_REPO_SLUG } = this.BITBUCKET_ENVS;
+        return `https://bitbucket.org/${BITBUCKET_WORKSPACE}/${BITBUCKET_REPO_SLUG}/pipelines/results/${BITBUCKET_BUILD_NUMBER}`;
+    }
+
+    private getBuildStatusUrl(): string {
+        const { BITBUCKET_API_URL, BITBUCKET_WORKSPACE, BITBUCKET_REPO_SLUG, BITBUCKET_COMMIT } = this.BITBUCKET_ENVS;
+        return `${BITBUCKET_API_URL}/${BITBUCKET_WORKSPACE}/${BITBUCKET_REPO_SLUG}/commit/${BITBUCKET_COMMIT}/statuses/build`;
     }
 
     private getAuth(): AxiosBasicCredentials {

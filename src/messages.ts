@@ -31,6 +31,7 @@ class Messages implements ISerializable<Messages> {
     report_details_description_1!: string;
     report_details_description_2!: string;
     missing_required_environment_variables!: string;
+    configured_quality_gates!: string;
     no_quality_gate_is_configured!: string;
     skipped_quality_gate_with_invalid_bitbucket_security_level!: string;
     skipped_quality_gate_with_empty_threshold!: string;
@@ -45,10 +46,13 @@ class Messages implements ISerializable<Messages> {
     flow_or_duplicate_violation_details_description!: string;
     evaluating_quality_gates!: string;
     details_for_each_quality_gate!: string;
-    quality_gate_failed!: string;
-    quality_gate_passed!: string;
+    quality_gate_failed_details!: string;
+    quality_gate_passed_details!: string;
     mark_build_to_failed_due_to_quality_gate_failure!: string;
     mark_build_to_failed_due_to_quality_gate_failures!: string;
+    quality_gate_failed!: string;
+    quality_gate_passed!: string;
+    all_quality_gate_passed!: string;
 
     deserialize(jsonPath: string) : Messages {
         const buf = fs.readFileSync(jsonPath);

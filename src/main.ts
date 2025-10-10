@@ -12,6 +12,8 @@ export interface BitbucketEnvs {
     BITBUCKET_WORKSPACE: string;
     BITBUCKET_CLONE_DIR: string;
     BITBUCKET_API_URL: string;
+    BITBUCKET_PR_ID: string;
+    BITBUCKET_BUILD_NUMBER: string;
 }
 
 export async function run(): Promise<void> {
@@ -52,15 +54,11 @@ export async function run(): Promise<void> {
             process.exit(1);
         }
 
-        // TODO: This is the test log of quality gate. This will be removed in other task
-        logger.debug(messagesFormatter.format('Configured quality gates: {0}', JSON.stringify(args['qualityGate'])));
-
         if (args['qualityGate']?.length > 0) {
             const normalizedQualityGatePairs: string[] = Array.isArray(args['qualityGate']) ? args['qualityGate'] : [args['qualityGate']];
             runOptions.qualityGates = parseQualityGates(normalizedQualityGatePairs);
 
-            // TODO: This is the test log of quality gate. This will be removed in other task
-            logger.debug(messagesFormatter.format('Normalized quality gates: {0}', JSON.stringify(runOptions.qualityGates)));
+            logger.debug(messagesFormatter.format(messages.configured_quality_gates, JSON.stringify(runOptions.qualityGates)));
         } else {
             logger.debug(messagesFormatter.format(messages.no_quality_gate_is_configured));
         }
@@ -116,7 +114,9 @@ function getBitbucketEnvs(): BitbucketEnvs {
         BITBUCKET_COMMIT: process.env.BITBUCKET_COMMIT || '',
         BITBUCKET_WORKSPACE: process.env.BITBUCKET_WORKSPACE || '',
         BITBUCKET_CLONE_DIR: process.env.BITBUCKET_CLONE_DIR || '',
-        BITBUCKET_API_URL: 'https://api.bitbucket.org/2.0/repositories'
+        BITBUCKET_API_URL: 'https://api.bitbucket.org/2.0/repositories',
+        BITBUCKET_PR_ID: process.env.BITBUCKET_PR_ID || '',
+        BITBUCKET_BUILD_NUMBER: process.env.BITBUCKET_BUILD_NUMBER || ''
     }
 
     const missingEnvs = Object.keys(requiredEnvs).filter(key => requiredEnvs[key as keyof BitbucketEnvs] == '');

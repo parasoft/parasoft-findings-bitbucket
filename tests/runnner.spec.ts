@@ -343,7 +343,9 @@ describe('runnner', () => {
                 BITBUCKET_COMMIT: 'commit',
                 BITBUCKET_WORKSPACE: 'workspace',
                 BITBUCKET_CLONE_DIR: __dirname,
-                BITBUCKET_API_URL: 'https://api.bitbucket.org/2.0/repositories'
+                BITBUCKET_API_URL: 'https://api.bitbucket.org/2.0/repositories',
+                BITBUCKET_PR_ID: '1',
+                BITBUCKET_BUILD_NUMBER: '1'
             };
         };
     });
