@@ -150,7 +150,7 @@ function parseQualityGates(qualityGatePairs: string[]): runner.QualityGates {
             continue;
         }
 
-        const isPureNumber = new RegExp('^\\d+$').test(thresholdString);
+        const isPureNumber = new RegExp('^-?\\d+$').test(thresholdString);
         let threshold = undefined;
         if (!isPureNumber) {
             threshold = 0;

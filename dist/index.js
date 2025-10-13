@@ -38635,7 +38635,7 @@ function parseQualityGates(qualityGatePairs) {
             logger_1.logger.warn(messages_1.messagesFormatter.format(messages_1.messages.skipped_quality_gate_with_same_bitbucket_security_level, qualityGatePair));
             continue;
         }
-        const isPureNumber = new RegExp('^\\d+$').test(thresholdString);
+        const isPureNumber = new RegExp('^-?\\d+$').test(thresholdString);
         let threshold = undefined;
         if (!isPureNumber) {
             threshold = 0;
