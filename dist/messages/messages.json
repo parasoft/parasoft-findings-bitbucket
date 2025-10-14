@@ -40,10 +40,10 @@
   "flow_or_duplicate_violation_details_description": "This is a {0} analysis violation. See the Parasoft HTML report for details",
   "evaluating_quality_gates": "Evaluating quality gates...",
   "details_for_each_quality_gate": "Details for each quality gate:",
-  "quality_gate_failed_details": "  [{0}]: <<Failed>> - (Actual value: {1}, Quality gate: {2})",
-  "quality_gate_passed_details": "  [{0}]: <<Passed>> - (Actual value: {1}, Quality gate: {2})",
+  "quality_gate_failed_details": "  \u274C [{0}]: Failed (Actual value: {1}, Threshold: {2})",
+  "quality_gate_passed_details": "  \u2705 [{0}]: Passed (Actual value: {1}, Threshold: {2})",
   "quality_gate_failed": "Parasoft Findings: Quality gate failed",
   "quality_gate_passed": "Parasoft Findings: Quality gate passed",
-  "all_quality_gate_passed": "All quality gates passed.",
+  "all_quality_gate_passed": "\u2705 All quality gates passed.",
   "failed_to_create_build_status_in_pull_request": "Failed to create the build status in the pull request {0}. Error: {1}"
 }
