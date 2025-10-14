@@ -42,6 +42,8 @@ describe('main', () => {
             process.env.BITBUCKET_WORKSPACE = 'workspace';
             process.env.BITBUCKET_CLONE_DIR = __dirname;
             process.env.BITBUCKET_API_URL = 'https://api.bitbucket.org/2.0/repositories';
+            process.env.BITBUCKET_PR_ID = '1';
+            process.env.BITBUCKET_BUILD_NUMBER = '1';
         };
 
         const clearBitbucketEnv = () => {
@@ -52,6 +54,8 @@ describe('main', () => {
             delete process.env.BITBUCKET_WORKSPACE;
             delete process.env.BITBUCKET_CLONE_DIR;
             delete process.env.BITBUCKET_API_URL;
+            delete process.env.BITBUCKET_PR_ID;
+            delete process.env.BITBUCKET_BUILD_NUMBER;
         };
 
         const setUpFakeRunner = (fakeRunner: sinon.SinonSpy) => {
