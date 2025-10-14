@@ -439,11 +439,11 @@ class StaticAnalysisParserRunner {
             }
         }
         if (this.BITBUCKET_ENVS.BITBUCKET_PR_ID) {
-            await this.createQualityGateBuildToPullRequest(qualityGateResult, failedQualityGates, vulnerabilityCounts);
+            await this.createQualityGateBuildStatusToPullRequest(qualityGateResult, failedQualityGates, vulnerabilityCounts);
         }
         return qualityGateResult;
     }
-    async createQualityGateBuildToPullRequest(qualityGateResult, failedQualityGates, vulnerabilityCounts) {
+    async createQualityGateBuildStatusToPullRequest(qualityGateResult, failedQualityGates, vulnerabilityCounts) {
         var _a;
         let buildKey;
         let buildStatus;
@@ -478,7 +478,7 @@ class StaticAnalysisParserRunner {
                     logger_1.logger.error(JSON.stringify(data, null, 2));
                 }
             }
-            throw new Error("Error uploading build status: " + error);
+            throw new Error(messages_1.messagesFormatter.format(messages_1.messages.failed_to_create_build_status_in_pull_request, this.BITBUCKET_ENVS.BITBUCKET_PR_ID, error));
         }
     }
     getReportUrl(reportId) {

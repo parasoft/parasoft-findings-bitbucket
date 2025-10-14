@@ -452,13 +452,13 @@ export class StaticAnalysisParserRunner {
         }
 
         if (this.BITBUCKET_ENVS.BITBUCKET_PR_ID) {
-            await this.createQualityGateBuildToPullRequest(qualityGateResult, failedQualityGates, vulnerabilityCounts);
+            await this.createQualityGateBuildStatusToPullRequest(qualityGateResult, failedQualityGates, vulnerabilityCounts);
         }
 
         return qualityGateResult;
     }
 
-    private async createQualityGateBuildToPullRequest(qualityGateResult: Result, failedQualityGates: [string, number][], vulnerabilityCounts: Record<string, number>): Promise<void> {
+    private async createQualityGateBuildStatusToPullRequest(qualityGateResult: Result, failedQualityGates: [string, number][], vulnerabilityCounts: Record<string, number>): Promise<void> {
         let buildKey;
         let buildStatus;
         let buildDescription;
@@ -492,7 +492,7 @@ export class StaticAnalysisParserRunner {
                     logger.error(JSON.stringify(data, null, 2));
                 }
             }
-            throw new Error("Error uploading build status: " + error);
+            throw new Error(messagesFormatter.format(messages.failed_to_create_build_status_in_pull_request, this.BITBUCKET_ENVS.BITBUCKET_PR_ID, error));
         }
     }
 

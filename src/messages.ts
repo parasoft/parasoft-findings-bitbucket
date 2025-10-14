@@ -53,6 +53,7 @@ class Messages implements ISerializable<Messages> {
     quality_gate_failed!: string;
     quality_gate_passed!: string;
     all_quality_gate_passed!: string;
+    failed_to_create_build_status_in_pull_request!: string;
 
     deserialize(jsonPath: string) : Messages {
         const buf = fs.readFileSync(jsonPath);
