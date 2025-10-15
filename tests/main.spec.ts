@@ -10,6 +10,8 @@ describe('main', () => {
 
         let log: sinon.SinonSpy;
         let logInfo: sinon.SinonSpy;
+        let logWarn: sinon.SinonSpy;
+        let logDebug: sinon.SinonSpy;
         let logError: sinon.SinonSpy;
 
         let exit: sinon.SinonStub;
@@ -22,6 +24,10 @@ describe('main', () => {
             sandbox.replace(console, 'log', log);
             logInfo = sandbox.fake();
             sandbox.replace(logger, 'info', logInfo);
+            logWarn = sandbox.fake();
+            sandbox.replace(logger, 'warn', logWarn);
+            logDebug = sandbox.fake();
+            sandbox.replace(logger, 'debug', logDebug);
             logError = sandbox.fake();
             sandbox.replace(logger, 'error', logError);
             exit = sandbox.stub(process, 'exit');
@@ -109,6 +115,25 @@ describe('main', () => {
             });
             sinon.assert.calledWith(logInfo, messagesFormatter.format(messages.complete));
             sinon.assert.match(logger.level, 'debug');
+            sinon.assert.calledWith(logDebug, messagesFormatter.format(messages.no_quality_gate_is_configured));
+        });
+
+        it('Parse static analysis report with quality gate', async () => {
+            process.argv = ['node', 'parasoft-findings-bitbucket', '--report=D:/test/report.xml', '--parasoftToolOrJavaRootPath=C:/Java', '--qualityGate', 'all=10', '--debug'];
+            setBitbucketEnv();
+            setUpFakeRunner(sandbox.fake.resolves("successfully parsed"));
+
+            await main.run();
+
+            sinon.assert.notCalled(logError);
+            sinon.assert.calledWith(fakeStaticAnalysisParserRunner, {
+                report: "D:/test/report.xml",
+                parasoftToolOrJavaRootPath: "C:/Java",
+                qualityGates: { ALL: 10 }
+            });
+            sinon.assert.calledWith(logInfo, messagesFormatter.format(messages.complete));
+            sinon.assert.match(logger.level, 'debug');
+            sinon.assert.calledWith(logDebug, messagesFormatter.format(messages.configured_quality_gates, '{"ALL":10}'));
         });
 
         it('Missing --report', async () => {
@@ -157,7 +182,58 @@ describe('main', () => {
             sinon.assert.calledWith(exit, 1);
             sinon.assert.called(logError);
             const arg = logError.firstCall.args[0];
-            sinon.assert.match(arg.message, messagesFormatter.format(messages.missing_required_environment_variables, 'USER_EMAIL, API_TOKEN, BITBUCKET_REPO_SLUG, BITBUCKET_COMMIT, BITBUCKET_WORKSPACE, BITBUCKET_CLONE_DIR'));
+            sinon.assert.match(arg.message, messagesFormatter.format(messages.missing_required_environment_variables, 'USER_EMAIL, API_TOKEN, BITBUCKET_REPO_SLUG, BITBUCKET_COMMIT, BITBUCKET_WORKSPACE, BITBUCKET_CLONE_DIR, BITBUCKET_BUILD_NUMBER'));
+        });
+
+        describe('Invalid quality gate values', async () => {
+            beforeEach(() => {
+                process.argv = ['node', 'parasoft-findings-bitbucket', '--report=D:/test/report.xml', '--parasoftToolOrJavaRootPath=C:/Java'];
+            });
+
+            it('Invalid bitbucket security level', async () => {
+                process.argv.push('--qualityGate', 'invalid=10');
+
+                await main.run();
+
+                sinon.assert.called(logWarn);
+                sinon.assert.calledWith(logWarn, messagesFormatter.format(messages.skipped_quality_gate_with_invalid_bitbucket_security_level, 'invalid=10', 'invalid'));
+            });
+
+            it('Empty threshold value', async () => {
+                process.argv.push('--qualityGate', 'all=');
+
+                await main.run();
+
+                sinon.assert.called(logWarn);
+                sinon.assert.calledWith(logWarn, messagesFormatter.format(messages.skipped_quality_gate_with_empty_threshold, 'all=', ''));
+            });
+
+            it('Same bitbucket security levels', async () => {
+                process.argv.push('--qualityGate', 'all=1', '--qualityGate', 'all=0');
+
+                await main.run();
+
+                sinon.assert.called(logWarn);
+                sinon.assert.calledWith(logWarn, messagesFormatter.format(messages.skipped_quality_gate_with_same_bitbucket_security_level, 'all=0'));
+            });
+
+            it('Invalid threshold value and use default value', async () => {
+                process.argv.push('--qualityGate', 'all=invalid');
+
+                await main.run();
+
+                sinon.assert.called(logWarn);
+                sinon.assert.calledWith(logWarn, messagesFormatter.format(messages.invalid_threshold_value_but_use_default_value, 'invalid', '0'));
+            });
+
+            it('Threshold value is less than 0 and use default value', async () => {
+                process.argv.push('--qualityGate', 'all=-1');
+
+                await main.run();
+
+                sinon.assert.called(logWarn);
+                sinon.assert.calledWith(logWarn, messagesFormatter.format(messages.threshold_value_less_than_zero_but_use_default_value, '-1', '0'));
+            });
         });
     });
 });
