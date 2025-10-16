@@ -8,8 +8,8 @@ import * as cp from 'child_process';
 import * as path from "node:path";
 import * as fs from "node:fs";
 
-describe('runnner', () => {
-    describe('run', () => {
+describe('runner', () => {
+    describe('run()', () => {
         let sandbox: sinon.SinonSandbox;
         // logger
         let logInfo: sinon.SinonSpy;
@@ -33,7 +33,7 @@ describe('runnner', () => {
             sandbox.restore();
         })
 
-        it('no static analysis reports found', async () => {
+        it('should throw the error when no static analysis reports are found', async () => {
             const put = sandbox.fake.resolves({status: 200, data: {}});
             sandbox.replace(axios, 'put', put);
             const runOptions: RunOptions = {
@@ -58,7 +58,7 @@ describe('runnner', () => {
             sinon.assert.fail("Expected error to be thrown but it was not.");
         });
 
-        it('no Java execute file found in tool home', async () => {
+        it('should throw the error when no Java execute file is found in tool install directory', async () => {
             const put = sandbox.fake.resolves({status: 200, data: {}});
             sandbox.replace(axios, 'put', put);
             const runOptions: RunOptions = {
@@ -83,7 +83,7 @@ describe('runnner', () => {
             sinon.assert.fail("Expected error to be thrown but it was not.");
         });
 
-        it('no Java execute file found', async () => {
+        it('should throw the error when no Java execute file is found', async () => {
             const javahome = process.env.JAVA_HOME;
             try {
                 delete process.env.JAVA_HOME;
@@ -248,7 +248,7 @@ describe('runnner', () => {
                 sinon.assert.calledWith(logInfo, messagesFormatter.format(messages.uploaded_parasoft_report_results, 'dotTEST', 1000));
             });
 
-            it('parse and upload static analysis result normal - a quality gate failure', async () => {
+            it('should exit with 1 when only one quality gate fails', async () => {
                 runOptions.qualityGates = {'ALL':500};
                 const put = sandbox.fake.resolves({status: 200, data: {}});
                 sandbox.replace(axios, 'put', put);
@@ -269,7 +269,7 @@ describe('runnner', () => {
                 sinon.assert.calledWith(logInfo, messagesFormatter.format(messages.uploaded_parasoft_report_results, 'dotTEST', 1000));
             });
 
-            it('parse and upload static analysis result normal - multiple quality gate failures', async () => {
+            it('should exit with 1 when multiple quality gate fail', async () => {
                 runOptions.qualityGates = {'ALL':500, 'HIGH':5};
                 const put = sandbox.fake.resolves({status: 200, data: {}});
                 sandbox.replace(axios, 'put', put);
@@ -291,7 +291,7 @@ describe('runnner', () => {
                 sinon.assert.calledWith(logInfo, messagesFormatter.format(messages.uploaded_parasoft_report_results, 'dotTEST', 1000));
             });
 
-            it('not valid Static Analysis report', async () => {
+            it('should throw the error when there are no valid Static Analysis reports', async () => {
                 reportPath = path.join(__dirname, '/res/reports/invalid_report');
                 runOptions.report = reportPath + '.xml';
                 const put = sandbox.fake.resolves({status: 200, data: {}});
@@ -315,7 +315,7 @@ describe('runnner', () => {
                 sinon.assert.fail("Expected error to be thrown but it was not.");
             });
 
-            it('parse report failed', async () => {
+            it('should print warning message when parsing report failed', async () => {
                 const put = sandbox.fake.resolves({status: 200, data: {}});
                 sandbox.replace(axios, 'put', put);
                 const post = sandbox.fake.resolves({status: 200, data: {}});
@@ -334,7 +334,7 @@ describe('runnner', () => {
                 sinon.assert.notCalled(put);
             });
 
-            it('create report module failed', async () => {
+            it('should throw the error when creating report module failed', async () => {
                 const fakeResponse: AxiosResponse = {
                     status: 500,
                     statusText: 'Internal Server Error',
@@ -365,7 +365,7 @@ describe('runnner', () => {
                 sinon.assert.fail("Expected error to be thrown but it was not.");
             });
 
-            it('upload static analysis result failed', async () => {
+            it('should throw the error when uploading static analysis result failed', async () => {
                 const fakeResponse: AxiosResponse = {
                     status: 500,
                     statusText: 'Internal Server Error',
@@ -395,7 +395,7 @@ describe('runnner', () => {
                 sinon.assert.fail("Expected error to be thrown but it was not.");
             });
 
-            it('create build status failed', async () => {
+            it('should throw the error when creating build status failed', async () => {
                 runOptions.qualityGates = {'ALL':500};
                 const fakeResponse: AxiosResponse = {
                     status: 500,
