@@ -10,6 +10,8 @@ describe('main', () => {
 
         let log: sinon.SinonSpy;
         let logInfo: sinon.SinonSpy;
+        let logWarn: sinon.SinonSpy;
+        let logDebug: sinon.SinonSpy;
         let logError: sinon.SinonSpy;
 
         let exit: sinon.SinonStub;
@@ -22,6 +24,10 @@ describe('main', () => {
             sandbox.replace(console, 'log', log);
             logInfo = sandbox.fake();
             sandbox.replace(logger, 'info', logInfo);
+            logWarn = sandbox.fake();
+            sandbox.replace(logger, 'warn', logWarn);
+            logDebug = sandbox.fake();
+            sandbox.replace(logger, 'debug', logDebug);
             logError = sandbox.fake();
             sandbox.replace(logger, 'error', logError);
             exit = sandbox.stub(process, 'exit');
@@ -95,7 +101,7 @@ describe('main', () => {
             sinon.assert.calledWith(exit, 0);
         });
 
-        it('Parse static analysis report successfully', async () => {
+        it('parse static analysis report successfully without quality gate check', async () => {
             process.argv = ['node', 'parasoft-findings-bitbucket', '--report=D:/test/report.xml', '--parasoftToolOrJavaRootPath=C:/Java', '--debug'];
             setBitbucketEnv();
             setUpFakeRunner(sandbox.fake.resolves("successfully parsed"));
@@ -109,9 +115,39 @@ describe('main', () => {
             });
             sinon.assert.calledWith(logInfo, messagesFormatter.format(messages.complete));
             sinon.assert.match(logger.level, 'debug');
+            sinon.assert.calledWith(logDebug, messagesFormatter.format(messages.no_quality_gate_is_configured));
         });
 
-        it('Missing --report', async () => {
+        it('parse static analysis report successfully with quality gate check', async () => {
+            process.argv = ['node', 'parasoft-findings-bitbucket', '--report=D:/test/report.xml', '--parasoftToolOrJavaRootPath=C:/Java', '--qualityGate', 'all=10', '--debug'];
+            setBitbucketEnv();
+            setUpFakeRunner(sandbox.fake.resolves("successfully parsed"));
+
+            await main.run();
+
+            sinon.assert.notCalled(logError);
+            sinon.assert.calledWith(fakeStaticAnalysisParserRunner, {
+                report: "D:/test/report.xml",
+                parasoftToolOrJavaRootPath: "C:/Java",
+                qualityGates: { ALL: 10 }
+            });
+            sinon.assert.calledWith(logInfo, messagesFormatter.format(messages.complete));
+            sinon.assert.match(logger.level, 'debug');
+            sinon.assert.calledWith(logDebug, messagesFormatter.format(messages.configured_quality_gates, '{"ALL":10}'));
+        });
+
+        it('should print error messages when parse static analysis failed', async () => {
+            process.argv = ['node', 'parasoft-findings-bitbucket', '--report=D:/test/report.xml', '--parasoftToolOrJavaRootPath=C:/Java'];
+            const error = new Error('Parse failed');
+            setBitbucketEnv();
+            setUpFakeRunner(sinon.fake.throws(error));
+
+            await main.run();
+
+            sinon.assert.calledWith(logError, error);
+        });
+
+        it('should exit with 1 when missing --report', async () => {
             process.argv = ['node', 'parasoft-findings-bitbucket', '--parasoftToolOrJavaRootPath=C:/Java'];
 
             await main.run();
@@ -121,7 +157,7 @@ describe('main', () => {
             sinon.assert.calledWith(logError, messagesFormatter.format(messages.missing_required_parameter, '--report'));
         });
 
-        it('Missing --parasoftToolOrJavaRootPath and java home', async () => {
+        it('should exit with 1 when missing --parasoftToolOrJavaRootPath and java home', async () => {
             const javahome = process.env.JAVA_HOME;
             try {
                 delete process.env.JAVA_HOME;
@@ -138,18 +174,7 @@ describe('main', () => {
             }
         });
 
-        it('Parse static analysis failed', async () => {
-            process.argv = ['node', 'parasoft-findings-bitbucket', '--report=D:/test/report.xml', '--parasoftToolOrJavaRootPath=C:/Java'];
-            const error = new Error('Parse failed');
-            setBitbucketEnv();
-            setUpFakeRunner(sinon.fake.throws(error));
-
-            await main.run();
-
-            sinon.assert.calledWith(logError, error);
-        });
-        
-        it('Missing required environment variables', async () => {
+        it('should exit with 1 when missing required environment variables', async () => {
             process.argv = ['node', 'parasoft-findings-bitbucket', '--report=D:/test/report.xml', '--parasoftToolOrJavaRootPath=C:/Java'];
 
             await main.run();
@@ -157,7 +182,58 @@ describe('main', () => {
             sinon.assert.calledWith(exit, 1);
             sinon.assert.called(logError);
             const arg = logError.firstCall.args[0];
-            sinon.assert.match(arg.message, messagesFormatter.format(messages.missing_required_environment_variables, 'USER_EMAIL, API_TOKEN, BITBUCKET_REPO_SLUG, BITBUCKET_COMMIT, BITBUCKET_WORKSPACE, BITBUCKET_CLONE_DIR'));
+            sinon.assert.match(arg.message, messagesFormatter.format(messages.missing_required_environment_variables, 'USER_EMAIL, API_TOKEN, BITBUCKET_REPO_SLUG, BITBUCKET_COMMIT, BITBUCKET_WORKSPACE, BITBUCKET_CLONE_DIR, BITBUCKET_BUILD_NUMBER'));
+        });
+
+        describe('parseQualityGates()', async () => {
+            beforeEach(() => {
+                process.argv = ['node', 'parasoft-findings-bitbucket', '--report=D:/test/report.xml', '--parasoftToolOrJavaRootPath=C:/Java'];
+            });
+
+            it('should skip quality gate when bitbucket security level is invalid', async () => {
+                process.argv.push('--qualityGate', 'invalid=10');
+
+                await main.run();
+
+                sinon.assert.called(logWarn);
+                sinon.assert.calledWith(logWarn, messagesFormatter.format(messages.skipped_quality_gate_with_invalid_bitbucket_security_level, 'invalid=10', 'invalid'));
+            });
+
+            it('should skip quality gate when threshold value is empty', async () => {
+                process.argv.push('--qualityGate', 'all=');
+
+                await main.run();
+
+                sinon.assert.called(logWarn);
+                sinon.assert.calledWith(logWarn, messagesFormatter.format(messages.skipped_quality_gate_with_empty_threshold, 'all=', ''));
+            });
+
+            it('should skip quality gate with same bitbucket security level', async () => {
+                process.argv.push('--qualityGate', 'all=1', '--qualityGate', 'all=0');
+
+                await main.run();
+
+                sinon.assert.called(logWarn);
+                sinon.assert.calledWith(logWarn, messagesFormatter.format(messages.skipped_quality_gate_with_same_bitbucket_security_level, 'all=0'));
+            });
+
+            it('should use default value when threshold value is invalid', async () => {
+                process.argv.push('--qualityGate', 'all=invalid');
+
+                await main.run();
+
+                sinon.assert.called(logWarn);
+                sinon.assert.calledWith(logWarn, messagesFormatter.format(messages.invalid_threshold_value_but_use_default_value, 'invalid', '0'));
+            });
+
+            it('should use default value when threshold value is less than 0', async () => {
+                process.argv.push('--qualityGate', 'all=-1');
+
+                await main.run();
+
+                sinon.assert.called(logWarn);
+                sinon.assert.calledWith(logWarn, messagesFormatter.format(messages.threshold_value_less_than_zero_but_use_default_value, '-1', '0'));
+            });
         });
     });
 });

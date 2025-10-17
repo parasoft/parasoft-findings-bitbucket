@@ -8,8 +8,8 @@ import * as cp from 'child_process';
 import * as path from "node:path";
 import * as fs from "node:fs";
 
-describe('runnner', () => {
-    describe('run', () => {
+describe('runner', () => {
+    describe('run()', () => {
         let sandbox: sinon.SinonSandbox;
         // logger
         let logInfo: sinon.SinonSpy;
@@ -33,7 +33,7 @@ describe('runnner', () => {
             sandbox.restore();
         })
 
-        it('no static analysis reports found', async () => {
+        it('should throw the error when no static analysis reports are found', async () => {
             const put = sandbox.fake.resolves({status: 200, data: {}});
             sandbox.replace(axios, 'put', put);
             const runOptions: RunOptions = {
@@ -58,7 +58,7 @@ describe('runnner', () => {
             sinon.assert.fail("Expected error to be thrown but it was not.");
         });
 
-        it('no Java execute file found in tool home', async () => {
+        it('should throw the error when no Java execute file is found in tool install directory', async () => {
             const put = sandbox.fake.resolves({status: 200, data: {}});
             sandbox.replace(axios, 'put', put);
             const runOptions: RunOptions = {
@@ -83,7 +83,7 @@ describe('runnner', () => {
             sinon.assert.fail("Expected error to be thrown but it was not.");
         });
 
-        it('no Java execute file found', async () => {
+        it('should throw the error when no Java execute file is found', async () => {
             const javahome = process.env.JAVA_HOME;
             try {
                 delete process.env.JAVA_HOME;
@@ -228,7 +228,70 @@ describe('runnner', () => {
                 sinon.assert.calledWith(logInfo, messagesFormatter.format(messages.uploaded_parasoft_report_results, 'C++test', 1000));
             });
 
-            it('not valid Static Analysis report', async () => {
+            it('parse and upload static analysis result normal - quality gate passed', async () => {
+                runOptions.qualityGates = {'ALL':2000};
+                const put = sandbox.fake.resolves({status: 200, data: {}});
+                sandbox.replace(axios, 'put', put);
+                const post = sandbox.fake.resolves({status: 200, data: {}});
+                sandbox.replace(axios, 'post', post);
+
+                const staticAnalysisParserRunner = new StaticAnalysisParserRunner();
+                const result = await staticAnalysisParserRunner.run(runOptions, createBitbucketEnv());
+
+                sinon.assert.match(result.exitCode, 0);
+                sinon.assert.calledWith(logInfo, messagesFormatter.format(messages.parsed_parasoft_static_analysis_report, 1552, path.join(__dirname, '/res/reports/XML_STATIC.xml')));
+                sinon.assert.calledOnce(put);
+                sinon.assert.callCount(post, 11);
+                sinon.assert.calledWith(logInfo, messagesFormatter.format(messages.evaluating_quality_gates));
+                sinon.assert.calledWith(logInfo, messagesFormatter.format(messages.details_for_each_quality_gate));
+                sinon.assert.calledWith(logInfo, messagesFormatter.format(messages.quality_gate_passed_details, 'ALL', 1552, 2000));
+                sinon.assert.calledWith(logInfo, messagesFormatter.format(messages.uploaded_parasoft_report_results, 'dotTEST', 1000));
+            });
+
+            it('should exit with 1 when only one quality gate fails', async () => {
+                runOptions.qualityGates = {'ALL':500};
+                const put = sandbox.fake.resolves({status: 200, data: {}});
+                sandbox.replace(axios, 'put', put);
+                const post = sandbox.fake.resolves({status: 200, data: {}});
+                sandbox.replace(axios, 'post', post);
+
+                const staticAnalysisParserRunner = new StaticAnalysisParserRunner();
+                const result = await staticAnalysisParserRunner.run(runOptions, createBitbucketEnv());
+
+                sinon.assert.match(result.exitCode, 1);
+                sinon.assert.calledWith(logInfo, messagesFormatter.format(messages.parsed_parasoft_static_analysis_report, 1552, path.join(__dirname, '/res/reports/XML_STATIC.xml')));
+                sinon.assert.calledOnce(put);
+                sinon.assert.callCount(post, 11);
+                sinon.assert.calledWith(logInfo, messagesFormatter.format(messages.evaluating_quality_gates));
+                sinon.assert.calledWith(logInfo, messagesFormatter.format(messages.details_for_each_quality_gate));
+                sinon.assert.calledWith(logInfo, messagesFormatter.format(messages.quality_gate_failed_details, 'ALL', 1552, 500));
+                sinon.assert.calledWith(logInfo, messagesFormatter.format(messages.mark_build_to_failed_due_to_quality_gate_failure));
+                sinon.assert.calledWith(logInfo, messagesFormatter.format(messages.uploaded_parasoft_report_results, 'dotTEST', 1000));
+            });
+
+            it('should exit with 1 when multiple quality gate fail', async () => {
+                runOptions.qualityGates = {'ALL':500, 'HIGH':5};
+                const put = sandbox.fake.resolves({status: 200, data: {}});
+                sandbox.replace(axios, 'put', put);
+                const post = sandbox.fake.resolves({status: 200, data: {}});
+                sandbox.replace(axios, 'post', post);
+
+                const staticAnalysisParserRunner = new StaticAnalysisParserRunner();
+                const result = await staticAnalysisParserRunner.run(runOptions, createBitbucketEnv());
+
+                sinon.assert.match(result.exitCode, 1);
+                sinon.assert.calledWith(logInfo, messagesFormatter.format(messages.parsed_parasoft_static_analysis_report, 1552, path.join(__dirname, '/res/reports/XML_STATIC.xml')));
+                sinon.assert.calledOnce(put);
+                sinon.assert.callCount(post, 11);
+                sinon.assert.calledWith(logInfo, messagesFormatter.format(messages.evaluating_quality_gates));
+                sinon.assert.calledWith(logInfo, messagesFormatter.format(messages.details_for_each_quality_gate));
+                sinon.assert.calledWith(logInfo, messagesFormatter.format(messages.quality_gate_failed_details, 'ALL', 1552, 500));
+                sinon.assert.calledWith(logInfo, messagesFormatter.format(messages.quality_gate_failed_details, 'HIGH', 49, 5));
+                sinon.assert.calledWith(logInfo, messagesFormatter.format(messages.mark_build_to_failed_due_to_quality_gate_failures));
+                sinon.assert.calledWith(logInfo, messagesFormatter.format(messages.uploaded_parasoft_report_results, 'dotTEST', 1000));
+            });
+
+            it('should throw the error when there are no valid Static Analysis reports', async () => {
                 reportPath = path.join(__dirname, '/res/reports/invalid_report');
                 runOptions.report = reportPath + '.xml';
                 const put = sandbox.fake.resolves({status: 200, data: {}});
@@ -252,8 +315,7 @@ describe('runnner', () => {
                 sinon.assert.fail("Expected error to be thrown but it was not.");
             });
 
-
-            it('parse report failed', async () => {
+            it('should print warning message when parsing report failed', async () => {
                 const put = sandbox.fake.resolves({status: 200, data: {}});
                 sandbox.replace(axios, 'put', put);
                 const post = sandbox.fake.resolves({status: 200, data: {}});
@@ -272,7 +334,7 @@ describe('runnner', () => {
                 sinon.assert.notCalled(put);
             });
 
-            it('create report module failed', async () => {
+            it('should throw the error when creating report module failed', async () => {
                 const fakeResponse: AxiosResponse = {
                     status: 500,
                     statusText: 'Internal Server Error',
@@ -303,7 +365,7 @@ describe('runnner', () => {
                 sinon.assert.fail("Expected error to be thrown but it was not.");
             });
 
-            it('upload static analysis result failed', async () => {
+            it('should throw the error when uploading static analysis result failed', async () => {
                 const fakeResponse: AxiosResponse = {
                     status: 500,
                     statusText: 'Internal Server Error',
@@ -329,7 +391,39 @@ describe('runnner', () => {
                         sinon.assert.match(error.message, messagesFormatter.format(messages.failed_to_upload_parasoft_report_results, 'dotTEST', fakeError));
                         return;
                     }
+                }
+                sinon.assert.fail("Expected error to be thrown but it was not.");
+            });
 
+            it('should throw the error when creating build status failed', async () => {
+                runOptions.qualityGates = {'ALL':500};
+                const fakeResponse: AxiosResponse = {
+                    status: 500,
+                    statusText: 'Internal Server Error',
+                    headers: {},
+                    config: {
+                        headers: new AxiosHeaders('headers')
+                    },
+                    data: {message: 'Something went wrong'}
+                };
+                const fakeError = new AxiosError("Failed to create build status", undefined, undefined, undefined, fakeResponse);
+                const put = sandbox.fake.resolves({status: 200, data: {}});
+                sandbox.replace(axios, 'put', put);
+                const axiosPostStub = sinon.stub(axios, 'post');
+                axiosPostStub.withArgs('https://api.bitbucket.org/2.0/repositories/workspace/repo/commit/commit/statuses/build').rejects(fakeError);
+
+                try {
+                    const staticAnalysisParserRunner = new StaticAnalysisParserRunner();
+                    await staticAnalysisParserRunner.run(runOptions, createBitbucketEnv());
+                } catch (error) {
+                    if (error instanceof Error) {
+                        sinon.assert.calledWith(logError, "{\n  \"message\": \"Something went wrong\"\n}");
+                        sinon.assert.calledOnce(put);
+                        sinon.assert.callCount(axiosPostStub, 11);
+                        sinon.assert.match(error.message, messagesFormatter.format(messages.failed_to_create_build_status_in_pull_request, '1', fakeError));
+                        axiosPostStub.restore();
+                        return;
+                    }
                 }
                 sinon.assert.fail("Expected error to be thrown but it was not.");
             });
