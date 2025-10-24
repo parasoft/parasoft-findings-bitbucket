@@ -270,7 +270,7 @@ describe('runner', () => {
             });
 
             it('should exit with 1 when multiple quality gate fail', async () => {
-                runOptions.qualityGates = {'ALL':500, 'HIGH':5};
+                runOptions.qualityGates = {'ALL':500, 'HIGH':5, 'LOW':10};
                 const put = sandbox.fake.resolves({status: 200, data: {}});
                 sandbox.replace(axios, 'put', put);
                 const post = sandbox.fake.resolves({status: 200, data: {}});
@@ -287,6 +287,7 @@ describe('runner', () => {
                 sinon.assert.calledWith(logInfo, messagesFormatter.format(messages.details_for_each_quality_gate));
                 sinon.assert.calledWith(logInfo, messagesFormatter.format(messages.quality_gate_failed_details, 'ALL', 1552, 500));
                 sinon.assert.calledWith(logInfo, messagesFormatter.format(messages.quality_gate_failed_details, 'HIGH', 49, 5));
+                sinon.assert.calledWith(logInfo, messagesFormatter.format(messages.quality_gate_passed_details, 'LOW', 6, 10));
                 sinon.assert.calledWith(logInfo, messagesFormatter.format(messages.mark_build_to_failed_due_to_quality_gate_failures));
                 sinon.assert.calledWith(logInfo, messagesFormatter.format(messages.uploaded_parasoft_report_results, 'dotTEST', 1000));
             });
