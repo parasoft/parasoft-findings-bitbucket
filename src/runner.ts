@@ -430,7 +430,7 @@ export class StaticAnalysisParserRunner {
             }
         }
 
-        let qualityGateMessage, buildDescription = "";
+        let qualityGateMessage, buildStatusDescription = "";
         logger.info(messagesFormatter.format(messages.details_for_each_quality_gate));
         // Check if the number of vulnerabilities exceeds the threshold
         for (const qualityGate of Object.entries(qualityGates)) {
@@ -443,7 +443,7 @@ export class StaticAnalysisParserRunner {
             }
 
             logger.info(qualityGateMessage);
-            buildDescription += `${qualityGateMessage.trimStart()}\r`;
+            buildStatusDescription += `${qualityGateMessage.trimStart()}\r`;
         }
 
         if (failedQualityGates.length > 0) {
@@ -456,13 +456,13 @@ export class StaticAnalysisParserRunner {
         }
 
         if (this.BITBUCKET_ENVS.BITBUCKET_PR_ID) {
-            await this.createQualityGateBuildStatusToPullRequest(qualityGateResult, buildDescription);
+            await this.createQualityGateBuildStatusToPullRequest(qualityGateResult, buildStatusDescription);
         }
 
         return qualityGateResult;
     }
 
-    private async createQualityGateBuildStatusToPullRequest(qualityGateResult: Result, buildDescription: string): Promise<void> {
+    private async createQualityGateBuildStatusToPullRequest(qualityGateResult: Result, buildStatusDescription: string): Promise<void> {
         let buildKey, buildStatus;
         if (qualityGateResult.exitCode) {
             buildKey = messagesFormatter.format(messages.quality_gate_failed);
@@ -476,7 +476,7 @@ export class StaticAnalysisParserRunner {
             await axios.post(this.getBuildStatusUrl(), {
                 key: buildKey,
                 state: buildStatus,
-                description: buildDescription,
+                description: buildStatusDescription,
                 url: this.getBuildUrl()
             }, {auth: this.getAuth()});
         } catch (error) {
