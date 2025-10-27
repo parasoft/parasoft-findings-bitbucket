@@ -34,7 +34,6 @@ class Messages implements ISerializable<Messages> {
     configured_quality_gates!: string;
     no_quality_gate_is_configured!: string;
     skipped_quality_gate_with_invalid_bitbucket_security_level!: string;
-    skipped_quality_gate_with_empty_threshold!: string;
     invalid_threshold_value_but_use_default_value!: string;
     threshold_value_less_than_zero_but_use_default_value!: string;
     skipped_quality_gate_with_same_bitbucket_security_level!: string;
@@ -52,7 +51,6 @@ class Messages implements ISerializable<Messages> {
     mark_build_to_failed_due_to_quality_gate_failures!: string;
     quality_gate_failed!: string;
     quality_gate_passed!: string;
-    all_quality_gate_passed!: string;
     failed_to_create_build_status_in_pull_request!: string;
 
     deserialize(jsonPath: string) : Messages {

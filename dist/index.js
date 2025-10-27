@@ -417,17 +417,20 @@ class StaticAnalysisParserRunner {
                 vulnerabilityCounts[severity] += 1;
             }
         }
+        let qualityGateMessage, buildStatusDescription = "";
         logger_1.logger.info(messages_1.messagesFormatter.format(messages_1.messages.details_for_each_quality_gate));
         // Check if the number of vulnerabilities exceeds the threshold
         for (const qualityGate of Object.entries(qualityGates)) {
             const [severity, threshold] = qualityGate;
-            if (vulnerabilityCounts[severity] > threshold) {
-                logger_1.logger.info(messages_1.messagesFormatter.format(messages_1.messages.quality_gate_failed_details, severity, vulnerabilityCounts[severity], threshold));
-                failedQualityGates.push(qualityGate);
+            if (vulnerabilityCounts[severity] == 0 || vulnerabilityCounts[severity] < threshold) {
+                qualityGateMessage = messages_1.messagesFormatter.format(messages_1.messages.quality_gate_passed_details, severity, vulnerabilityCounts[severity], threshold);
             }
             else {
-                logger_1.logger.info(messages_1.messagesFormatter.format(messages_1.messages.quality_gate_passed_details, severity, vulnerabilityCounts[severity], threshold));
+                qualityGateMessage = messages_1.messagesFormatter.format(messages_1.messages.quality_gate_failed_details, severity, vulnerabilityCounts[severity], threshold);
+                failedQualityGates.push(qualityGate);
             }
+            logger_1.logger.info(qualityGateMessage);
+            buildStatusDescription += `${qualityGateMessage.trimStart()}\r`;
         }
         if (failedQualityGates.length > 0) {
             qualityGateResult.exitCode = 1;
@@ -439,35 +442,26 @@ class StaticAnalysisParserRunner {
             }
         }
         if (this.BITBUCKET_ENVS.BITBUCKET_PR_ID) {
-            await this.createQualityGateBuildStatusToPullRequest(qualityGateResult, failedQualityGates, vulnerabilityCounts);
+            await this.createQualityGateBuildStatusToPullRequest(qualityGateResult, buildStatusDescription);
         }
         return qualityGateResult;
     }
-    async createQualityGateBuildStatusToPullRequest(qualityGateResult, failedQualityGates, vulnerabilityCounts) {
+    async createQualityGateBuildStatusToPullRequest(qualityGateResult, buildStatusDescription) {
         var _a;
-        let buildKey;
-        let buildStatus;
-        let buildDescription;
+        let buildKey, buildStatus;
         if (qualityGateResult.exitCode) {
             buildKey = messages_1.messagesFormatter.format(messages_1.messages.quality_gate_failed);
             buildStatus = "FAILED";
-            buildDescription = "";
-            for (const failedQualityGate of failedQualityGates) {
-                const [severity, threshold] = failedQualityGate;
-                const description = messages_1.messagesFormatter.format(messages_1.messages.quality_gate_failed_details, severity, vulnerabilityCounts[severity], threshold).trimStart();
-                buildDescription += `${description}\r`;
-            }
         }
         else {
             buildKey = messages_1.messagesFormatter.format(messages_1.messages.quality_gate_passed);
             buildStatus = "SUCCESSFUL";
-            buildDescription = messages_1.messagesFormatter.format(messages_1.messages.all_quality_gate_passed);
         }
         try {
             await axios_1.default.post(this.getBuildStatusUrl(), {
                 key: buildKey,
                 state: buildStatus,
-                description: buildDescription,
+                description: buildStatusDescription,
                 url: this.getBuildUrl()
             }, { auth: this.getAuth() });
         }
@@ -38788,6 +38782,7 @@ function showHelp() {
         --report                            Path or minimatch pattern to locate Parasoft static analysis report files. (required)
         --parasoftToolOrJavaRootPath        Path to Java installation or Parasoft tool (required if JAVA_HOME not set) for report processing.
         --qualityGate                       Specify a quality gate for a Bitbucket build. 
+                                                If the actual number of vulnerabilities is greater than or equal to the threshold, then the build is considered as failed.
                                                 The value must be in the format: 'BITBUCKET_SECURITY_LEVEL=THRESHOLD' (e.g., CRITICAL=1).
                                                 Available security levels: ALL, CRITICAL, HIGH, MEDIUM, LOW.
         --debug                             Enable debug logging.
@@ -38826,10 +38821,6 @@ function parseQualityGates(qualityGatePairs) {
         const normalizedQualityName = qualityName.trim().toUpperCase();
         if (!qualityGateNames.includes(normalizedQualityName)) {
             logger_1.logger.warn(messages_1.messagesFormatter.format(messages_1.messages.skipped_quality_gate_with_invalid_bitbucket_security_level, qualityGatePair, qualityName));
-            continue;
-        }
-        if (thresholdString == undefined || thresholdString.trim() == '') {
-            logger_1.logger.warn(messages_1.messagesFormatter.format(messages_1.messages.skipped_quality_gate_with_empty_threshold, qualityGatePair, thresholdString));
             continue;
         }
         if (JSON.stringify(parsedQualityGates[normalizedQualityName])) {

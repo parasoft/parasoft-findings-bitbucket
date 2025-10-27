@@ -430,16 +430,20 @@ export class StaticAnalysisParserRunner {
             }
         }
 
+        let qualityGateMessage, buildStatusDescription = "";
         logger.info(messagesFormatter.format(messages.details_for_each_quality_gate));
         // Check if the number of vulnerabilities exceeds the threshold
         for (const qualityGate of Object.entries(qualityGates)) {
             const [severity, threshold] = qualityGate;
-            if (vulnerabilityCounts[severity] > threshold) {
-                logger.info(messagesFormatter.format(messages.quality_gate_failed_details, severity, vulnerabilityCounts[severity], threshold));
-                failedQualityGates.push(qualityGate);
+            if (vulnerabilityCounts[severity] == 0 || vulnerabilityCounts[severity] < threshold) {
+                qualityGateMessage = messagesFormatter.format(messages.quality_gate_passed_details, severity, vulnerabilityCounts[severity], threshold);
             } else {
-                logger.info(messagesFormatter.format(messages.quality_gate_passed_details, severity, vulnerabilityCounts[severity], threshold));
+                qualityGateMessage = messagesFormatter.format(messages.quality_gate_failed_details, severity, vulnerabilityCounts[severity], threshold);
+                failedQualityGates.push(qualityGate);
             }
+
+            logger.info(qualityGateMessage);
+            buildStatusDescription += `${qualityGateMessage.trimStart()}\r`;
         }
 
         if (failedQualityGates.length > 0) {
@@ -452,37 +456,27 @@ export class StaticAnalysisParserRunner {
         }
 
         if (this.BITBUCKET_ENVS.BITBUCKET_PR_ID) {
-            await this.createQualityGateBuildStatusToPullRequest(qualityGateResult, failedQualityGates, vulnerabilityCounts);
+            await this.createQualityGateBuildStatusToPullRequest(qualityGateResult, buildStatusDescription);
         }
 
         return qualityGateResult;
     }
 
-    private async createQualityGateBuildStatusToPullRequest(qualityGateResult: Result, failedQualityGates: [string, number][], vulnerabilityCounts: Record<string, number>): Promise<void> {
-        let buildKey;
-        let buildStatus;
-        let buildDescription;
-
+    private async createQualityGateBuildStatusToPullRequest(qualityGateResult: Result, buildStatusDescription: string): Promise<void> {
+        let buildKey, buildStatus;
         if (qualityGateResult.exitCode) {
             buildKey = messagesFormatter.format(messages.quality_gate_failed);
             buildStatus = "FAILED";
-            buildDescription = "";
-            for (const failedQualityGate of failedQualityGates) {
-                const [severity, threshold] = failedQualityGate;
-                const description = messagesFormatter.format(messages.quality_gate_failed_details, severity, vulnerabilityCounts[severity], threshold).trimStart();
-                buildDescription += `${description}\r`;
-            }
         } else {
             buildKey = messagesFormatter.format(messages.quality_gate_passed);
             buildStatus = "SUCCESSFUL";
-            buildDescription = messagesFormatter.format(messages.all_quality_gate_passed);
         }
 
         try {
             await axios.post(this.getBuildStatusUrl(), {
                 key: buildKey,
                 state: buildStatus,
-                description: buildDescription,
+                description: buildStatusDescription,
                 url: this.getBuildUrl()
             }, {auth: this.getAuth()});
         } catch (error) {

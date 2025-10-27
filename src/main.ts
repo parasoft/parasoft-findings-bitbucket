@@ -92,6 +92,7 @@ function showHelp() {
         --report                            Path or minimatch pattern to locate Parasoft static analysis report files. (required)
         --parasoftToolOrJavaRootPath        Path to Java installation or Parasoft tool (required if JAVA_HOME not set) for report processing.
         --qualityGate                       Specify a quality gate for a Bitbucket build. 
+                                                If the actual number of vulnerabilities is greater than or equal to the threshold, then the build is considered as failed.
                                                 The value must be in the format: 'BITBUCKET_SECURITY_LEVEL=THRESHOLD' (e.g., CRITICAL=1).
                                                 Available security levels: ALL, CRITICAL, HIGH, MEDIUM, LOW.
         --debug                             Enable debug logging.
@@ -140,11 +141,6 @@ function parseQualityGates(qualityGatePairs: string[]): runner.QualityGates {
            continue;
         }
 
-        if (thresholdString == undefined || thresholdString.trim() == '') {
-            logger.warn(messagesFormatter.format(messages.skipped_quality_gate_with_empty_threshold, qualityGatePair, thresholdString));
-            continue;
-        }
-
         if (JSON.stringify(parsedQualityGates[normalizedQualityName])) {
             logger.warn(messagesFormatter.format(messages.skipped_quality_gate_with_same_bitbucket_security_level, qualityGatePair));
             continue;
@@ -152,12 +148,14 @@ function parseQualityGates(qualityGatePairs: string[]): runner.QualityGates {
 
         const isPureNumber = new RegExp('^-?\\d+$').test(thresholdString);
         let threshold = undefined;
+
         if (!isPureNumber) {
             threshold = 0;
             logger.warn(messagesFormatter.format(messages.invalid_threshold_value_but_use_default_value, thresholdString, threshold));
         } else {
             threshold = parseInt(thresholdString);
         }
+
         if (threshold < 0) {
             threshold = 0;
             logger.warn(messagesFormatter.format(messages.threshold_value_less_than_zero_but_use_default_value, thresholdString, threshold));

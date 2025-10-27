@@ -80,6 +80,7 @@ describe('main', () => {
         --report                            Path or minimatch pattern to locate Parasoft static analysis report files. (required)
         --parasoftToolOrJavaRootPath        Path to Java installation or Parasoft tool (required if JAVA_HOME not set) for report processing.
         --qualityGate                       Specify a quality gate for a Bitbucket build. 
+                                                If the actual number of vulnerabilities is greater than or equal to the threshold, then the build is considered as failed.
                                                 The value must be in the format: 'BITBUCKET_SECURITY_LEVEL=THRESHOLD' (e.g., CRITICAL=1).
                                                 Available security levels: ALL, CRITICAL, HIGH, MEDIUM, LOW.
         --debug                             Enable debug logging.
@@ -199,13 +200,13 @@ describe('main', () => {
                 sinon.assert.calledWith(logWarn, messagesFormatter.format(messages.skipped_quality_gate_with_invalid_bitbucket_security_level, 'invalid=10', 'invalid'));
             });
 
-            it('should skip quality gate when threshold value is empty', async () => {
+            it('should use default value when threshold value is empty', async () => {
                 process.argv.push('--qualityGate', 'all=');
 
                 await main.run();
 
                 sinon.assert.called(logWarn);
-                sinon.assert.calledWith(logWarn, messagesFormatter.format(messages.skipped_quality_gate_with_empty_threshold, 'all=', ''));
+                sinon.assert.calledWith(logWarn, messagesFormatter.format(messages.invalid_threshold_value_but_use_default_value, '', 0));
             });
 
             it('should skip quality gate with same bitbucket security level', async () => {
