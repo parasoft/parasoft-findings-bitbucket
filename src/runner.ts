@@ -370,9 +370,14 @@ export class StaticAnalysisParserRunner {
                     const data = error.response?.data;
                     if (data) {
                         logger.error(JSON.stringify(data, null, 2));
+                    } else {
+                        logger.error("Error", error);
+                        logger.error(JSON.stringify(error.cause, null, 2));
+                        logger.error(error.stack);
                     }
+                    console.log(error.cause);
                 }
-                throw new Error(messagesFormatter.format(messages.failed_to_create_report_module, toolName, error));
+                throw new Error(messagesFormatter.format(messages.failed_to_create_report_module, toolName));
             }
 
             try {
@@ -399,7 +404,7 @@ export class StaticAnalysisParserRunner {
                         logger.error(JSON.stringify(data, null, 2));
                     }
                 }
-                throw new Error(messagesFormatter.format(messages.failed_to_upload_parasoft_report_results, toolName, error));
+                throw new Error(messagesFormatter.format(messages.failed_to_upload_parasoft_report_results, toolName));
             }
 
             logger.info(messagesFormatter.format(messages.uploaded_parasoft_report_results, toolName, vulnerabilities.length));
@@ -486,7 +491,7 @@ export class StaticAnalysisParserRunner {
                     logger.error(JSON.stringify(data, null, 2));
                 }
             }
-            throw new Error(messagesFormatter.format(messages.failed_to_create_build_status_in_pull_request, this.BITBUCKET_ENVS.BITBUCKET_PR_ID, error));
+            throw new Error(messagesFormatter.format(messages.failed_to_create_build_status_in_pull_request, this.BITBUCKET_ENVS.BITBUCKET_PR_ID));
         }
     }
 

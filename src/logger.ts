@@ -1,19 +1,21 @@
-import * as winston from 'winston';
+import {createLogger, format, Logform, transport, transports} from "winston";
 
 interface LoggerConfig {
     level: string;
-    format: winston.Logform.Format;
-    transports: winston.transport[];
+    format: Logform.Format;
+    transports: transport[];
 }
 
 const defaultConfig: LoggerConfig = {
-    level: 'info',
-    format: winston.format.combine(
-        winston.format.printf(logEntry =>
-            `[${logEntry.level.toUpperCase()}] ${logEntry.message}`
-        )
+    level: 'error',
+    format: format.combine(
+        format.json(),
+        format.errors({ stack: true }),
+        format.printf(({ level, message }) => {
+            return `[${level.toUpperCase()}] ${message}`;
+        })
     ),
-    transports: [new winston.transports.Console()]
+    transports: [new transports.Console()]
 };
 
 let currentConfig: LoggerConfig = {...defaultConfig};
@@ -23,4 +25,4 @@ export const configureLogger = (options: Partial<LoggerConfig>): void => {
     logger.configure(currentConfig);
 };
 
-export const logger = winston.createLogger(defaultConfig);
+export const logger = createLogger(defaultConfig);

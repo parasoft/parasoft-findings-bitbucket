@@ -9,11 +9,13 @@
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.logger = exports.configureLogger = void 0;
-const winston = __nccwpck_require__(4240);
+const winston_1 = __nccwpck_require__(4240);
 const defaultConfig = {
-    level: 'info',
-    format: winston.format.combine(winston.format.printf(logEntry => `[${logEntry.level.toUpperCase()}] ${logEntry.message}`)),
-    transports: [new winston.transports.Console()]
+    level: 'error',
+    format: winston_1.format.combine(winston_1.format.json(), winston_1.format.errors({ stack: true }), winston_1.format.printf(({ level, message }) => {
+        return `[${level.toUpperCase()}] ${message}`;
+    })),
+    transports: [new winston_1.transports.Console()]
 };
 let currentConfig = { ...defaultConfig };
 const configureLogger = (options) => {
@@ -21,7 +23,7 @@ const configureLogger = (options) => {
     exports.logger.configure(currentConfig);
 };
 exports.configureLogger = configureLogger;
-exports.logger = winston.createLogger(defaultConfig);
+exports.logger = (0, winston_1.createLogger)(defaultConfig);
 //# sourceMappingURL=logger.js.map
 
 /***/ }),
@@ -367,8 +369,14 @@ class StaticAnalysisParserRunner {
                     if (data) {
                         logger_1.logger.error(JSON.stringify(data, null, 2));
                     }
+                    else {
+                        logger_1.logger.error("Error", error);
+                        logger_1.logger.error(JSON.stringify(error.cause, null, 2));
+                        logger_1.logger.error(error.stack);
+                    }
+                    console.log(error.cause);
                 }
-                throw new Error(messages_1.messagesFormatter.format(messages_1.messages.failed_to_create_report_module, toolName, error));
+                throw new Error(messages_1.messagesFormatter.format(messages_1.messages.failed_to_create_report_module, toolName));
             }
             try {
                 // With POST …/annotations endpoint up to 100 annotations can be created or updated at once.
@@ -390,7 +398,7 @@ class StaticAnalysisParserRunner {
                         logger_1.logger.error(JSON.stringify(data, null, 2));
                     }
                 }
-                throw new Error(messages_1.messagesFormatter.format(messages_1.messages.failed_to_upload_parasoft_report_results, toolName, error));
+                throw new Error(messages_1.messagesFormatter.format(messages_1.messages.failed_to_upload_parasoft_report_results, toolName));
             }
             logger_1.logger.info(messages_1.messagesFormatter.format(messages_1.messages.uploaded_parasoft_report_results, toolName, vulnerabilities.length));
         }
@@ -472,7 +480,7 @@ class StaticAnalysisParserRunner {
                     logger_1.logger.error(JSON.stringify(data, null, 2));
                 }
             }
-            throw new Error(messages_1.messagesFormatter.format(messages_1.messages.failed_to_create_build_status_in_pull_request, this.BITBUCKET_ENVS.BITBUCKET_PR_ID, error));
+            throw new Error(messages_1.messagesFormatter.format(messages_1.messages.failed_to_create_build_status_in_pull_request, this.BITBUCKET_ENVS.BITBUCKET_PR_ID));
         }
     }
     getReportUrl(reportId) {
