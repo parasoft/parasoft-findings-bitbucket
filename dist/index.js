@@ -328,7 +328,7 @@ class StaticAnalysisParserRunner {
         return uuid.v5(violType + ruleId + msg + severity + lineHash + uri + order, this.UUID_NAMESPACE);
     }
     async uploadReportResultsToBitbucket() {
-        var _a, _b;
+        var _a, _b, _c, _d;
         for (const [parasoftReportPath, vulnerability] of this.vulnerabilityMap) {
             const toolName = vulnerability.toolName;
             let vulnerabilities = this.sortVulnerabilitiesBySevLevel(vulnerability.vulnerabilityDetails);
@@ -362,13 +362,8 @@ class StaticAnalysisParserRunner {
                 }, { auth: this.getAuth() });
             }
             catch (error) {
-                if (error instanceof axios_1.AxiosError) {
-                    const data = (_a = error.response) === null || _a === void 0 ? void 0 : _a.data;
-                    if (data) {
-                        logger_1.logger.error(JSON.stringify(data, null, 2));
-                    }
-                }
-                throw new Error(messages_1.messagesFormatter.format(messages_1.messages.failed_to_create_report_module, toolName, error));
+                const message = (_b = (_a = error.response) === null || _a === void 0 ? void 0 : _a.data) === null || _b === void 0 ? void 0 : _b.message;
+                throw new Error(messages_1.messagesFormatter.format(messages_1.messages.failed_to_create_report_module, toolName, error.code, message ? message : error));
             }
             try {
                 // With POST …/annotations endpoint up to 100 annotations can be created or updated at once.
@@ -384,13 +379,8 @@ class StaticAnalysisParserRunner {
                 }
             }
             catch (error) {
-                if (error instanceof axios_1.AxiosError) {
-                    const data = (_b = error.response) === null || _b === void 0 ? void 0 : _b.data;
-                    if (data) {
-                        logger_1.logger.error(JSON.stringify(data, null, 2));
-                    }
-                }
-                throw new Error(messages_1.messagesFormatter.format(messages_1.messages.failed_to_upload_parasoft_report_results, toolName, error));
+                const message = (_d = (_c = error.response) === null || _c === void 0 ? void 0 : _c.data) === null || _d === void 0 ? void 0 : _d.message;
+                throw new Error(messages_1.messagesFormatter.format(messages_1.messages.failed_to_upload_parasoft_report_results, toolName, error.code, message ? message : error));
             }
             logger_1.logger.info(messages_1.messagesFormatter.format(messages_1.messages.uploaded_parasoft_report_results, toolName, vulnerabilities.length));
         }
@@ -447,7 +437,7 @@ class StaticAnalysisParserRunner {
         return qualityGateResult;
     }
     async createQualityGateBuildStatusToPullRequest(qualityGateResult, buildStatusDescription) {
-        var _a;
+        var _a, _b;
         let buildKey, buildStatus;
         if (qualityGateResult.exitCode) {
             buildKey = messages_1.messagesFormatter.format(messages_1.messages.quality_gate_failed);
@@ -466,13 +456,8 @@ class StaticAnalysisParserRunner {
             }, { auth: this.getAuth() });
         }
         catch (error) {
-            if (error instanceof axios_1.AxiosError) {
-                const data = (_a = error.response) === null || _a === void 0 ? void 0 : _a.data;
-                if (data) {
-                    logger_1.logger.error(JSON.stringify(data, null, 2));
-                }
-            }
-            throw new Error(messages_1.messagesFormatter.format(messages_1.messages.failed_to_create_build_status_in_pull_request, this.BITBUCKET_ENVS.BITBUCKET_PR_ID, error));
+            const message = (_b = (_a = error.response) === null || _a === void 0 ? void 0 : _a.data) === null || _b === void 0 ? void 0 : _b.message;
+            throw new Error(messages_1.messagesFormatter.format(messages_1.messages.failed_to_create_build_status_in_pull_request, this.BITBUCKET_ENVS.BITBUCKET_PR_ID, error.code, message ? message : error));
         }
     }
     getReportUrl(reportId) {

@@ -345,7 +345,7 @@ describe('runner', () => {
                     },
                     data: {message: 'Something went wrong'}
                 };
-                const fakeError = new AxiosError("Failed to create report module", undefined, undefined, undefined, fakeResponse);
+                const fakeError = new AxiosError("Failed to create report module", 'ETIMEDOUT', undefined, undefined, fakeResponse);
                 const put = sandbox.fake.rejects(fakeError)
                 sandbox.replace(axios, 'put', put);
                 const post = sandbox.fake.resolves({status: 200, data: {}});
@@ -355,10 +355,9 @@ describe('runner', () => {
                     await staticAnalysisParserRunner.run(runOptions, createBitbucketEnv());
                 } catch (error) {
                     if (error instanceof Error) {
-                        sinon.assert.calledWith(logError, "{\n  \"message\": \"Something went wrong\"\n}");
                         sinon.assert.calledOnce(put);
                         sinon.assert.notCalled(post);
-                        sinon.assert.match(error.message, messagesFormatter.format(messages.failed_to_create_report_module, 'dotTEST', fakeError));
+                        sinon.assert.match(error.message, messagesFormatter.format(messages.failed_to_create_report_module, 'dotTEST', 'ETIMEDOUT', 'Something went wrong'));
                         return;
                     }
 
@@ -376,7 +375,7 @@ describe('runner', () => {
                     },
                     data: {message: 'Something went wrong'}
                 };
-                const fakeError = new AxiosError("Failed to upload static Analysis results", undefined, undefined, undefined, fakeResponse);
+                const fakeError = new AxiosError("Failed to upload static Analysis results", 'ETIMEDOUT', undefined, undefined, fakeResponse);
                 const put = sandbox.fake.resolves({status: 200, data: {}});
                 sandbox.replace(axios, 'put', put);
                 const post = sandbox.fake.rejects(fakeError);
@@ -386,10 +385,9 @@ describe('runner', () => {
                     await staticAnalysisParserRunner.run(runOptions, createBitbucketEnv());
                 } catch (error) {
                     if (error instanceof Error) {
-                        sinon.assert.calledWith(logError, "{\n  \"message\": \"Something went wrong\"\n}");
                         sinon.assert.calledOnce(put);
                         sinon.assert.calledOnce(post);
-                        sinon.assert.match(error.message, messagesFormatter.format(messages.failed_to_upload_parasoft_report_results, 'dotTEST', fakeError));
+                        sinon.assert.match(error.message, messagesFormatter.format(messages.failed_to_upload_parasoft_report_results, 'dotTEST', 'ETIMEDOUT', 'Something went wrong'));
                         return;
                     }
                 }
@@ -405,9 +403,9 @@ describe('runner', () => {
                     config: {
                         headers: new AxiosHeaders('headers')
                     },
-                    data: {message: 'Something went wrong'}
+                    data: {}
                 };
-                const fakeError = new AxiosError("Failed to create build status", undefined, undefined, undefined, fakeResponse);
+                const fakeError = new AxiosError("Failed to create build status", 'ETIMEDOUT', undefined, undefined, fakeResponse);
                 const put = sandbox.fake.resolves({status: 200, data: {}});
                 sandbox.replace(axios, 'put', put);
                 const axiosPostStub = sinon.stub(axios, 'post');
@@ -418,10 +416,9 @@ describe('runner', () => {
                     await staticAnalysisParserRunner.run(runOptions, createBitbucketEnv());
                 } catch (error) {
                     if (error instanceof Error) {
-                        sinon.assert.calledWith(logError, "{\n  \"message\": \"Something went wrong\"\n}");
                         sinon.assert.calledOnce(put);
                         sinon.assert.callCount(axiosPostStub, 11);
-                        sinon.assert.match(error.message, messagesFormatter.format(messages.failed_to_create_build_status_in_pull_request, '1', fakeError));
+                        sinon.assert.match(error.message, messagesFormatter.format(messages.failed_to_create_build_status_in_pull_request, '1', 'ETIMEDOUT', fakeError));
                         axiosPostStub.restore();
                         return;
                     }

@@ -32,8 +32,8 @@
   "uploading_parasoft_report_results": "Uploading Parasoft {0} Static Analysis results to Bitbucket: {1}",
   "only_specified_vulnerabilities_will_be_uploaded": "Only {0} vulnerabilities will be uploaded, due to the limitation of Bitbucket's API.",
   "uploaded_parasoft_report_results": "Uploaded Parasoft {0} Static Analysis results: {1} vulnerabilities.",
-  "failed_to_create_report_module": "Failed to create Parasoft {0} report module. Error: {1}",
-  "failed_to_upload_parasoft_report_results": "Failed to upload Parasoft {0} Static Analysis results. Error: {1}",
+  "failed_to_create_report_module": "Bitbucket API error while creating Parasoft {0} report module.\n  Error code: {1}.\n  Error message: {2}.",
+  "failed_to_upload_parasoft_report_results": "Bitbucket API error while uploading Parasoft {0} Static Analysis results.\n  Error code: {1}.\n  Error message: {2}.",
   "mark_build_to_failed_due_to_quality_gate_failure": "Mark the build as failed, due to a quality gate failure.",
   "mark_build_to_failed_due_to_quality_gate_failures": "Mark the build as failed, due to some quality gate failures.",
   "flow_or_duplicate_violation_details_description": "This is a {0} analysis violation. See the Parasoft HTML report for details",
@@ -43,5 +43,5 @@
   "quality_gate_passed_details": "  \u2705 [{0}]: Passed (Actual value: {1}, Threshold: {2})",
   "quality_gate_failed": "Parasoft Findings: Quality gate failed",
   "quality_gate_passed": "Parasoft Findings: Quality gate passed",
-  "failed_to_create_build_status_in_pull_request": "Failed to create the build status in the pull request {0}. Error: {1}"
+  "failed_to_create_build_status_in_pull_request": "Bitbucket API error while creating the build status in the pull request {0}.\n  Error code: {1}.\n  Error message: {2}."
 }

@@ -365,14 +365,9 @@ export class StaticAnalysisParserRunner {
                     reporter: "Parasoft",
                     result: "FAILED"
                 }, {auth: this.getAuth()});
-            } catch (error) {
-                if (error instanceof AxiosError) {
-                    const data = error.response?.data;
-                    if (data) {
-                        logger.error(JSON.stringify(data, null, 2));
-                    }
-                }
-                throw new Error(messagesFormatter.format(messages.failed_to_create_report_module, toolName, error));
+            } catch (error: any) {
+                const message = error.response?.data?.message;
+                throw new Error(messagesFormatter.format(messages.failed_to_create_report_module, toolName, error.code, message ? message : error));
             }
 
             try {
@@ -392,14 +387,9 @@ export class StaticAnalysisParserRunner {
                         { auth: this.getAuth() }
                     );
                 }
-            } catch (error) {
-                if (error instanceof AxiosError) {
-                    const data = error.response?.data;
-                    if (data) {
-                        logger.error(JSON.stringify(data, null, 2));
-                    }
-                }
-                throw new Error(messagesFormatter.format(messages.failed_to_upload_parasoft_report_results, toolName, error));
+            } catch (error: any) {
+                const message = error.response?.data?.message;
+                throw new Error(messagesFormatter.format(messages.failed_to_upload_parasoft_report_results, toolName, error.code, message ? message : error));
             }
 
             logger.info(messagesFormatter.format(messages.uploaded_parasoft_report_results, toolName, vulnerabilities.length));
@@ -479,14 +469,9 @@ export class StaticAnalysisParserRunner {
                 description: buildStatusDescription,
                 url: this.getBuildUrl()
             }, {auth: this.getAuth()});
-        } catch (error) {
-            if (error instanceof AxiosError) {
-                const data = error.response?.data;
-                if (data) {
-                    logger.error(JSON.stringify(data, null, 2));
-                }
-            }
-            throw new Error(messagesFormatter.format(messages.failed_to_create_build_status_in_pull_request, this.BITBUCKET_ENVS.BITBUCKET_PR_ID, error));
+        } catch (error: any) {
+            const message = error.response?.data?.message;
+            throw new Error(messagesFormatter.format(messages.failed_to_create_build_status_in_pull_request, this.BITBUCKET_ENVS.BITBUCKET_PR_ID, error.code, message ? message : error));
         }
     }
 
