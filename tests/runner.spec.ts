@@ -16,7 +16,6 @@ describe('runner', () => {
         let logError: sinon.SinonSpy;
         let logWarn: sinon.SinonSpy;
         let logDebug: sinon.SinonSpy;
-        let consoleError: sinon.SinonSpy;
 
         beforeEach(() => {
             sandbox = sinon.createSandbox();
@@ -28,8 +27,6 @@ describe('runner', () => {
             sandbox.replace(logger, 'warn', logWarn);
             logDebug = sandbox.fake();
             sandbox.replace(logger, 'debug', logDebug);
-            consoleError = sandbox.fake();
-            sandbox.replace(console, 'error', consoleError);
         });
 
         afterEach(() => {
@@ -338,172 +335,95 @@ describe('runner', () => {
                 sinon.assert.notCalled(put);
             });
 
-            describe('should throw the error when creating report module failed', () => {
-                it('when error contains response', async () => {
-                    const fakeResponse: AxiosResponse = {
-                        status: 500,
-                        statusText: 'Internal Server Error',
-                        headers: {},
-                        config: {
-                            headers: new AxiosHeaders('headers')
-                        },
-                        data: {message: 'Something went wrong'}
-                    };
-                    const fakeError = new AxiosError("Failed to create report module", undefined, undefined, undefined, fakeResponse);
-                    const put = sandbox.fake.rejects(fakeError)
-                    sandbox.replace(axios, 'put', put);
-                    const post = sandbox.fake.resolves({status: 200, data: {}});
-                    sandbox.replace(axios, 'post', post);
-                    try {
-                        const staticAnalysisParserRunner = new StaticAnalysisParserRunner();
-                        await staticAnalysisParserRunner.run(runOptions, createBitbucketEnv());
-                    } catch (error) {
-                        if (error instanceof Error) {
-                            sinon.assert.calledWith(logError, "{\n  \"message\": \"Something went wrong\"\n}");
-                            sinon.assert.calledOnce(put);
-                            sinon.assert.notCalled(post);
-                            sinon.assert.match(error.message, messagesFormatter.format(messages.failed_to_create_report_module, 'dotTEST'));
-                            return;
-                        }
-
+            it('should throw the error when creating report module failed', async () => {
+                const fakeResponse: AxiosResponse = {
+                    status: 500,
+                    statusText: 'Internal Server Error',
+                    headers: {},
+                    config: {
+                        headers: new AxiosHeaders('headers')
+                    },
+                    data: {message: 'Something went wrong'}
+                };
+                const fakeError = new AxiosError("Failed to create report module", 'ETIMEDOUT', undefined, undefined, fakeResponse);
+                const put = sandbox.fake.rejects(fakeError)
+                sandbox.replace(axios, 'put', put);
+                const post = sandbox.fake.resolves({status: 200, data: {}});
+                sandbox.replace(axios, 'post', post);
+                try {
+                    const staticAnalysisParserRunner = new StaticAnalysisParserRunner();
+                    await staticAnalysisParserRunner.run(runOptions, createBitbucketEnv());
+                } catch (error) {
+                    if (error instanceof Error) {
+                        sinon.assert.calledOnce(put);
+                        sinon.assert.notCalled(post);
+                        sinon.assert.match(error.message, messagesFormatter.format(messages.failed_to_create_report_module, 'dotTEST', 'ETIMEDOUT', 'Something went wrong'));
+                        return;
                     }
-                    sinon.assert.fail("Expected error to be thrown but it was not.");
-                });
 
-                it('when error does not contain response', async () => {
-                    const fakeError = new AxiosError("Failed to create report module", undefined, undefined, undefined, undefined);
-                    const put = sandbox.fake.rejects(fakeError)
-                    sandbox.replace(axios, 'put', put);
-                    const post = sandbox.fake.resolves({status: 200, data: {}});
-                    sandbox.replace(axios, 'post', post);
-                    try {
-                        const staticAnalysisParserRunner = new StaticAnalysisParserRunner();
-                        await staticAnalysisParserRunner.run(runOptions, createBitbucketEnv());
-                    } catch (error) {
-                        if (error instanceof Error) {
-                            sinon.assert.calledOnce(put);
-                            sinon.assert.notCalled(post);
-                            sinon.assert.calledOnce(consoleError);
-                            sinon.assert.match(error.message, messagesFormatter.format(messages.failed_to_create_report_module, 'dotTEST'));
-                            return;
-                        }
-                    }
-                    sinon.assert.fail("Expected error to be thrown but it was not.");
-                });
+                }
+                sinon.assert.fail("Expected error to be thrown but it was not.");
             });
 
-            describe('should throw the error when uploading static analysis result failed', () => {
-                it('when error contains response', async () => {
-                    const fakeResponse: AxiosResponse = {
-                        status: 500,
-                        statusText: 'Internal Server Error',
-                        headers: {},
-                        config: {
-                            headers: new AxiosHeaders('headers')
-                        },
-                        data: {message: 'Something went wrong'}
-                    };
-                    const fakeError = new AxiosError("Failed to upload static Analysis results", undefined, undefined, undefined, fakeResponse);
-                    const put = sandbox.fake.resolves({status: 200, data: {}});
-                    sandbox.replace(axios, 'put', put);
-                    const post = sandbox.fake.rejects(fakeError);
-                    sandbox.replace(axios, 'post', post);
-                    try {
-                        const staticAnalysisParserRunner = new StaticAnalysisParserRunner();
-                        await staticAnalysisParserRunner.run(runOptions, createBitbucketEnv());
-                    } catch (error) {
-                        if (error instanceof Error) {
-                            sinon.assert.calledWith(logError, "{\n  \"message\": \"Something went wrong\"\n}");
-                            sinon.assert.calledOnce(put);
-                            sinon.assert.calledOnce(post);
-                            sinon.assert.match(error.message, messagesFormatter.format(messages.failed_to_upload_parasoft_report_results, 'dotTEST'));
-                            return;
-                        }
+            it('should throw the error when uploading static analysis result failed', async () => {
+                const fakeResponse: AxiosResponse = {
+                    status: 500,
+                    statusText: 'Internal Server Error',
+                    headers: {},
+                    config: {
+                        headers: new AxiosHeaders('headers')
+                    },
+                    data: {message: 'Something went wrong'}
+                };
+                const fakeError = new AxiosError("Failed to upload static Analysis results", 'ETIMEDOUT', undefined, undefined, fakeResponse);
+                const put = sandbox.fake.resolves({status: 200, data: {}});
+                sandbox.replace(axios, 'put', put);
+                const post = sandbox.fake.rejects(fakeError);
+                sandbox.replace(axios, 'post', post);
+                try {
+                    const staticAnalysisParserRunner = new StaticAnalysisParserRunner();
+                    await staticAnalysisParserRunner.run(runOptions, createBitbucketEnv());
+                } catch (error) {
+                    if (error instanceof Error) {
+                        sinon.assert.calledOnce(put);
+                        sinon.assert.calledOnce(post);
+                        sinon.assert.match(error.message, messagesFormatter.format(messages.failed_to_upload_parasoft_report_results, 'dotTEST', 'ETIMEDOUT', 'Something went wrong'));
+                        return;
                     }
-                    sinon.assert.fail("Expected error to be thrown but it was not.");
-                });
-
-                it('when error does not contain response', async () => {
-                    const fakeError = new AxiosError("Failed to upload static Analysis results", undefined, undefined, undefined, undefined);
-                    const put = sandbox.fake.resolves({status: 200, data: {}});
-                    sandbox.replace(axios, 'put', put);
-                    const post = sandbox.fake.rejects(fakeError);
-                    sandbox.replace(axios, 'post', post);
-                    try {
-                        const staticAnalysisParserRunner = new StaticAnalysisParserRunner();
-                        await staticAnalysisParserRunner.run(runOptions, createBitbucketEnv());
-                    } catch (error) {
-                        if (error instanceof Error) {
-                            sinon.assert.calledOnce(put);
-                            sinon.assert.calledOnce(post);
-                            sinon.assert.calledOnce(consoleError);
-                            sinon.assert.match(error.message, messagesFormatter.format(messages.failed_to_upload_parasoft_report_results, 'dotTEST'));
-                            return;
-                        }
-                    }
-                    sinon.assert.fail("Expected error to be thrown but it was not.");
-                });
+                }
+                sinon.assert.fail("Expected error to be thrown but it was not.");
             });
 
+            it('should throw the error when creating build status failed', async () => {
+                runOptions.qualityGates = {'ALL':500};
+                const fakeResponse: AxiosResponse = {
+                    status: 500,
+                    statusText: 'Internal Server Error',
+                    headers: {},
+                    config: {
+                        headers: new AxiosHeaders('headers')
+                    },
+                    data: {}
+                };
+                const fakeError = new AxiosError("Failed to create build status", 'ETIMEDOUT', undefined, undefined, fakeResponse);
+                const put = sandbox.fake.resolves({status: 200, data: {}});
+                sandbox.replace(axios, 'put', put);
+                const axiosPostStub = sinon.stub(axios, 'post');
+                axiosPostStub.withArgs('https://api.bitbucket.org/2.0/repositories/workspace/repo/commit/commit/statuses/build').rejects(fakeError);
 
-
-            describe('should throw the error when creating build status failed', () => {
-                it('when error contains response', async () => {
-                    runOptions.qualityGates = {'ALL':500};
-                    const fakeResponse: AxiosResponse = {
-                        status: 500,
-                        statusText: 'Internal Server Error',
-                        headers: {},
-                        config: {
-                            headers: new AxiosHeaders('headers')
-                        },
-                        data: {message: 'Something went wrong'}
-                    };
-                    const fakeError = new AxiosError("Failed to create build status", undefined, undefined, undefined, fakeResponse);
-                    const put = sandbox.fake.resolves({status: 200, data: {}});
-                    sandbox.replace(axios, 'put', put);
-                    const axiosPostStub = sinon.stub(axios, 'post');
-                    axiosPostStub.withArgs('https://api.bitbucket.org/2.0/repositories/workspace/repo/commit/commit/statuses/build').rejects(fakeError);
-
-                    try {
-                        const staticAnalysisParserRunner = new StaticAnalysisParserRunner();
-                        await staticAnalysisParserRunner.run(runOptions, createBitbucketEnv());
-                    } catch (error) {
-                        if (error instanceof Error) {
-                            sinon.assert.calledWith(logError, "{\n  \"message\": \"Something went wrong\"\n}");
-                            sinon.assert.calledOnce(put);
-                            sinon.assert.callCount(axiosPostStub, 11);
-                            sinon.assert.match(error.message, messagesFormatter.format(messages.failed_to_create_build_status_in_pull_request, '1', fakeError));
-                            axiosPostStub.restore();
-                            return;
-                        }
+                try {
+                    const staticAnalysisParserRunner = new StaticAnalysisParserRunner();
+                    await staticAnalysisParserRunner.run(runOptions, createBitbucketEnv());
+                } catch (error) {
+                    if (error instanceof Error) {
+                        sinon.assert.calledOnce(put);
+                        sinon.assert.callCount(axiosPostStub, 11);
+                        sinon.assert.match(error.message, messagesFormatter.format(messages.failed_to_create_build_status_in_pull_request, '1', 'ETIMEDOUT', fakeError));
+                        axiosPostStub.restore();
+                        return;
                     }
-                    sinon.assert.fail("Expected error to be thrown but it was not.");
-                });
-
-                it('when error does not contain response', async () => {
-                    runOptions.qualityGates = {'ALL':500};
-                    const fakeError = new AxiosError("Failed to create build status", undefined, undefined, undefined, undefined);
-                    const put = sandbox.fake.resolves({status: 200, data: {}});
-                    sandbox.replace(axios, 'put', put);
-                    const axiosPostStub = sinon.stub(axios, 'post');
-                    axiosPostStub.withArgs('https://api.bitbucket.org/2.0/repositories/workspace/repo/commit/commit/statuses/build').rejects(fakeError);
-
-                    try {
-                        const staticAnalysisParserRunner = new StaticAnalysisParserRunner();
-                        await staticAnalysisParserRunner.run(runOptions, createBitbucketEnv());
-                    } catch (error) {
-                        if (error instanceof Error) {
-                            sinon.assert.calledOnce(put);
-                            sinon.assert.callCount(axiosPostStub, 11);
-                            sinon.assert.calledOnce(consoleError);
-                            sinon.assert.match(error.message, messagesFormatter.format(messages.failed_to_create_build_status_in_pull_request, '1', fakeError));
-                            axiosPostStub.restore();
-                            return;
-                        }
-                    }
-                    sinon.assert.fail("Expected error to be thrown but it was not.");
-                });
+                }
+                sinon.assert.fail("Expected error to be thrown but it was not.");
             });
         });
 
