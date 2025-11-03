@@ -367,8 +367,11 @@ class StaticAnalysisParserRunner {
                     if (data) {
                         logger_1.logger.error(JSON.stringify(data, null, 2));
                     }
+                    else {
+                        console.error("[ERROR]", error);
+                    }
                 }
-                throw new Error(messages_1.messagesFormatter.format(messages_1.messages.failed_to_create_report_module, toolName, error));
+                throw new Error(messages_1.messagesFormatter.format(messages_1.messages.failed_to_create_report_module, toolName));
             }
             try {
                 // With POST …/annotations endpoint up to 100 annotations can be created or updated at once.
@@ -389,8 +392,11 @@ class StaticAnalysisParserRunner {
                     if (data) {
                         logger_1.logger.error(JSON.stringify(data, null, 2));
                     }
+                    else {
+                        console.error("[ERROR]", error);
+                    }
                 }
-                throw new Error(messages_1.messagesFormatter.format(messages_1.messages.failed_to_upload_parasoft_report_results, toolName, error));
+                throw new Error(messages_1.messagesFormatter.format(messages_1.messages.failed_to_upload_parasoft_report_results, toolName));
             }
             logger_1.logger.info(messages_1.messagesFormatter.format(messages_1.messages.uploaded_parasoft_report_results, toolName, vulnerabilities.length));
         }
@@ -471,8 +477,11 @@ class StaticAnalysisParserRunner {
                 if (data) {
                     logger_1.logger.error(JSON.stringify(data, null, 2));
                 }
+                else {
+                    console.error("[ERROR]", error);
+                }
             }
-            throw new Error(messages_1.messagesFormatter.format(messages_1.messages.failed_to_create_build_status_in_pull_request, this.BITBUCKET_ENVS.BITBUCKET_PR_ID, error));
+            throw new Error(messages_1.messagesFormatter.format(messages_1.messages.failed_to_create_build_status_in_pull_request, this.BITBUCKET_ENVS.BITBUCKET_PR_ID));
         }
     }
     getReportUrl(reportId) {
