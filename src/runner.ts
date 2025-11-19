@@ -6,7 +6,7 @@ import * as glob from 'glob';
 import * as sax from 'sax';
 import * as sarifReportTypes from './sarifReportTypes';
 import * as uuid from 'uuid';
-import axios, {AxiosBasicCredentials, AxiosError} from "axios";
+import axios, {AxiosBasicCredentials} from "axios";
 import {logger} from './logger';
 import {messages, messagesFormatter} from './messages';
 import {BitbucketEnvs} from './main';
