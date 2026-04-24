@@ -249,19 +249,12 @@ describe('runner', () => {
             });
 
             it('parse and upload static analysis result normal - duplicate category desc', async () => {
+                reportPath = path.join(__dirname, '/res/reports/XML_STATIC_DUPLICATE_CATEGORY_DESC');
+                runOptions.report = reportPath + '.xml';
                 const put = sandbox.fake.resolves({status: 200, data: {}});
                 sandbox.replace(axios, 'put', put);
                 const post = sandbox.fake.resolves({status: 200, data: {}});
                 sandbox.replace(axios, 'post', post);
-
-                const reportPath = path.join(__dirname, '/res/reports/XML_STATIC_DUPLICATE_CATEGORY_DESC')
-                if (fs.existsSync(reportPath + '.sarif')) {
-                    fs.rmSync(reportPath + '.sarif');
-                }
-                runOptions = {
-                    report: reportPath + '.xml',
-                    parasoftToolOrJavaRootPath: process.env.JAVA_HOME || path.join(__dirname, '/res/toolRootPaths/toolHome')
-                };
 
                 const staticAnalysisParserRunner = new StaticAnalysisParserRunner();
                 const result = await staticAnalysisParserRunner.run(runOptions, createBitbucketEnv());
