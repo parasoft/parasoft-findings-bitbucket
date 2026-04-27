@@ -248,6 +248,23 @@ describe('runner', () => {
                 sinon.assert.calledWith(logInfo, messagesFormatter.format(messages.uploaded_parasoft_report_results, 'dotTEST', 1000));
             });
 
+            it('parse and upload static analysis result normal - duplicate category desc', async () => {
+                reportPath = path.join(__dirname, '/res/reports/XML_STATIC_DUPLICATE_CATEGORY_DESC');
+                runOptions.report = reportPath + '.xml';
+                const put = sandbox.fake.resolves({status: 200, data: {}});
+                sandbox.replace(axios, 'put', put);
+                const post = sandbox.fake.resolves({status: 200, data: {}});
+                sandbox.replace(axios, 'post', post);
+
+                const staticAnalysisParserRunner = new StaticAnalysisParserRunner();
+                const result = await staticAnalysisParserRunner.run(runOptions, createBitbucketEnv());
+
+                sinon.assert.match(result.exitCode, 0);
+                sinon.assert.calledWith(logInfo, messagesFormatter.format(messages.parsed_parasoft_static_analysis_report, 1, path.join(__dirname, '/res/reports/XML_STATIC_DUPLICATE_CATEGORY_DESC.xml')));
+                sinon.assert.calledOnce(put);
+                sinon.assert.calledOnce(post);
+            });
+
             it('should exit with 1 when only one quality gate fails', async () => {
                 runOptions.qualityGates = {'ALL':500};
                 const put = sandbox.fake.resolves({status: 200, data: {}});
