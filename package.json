@@ -41,7 +41,7 @@
     "@types/minimist": "^1.2.5",
     "@types/mocha": "^10.0.6",
     "@types/sax": "^1.2.7",
-    "@types/sinon": "^17.0.3",
+    "@types/sinon": "^21.0.1",
     "@types/string-format": "^2.0.3",
     "@vercel/ncc": "^0.38.1",
     "eslint": "^9.30.1",
