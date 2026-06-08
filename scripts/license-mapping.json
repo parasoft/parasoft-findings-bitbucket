@@ -1,23 +1,28 @@
 [
-    {
-        "purl" : "pkg:npm/string-format@2.0.0",
+	{
+        "purl" : "pkg:npm/glob@11.1.0",
         "licenses" : [
             {
                 "license" : {
-                    "id" : "MIT",
-                    "url" : "http://www.opensource.org/licenses/mit-license.php"
-                }
-            },
-            {
-                "license" : {
-                    "id" : "WTFPL",
-                    "url" : "https://spdx.org/licenses/WTFPL.html"
+                    "id" : "BlueOak-1.0.0",
+                    "url" : "https://opensource.org/license/blue-oak-model-license"
                 }
             }
         ]
     },
 	{
         "purl" : "pkg:npm/jackspeak@4.1.1",
+        "licenses" : [
+            {
+                "license" : {
+                    "id" : "BlueOak-1.0.0",
+                    "url" : "https://opensource.org/license/blue-oak-model-license"
+                }
+            }
+        ]
+    },
+	{
+        "purl" : "pkg:npm/minimatch@10.2.5",
         "licenses" : [
             {
                 "license" : {
@@ -45,6 +50,23 @@
                 "license" : {
                     "id" : "BlueOak-1.0.0",
                     "url" : "https://opensource.org/license/blue-oak-model-license"
+                }
+            }
+        ]
+    },
+	{
+        "purl" : "pkg:npm/string-format@2.0.0",
+        "licenses" : [
+            {
+                "license" : {
+                    "id" : "MIT",
+                    "url" : "http://www.opensource.org/licenses/mit-license.php"
+                }
+            },
+            {
+                "license" : {
+                    "id" : "WTFPL",
+                    "url" : "https://spdx.org/licenses/WTFPL.html"
                 }
             }
         ]
