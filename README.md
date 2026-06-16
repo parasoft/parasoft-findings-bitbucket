@@ -22,7 +22,7 @@ To display Parasoft static analysis results on Bitbucket, you need to customize 
 
 - Install the Parasoft Findings Bitbucket CLI globally:
     ```yaml
-    npm i -g github:parasoft/parasoft-findings-bitbucket
+    npm i -g github:parasoft/parasoft-findings-bitbucket#<releaseVersion>
     ```
 
 ### Adding the Parasoft Findings Bitbucket tool to Bitbucket Pipeline
@@ -58,7 +58,7 @@ pipelines:
           name: "Upload Parasoft static analysis XML report results via Parasoft Findings Bitbucket"
           script:
             # Install Parasoft Findings Bitbucket tool
-            - npm i -g github:parasoft/parasoft-findings-bitbucket
+            - npm i -g github:parasoft/parasoft-findings-bitbucket#1.0.0
 
             # Generate Parasoft Static Analysis XML and HTML reports. The HTML report provides detailed information on Flow and Code Duplicate vulnerabilities
             - jtestcli.exe -config "builtin://Recommended Rules" -settings "localsettings.properties" -data "demo.data.json" -report "reports/static/report.xml" -property report.format=xml,html
@@ -82,7 +82,7 @@ pipelines:
           name: "Upload Parasoft static analysis XML report results including quality gate checks via Parasoft Findings Bitbucket"
           script:
             # Install Parasoft Findings Bitbucket tool
-            - npm i -g github:parasoft/parasoft-findings-bitbucket
+            - npm i -g github:parasoft/parasoft-findings-bitbucket#1.0.0
 
             # Generate Parasoft Static Analysis XML and HTML reports. The HTML report provides detailed information on Flow and Code Duplicate vulnerabilities
             - jtestcli.exe -config "builtin://Recommended Rules" -settings "localsettings.properties" -data "demo.data.json" -report "reports/static/report.xml" -property report.format=xml,html
