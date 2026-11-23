@@ -2,7 +2,7 @@ extension:
   - ts
 spec: "tests/**/*.spec.ts"
 require: ts-node/register
-reporter: mocha-multi-reporters
+reporter: xunit
 reporter-option:
-  - "configFile=mocha-reporter-config.json"
+  - "output=test-results.xml"
 timeout: 30000
