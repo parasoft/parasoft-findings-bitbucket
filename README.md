@@ -17,14 +17,6 @@ To display Parasoft static analysis results on Bitbucket, you need to customize 
 
 - Generated Parasoft static analysis XML report
 
-### Building and Testing from Source
-
-The development environment requires Node.js `^20.19.0 || >=22.12.0` and Java 17+.
-Run `npm run all` to build and test the project. Tests generate an XUnit report
-at `test-results.xml` and HTML and Cobertura coverage reports under `coverage/`.
-In Jenkins, configure the JUnit publisher to read `test-results.xml` relative
-to the workspace. Publish test results even when the test command fails.
-
 ### Bitbucket Configuration
 - Create repository variables **USER_EMAIL** and **API_TOKEN** used for Bitbucket API access.
 
