@@ -1,6 +1,17 @@
 [
 	{
-        "purl" : "pkg:npm/glob@13.0.6",
+        "purl" : "pkg:npm/%40isaacs/nonrecursive-glob-match@1.1.0",
+        "licenses" : [
+            {
+                "license" : {
+                    "id" : "BlueOak-1.0.0",
+                    "url" : "https://opensource.org/license/blue-oak-model-license"
+                }
+            }
+        ]
+    },
+	{
+        "purl" : "pkg:npm/glob@14.0.6",
         "licenses" : [
             {
                 "license" : {
@@ -22,7 +33,7 @@
         ]
     },
 	{
-        "purl" : "pkg:npm/lru-cache@11.5.1",
+        "purl" : "pkg:npm/lru-cache@11.5.3",
         "licenses" : [
             {
                 "license" : {
@@ -33,7 +44,7 @@
         ]
     },
 	{
-        "purl" : "pkg:npm/minimatch@10.2.5",
+        "purl" : "pkg:npm/minimatch@11.0.9",
         "licenses" : [
             {
                 "license" : {
@@ -66,7 +77,7 @@
         ]
     },
 	{
-        "purl" : "pkg:npm/path-scurry@2.0.2",
+        "purl" : "pkg:npm/path-scurry@3.0.0",
         "licenses" : [
             {
                 "license" : {
